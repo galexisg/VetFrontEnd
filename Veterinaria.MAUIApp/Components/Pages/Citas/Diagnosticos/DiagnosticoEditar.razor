@@ -1,0 +1,88 @@
+﻿@page "/diagnosticos/{citaId:long}/editar/{id:long}"
+@inject Veterinaria.MAUIApp.Services.DiagnosticoService DiagnosticoService
+@inject NavigationManager Navigation
+@using Veterinaria.MAUIApp.Models
+
+<div class="d-flex flex-column min-vh-100">
+
+    <div class="container py-3 flex-grow-1 d-flex flex-column">
+
+        <!-- Encabezado con botón volver -->
+        <div class="d-flex align-items-center mb-3">
+            <button class="btn btn-light rounded-circle shadow-sm me-2"
+                    style="width: 36px; height: 36px; line-height: 1;"
+                    @onclick='() => Navigation.NavigateTo($"/diagnosticos/{citaId}")'>
+                ←
+            </button>
+            <div>
+                <h5 class="fw-bold mb-0">Diagnóstico</h5>
+                <small class="text-muted">Edita la información del diagnóstico</small>
+            </div>
+        </div>
+
+        @if (diagnostico == null)
+        {
+            <p><em>Cargando datos del diagnóstico...</em></p>
+        }
+        else
+        {
+            <!-- El form ahora ocupa toda la altura disponible -->
+            <EditForm Id="editForm" Model="@diagnostico" OnValidSubmit="Guardar" class="d-flex flex-column flex-grow-1">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="mb-3">
+                    <label class="form-label">Nombre del diagnóstico</label>
+                    <InputText class="form-control rounded-4 shadow-sm" @bind-Value="diagnostico.Nombre" />
+                    <ValidationMessage For="@(() => diagnostico.Nombre)" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Descripción del diagnóstico</label>
+                    <InputTextArea class="form-control rounded-4 shadow-sm" rows="3" @bind-Value="diagnostico.Descripcion" />
+                    <ValidationMessage For="@(() => diagnostico.Descripcion)" />
+                </div>
+
+                <!-- Botones pegados abajo -->
+                <div class="mt-auto d-flex gap-2 p-3 border-top">
+                    <button type="button" class="btn btn-dark flex-fill py-2 rounded-pill"
+                            @onclick="Cancelar">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success flex-fill py-2 rounded-pill fw-bold">
+                        Guardar cambios
+                    </button>
+                </div>
+            </EditForm>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public long citaId { get; set; }
+    [Parameter] public long id { get; set; }
+
+    private Diagnostico? diagnostico;
+
+    protected override async Task OnInitializedAsync()
+    {
+        diagnostico = await DiagnosticoService.GetByIdAsync(citaId, id);
+
+        if (diagnostico == null)
+        {
+            Navigation.NavigateTo($"/diagnosticos/{citaId}");
+        }
+    }
+
+    private async Task Guardar()
+    {
+        if (diagnostico != null)
+        {
+            await DiagnosticoService.EditarAsync(citaId, id, diagnostico);
+            Navigation.NavigateTo($"/diagnosticos/{citaId}");
+        }
+    }
+
+    private void Cancelar() =>
+        Navigation.NavigateTo($"/diagnosticos/{citaId}");
+}
