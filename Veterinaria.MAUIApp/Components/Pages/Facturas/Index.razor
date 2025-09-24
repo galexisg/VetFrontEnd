@@ -1,7 +1,61 @@
 ﻿@page "/facturas/index"
+@inject NavigationManager Nav
 
-<h3>Index</h3>
+<div class="contenedor">
+    <div class="status-bar-safe-area"></div>
+    <header class="mb-4">
+        <p class="titulo">Facturas</p>
+        <p class="descripcion">Gestiona el registro y control</p>
+    </header>
+
+    <!-- Tarjeta Nueva Factura -->
+    <div class="input-container" style="display:flex;align-items:center;gap:12px;">
+        <div style="flex:1;">
+            <p class="titulo" style="margin-bottom:4px;">Nueva Factura</p>
+            <p class="descripcion">Agrega una nueva factura</p>
+        </div>
+        <button class="boton-verde" @onclick="@(() => Nav.NavigateTo("/facturas/agregar"))">
+            Agregar
+        </button>
+    </div>
+
+    <!-- Buscador -->
+    <div class="input-container" style="display:flex;gap:12px;align-items:center;">
+        <div style="position:relative;flex:1;">
+            <input class="input" placeholder="Buscar facturas..." />
+            <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#5D5D5D;">🔍</span>
+        </div>
+    </div>
+
+    <!-- Lista (mock visual) -->
+    @foreach (var f in MockFacturas)
+    {
+        <div style="background:var(--blanco);border:1px solid var(--borde);border-radius:12px;padding:12px;margin-bottom:12px;">
+            <p class="titulo" style="margin-bottom:4px;">@f.Nombre</p>
+            <p class="descripcion" style="margin-bottom:12px;">$@f.Total</p>
+
+            <div style="display:flex;gap:8px;">
+                <button class="boton-verde" style="flex:1;"
+                        @onclick="@(() => Nav.NavigateTo($"/facturas/{f.Id}/detalles/agregar"))">
+                    Agregar detalle
+                </button>
+                <button class="boton-verde" style="flex:1;"
+                        @onclick="@(() => Nav.NavigateTo($"/facturas/{f.Id}/pago/agregar"))">
+                    Agregar pago
+                </button>
+            </div>
+        </div>
+    }
+
+</div>
 
 @code {
-
+    // Solo para mostrar UI en el listado
+    private record Card(int Id, string Nombre, string Total);
+    private List<Card> MockFacturas = new()
+    {
+        new(1,"Jose Miguel Herrera Gonzalez","15.50"),
+        new(2,"Jose Miguel Herrera Gonzalez","15.50"),
+        new(3,"Jose Miguel Herrera Gonzalez","15.50"),
+    };
 }

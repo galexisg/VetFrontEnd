@@ -1,7 +1,98 @@
 ﻿@page "/facturas/agregar"
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
+@inject NavigationManager Nav
 
-<h3>Agregar</h3>
+<div class="contenedor">
+    <div class="status-bar-safe-area"></div>
+
+    <header class="mb-4">
+        <p class="titulo">Nueva factura</p>
+        <p class="descripcion">Gestiona el registro y control</p>
+    </header>
+
+    <EditForm Model="@form" OnValidSubmit="@Guardar">
+        <DataAnnotationsValidator />
+        <ValidationSummary class="mb-3" />
+
+        <div class="input-container">
+            <label class="label">Cliente</label>
+            <InputText class="input" placeholder="Ingresa un nombre completo"
+                       @bind-Value="form.Cliente" />
+            <ValidationMessage For="@(() => form.Cliente)" class="validation-message" />
+        </div>
+
+        <div class="input-container">
+            <label class="label">Cita</label>
+            <InputSelect class="input" @bind-Value="form.CitaId">
+                <option value="">Seleccionar</option>
+                <option value="1">Corte y barba - 9:00 AM</option>
+                <option value="2">Tinte - 10:30 AM</option>
+                <option value="3">Afeitado - 2:00 PM</option>
+            </InputSelect>
+            <ValidationMessage For="@(() => form.CitaId)" class="validation-message" />
+        </div>
+
+        <div class="input-container">
+            <label class="label">Total</label>
+            <InputNumber class="input"
+                         step="0.01" inputmode="decimal"
+                         placeholder="Ingresa el total"
+                         @bind-Value="form.Total" />
+            <ValidationMessage For="@(() => form.Total)" class="validation-message" />
+        </div>
+
+        <div class="input-container">
+            <label class="label">Saldo</label>
+            <InputNumber class="input"
+                         step="0.01" inputmode="decimal"
+                         placeholder="Ingresa el saldo"
+                         @bind-Value="form.Saldo" />
+            <ValidationMessage For="@(() => form.Saldo)" class="validation-message" />
+        </div>
+
+        <div class="input-container">
+            <label class="label">Motivo Anulación (Opcional)</label>
+            <InputText class="input" placeholder="Ingresa un motivo opcional"
+                       @bind-Value="form.MotivoAnulacion" />
+        </div>
+
+        <!-- Barra de acciones -->
+        <div class="acciones-footer">
+            <button type="button" class="boton-negro"
+                    @onclick="@(() => Nav.NavigateTo("/facturas"))">
+                Cancelar
+            </button>
+            <button type="submit" class="boton-verde">
+                Guardar cambios
+            </button>
+        </div>
+    </EditForm>
+</div>
 
 @code {
+    public class FacturaForm
+    {
+        [Required(ErrorMessage = "El cliente es requerido")]
+        public string? Cliente { get; set; }
 
+        [Required(ErrorMessage = "Selecciona una cita")]
+        public int? CitaId { get; set; }
+
+        [Range(0, 9999999, ErrorMessage = "Total inválido")]
+        public decimal Total { get; set; }
+
+        [Range(0, 9999999, ErrorMessage = "Saldo inválido")]
+        public decimal Saldo { get; set; }
+
+        public string? MotivoAnulacion { get; set; }
+    }
+
+    private readonly FacturaForm form = new();
+
+    private void Guardar()
+    {
+        // Solo navegación de demo tras "guardar"
+        Nav.NavigateTo("/facturas");
+    }
 }
