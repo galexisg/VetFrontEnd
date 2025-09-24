@@ -1,7 +1,22 @@
-﻿@page "/facturas/editar"
+﻿@page "/facturas/editar/{id:int}"
+@inject NavigationManager Nav
+@code { [Parameter] public int id { get; set; } }
 
-<h3>Editar</h3>
+    <div class="contenedor">
+        <div class="status-bar-safe-area"></div>
+        <header class="mb-4">
+            <p class="titulo">Editar factura</p>
+            <p class="descripcion">ID: @id</p>
+        </header>
 
-@code {
+        <!-- reutiliza tus mismos inputs de Agregar si lo deseas -->
+        <div class="input-container">
+            <label class="label">Cliente</label>
+            <input class="input" placeholder="Ingresa un nombre completo" value="Ejemplo" />
+        </div>
 
-}
+        <div class="acciones-footer">
+            <button type="button" class="boton-negro" @onclick="@(() => Nav.NavigateTo("/facturas"))">Cancelar</button>
+            <button type="button" class="boton-verde" @onclick="@(() => Nav.NavigateTo("/facturas"))">Guardar cambios</button>
+        </div>
+    </div>
