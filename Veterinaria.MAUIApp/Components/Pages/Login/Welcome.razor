@@ -1,0 +1,19 @@
+﻿@page "/"
+@inject NavigationManager navManager
+
+<div class="contenedor home">
+    <button style="opacity:0%;" @onclick="Login" class="boton-verde">Comenzar a cuidar a mi mascota</button>
+    <img class="img-perro" src="/Images/Perro.png" alt="Alternate Text"/>
+    <div class="d-grid text-center" style="gap:8px;">
+    <h1 style="font-size:28px;" class="titulo">¡Bienvenido a Colitas!</h1>
+    <p style="font-size:16px;" class="descripcion">Cuida de tus peluditos favoritos y mantén a tus mascotas felices y saludables.</p>
+    </div>
+    <button @onclick="Login" class="boton-verde">Comenzar a cuidar a mi mascota</button>
+</div>
+
+@code {
+    private void Login()g
+    {
+        navManager.NavigateTo("/login/login");
+    }
+}
