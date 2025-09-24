@@ -1,7 +1,102 @@
-﻿@page "/servicios/index"
+﻿@page "/servicios"
+@using Veterinaria.MAUIApp.Services
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Models.Dtos
+@inject ServicioService ServicioService
+@inject NavigationManager Navigation
 
-<h3>Index</h3>
+<h3>Lista de Servicios</h3>
+
+<div class="mb-3">
+    <button class="btn btn-primary" @onclick="IrAAgregar">
+        <span class="oi oi-plus" aria-hidden="true"></span> Agregar Nuevo Servicio
+    </button>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex mb-3">
+            <input @bind="filtroNombre" class="form-control me-2" placeholder="Filtrar por nombre..." />
+            <select class="form-select me-2" @bind="filtroActivo">
+                <option value="">Todos</option>
+                <option value="true">Activos</option>
+                <option value="false">Inactivos</option>
+            </select>
+            <button class="btn btn-secondary" @onclick="AplicarFiltros">Filtrar</button>
+        </div>
+
+        @if (pagedResult == null)
+        {
+            <p><em>Cargando servicios...</em></p>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var servicio in pagedResult.Content)
+                    {
+                        <tr>
+                            <td>@servicio.Id</td>
+                            <td>@servicio.Nombre</td>
+                            <td>@servicio.PrecioBase.ToString("C")</td>
+                            <td>
+                                <span class="badge @(servicio.Estado == EstadoServicio.ACTIVO ? "bg-success" : "bg-danger")">
+                                    @servicio.Estado
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-secondary" @onclick="() => IrAEditar(servicio.Id)">Editar</button>
+                                <button class="btn btn-sm btn-warning" @onclick="() => CambiarEstado(servicio)">
+                                    @(servicio.Estado == EstadoServicio.ACTIVO ? "Desactivar" : "Activar")
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
 
 @code {
+    // 👇 Solución: Se marca como nulable (?) porque se carga de forma asíncrona.
+    private PagedResult<Servicio>? pagedResult;
 
+    private string filtroNombre = "";
+    private bool? filtroActivo = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarServicios();
+    }
+
+    private async Task CargarServicios(int page = 0)
+    {
+        pagedResult = await ServicioService.ObtenerPaginado(filtroNombre, filtroActivo, page);
+        StateHasChanged();
+    }
+
+    private async Task CambiarEstado(Servicio servicio)
+    {
+        var nuevoEstado = servicio.Estado == EstadoServicio.ACTIVO ? EstadoServicio.INACTIVO : EstadoServicio.ACTIVO;
+        var request = new ServicioEstadoRequest { Estado = nuevoEstado };
+        var actualizado = await ServicioService.CambiarEstado(servicio.Id, request);
+        if (actualizado != null)
+        {
+            await CargarServicios();
+        }
+    }
+
+    private async Task AplicarFiltros() => await CargarServicios();
+    private void IrAAgregar() => Navigation.NavigateTo("/servicios/agregar");
+    private void IrAEditar(long id) => Navigation.NavigateTo($"/servicios/editar/{id}");
 }

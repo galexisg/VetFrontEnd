@@ -1,7 +1,42 @@
 ﻿@page "/servicios/agregar"
+@using Veterinaria.MAUIApp.Services
+@using Veterinaria.MAUIApp.Models.Dtos
+@inject ServicioService ServicioService
+@inject NavigationManager Navigation
 
-<h3>Agregar</h3>
+<h3>Agregar Nuevo Servicio</h3>
+
+<div class="card">
+    <div class="card-body">
+        <div class="mb-2">
+            <label class="form-label">Nombre:</label>
+            <input @bind="nuevoServicio.Nombre" class="form-control" placeholder="Nombre del servicio" />
+        </div>
+        <div class="mb-2">
+            <label class="form-label">Descripción:</label>
+            <input @bind="nuevoServicio.Descripcion" class="form-control" placeholder="Descripción breve" />
+        </div>
+        <div class="mb-2">
+            <label class="form-label">Precio Base:</label>
+            <input type="number" @bind="nuevoServicio.PrecioBase" class="form-control" />
+        </div>
+        <button class="btn btn-primary" @onclick="GuardarServicio">Guardar</button>
+        <button class="btn btn-link" @onclick="Cancelar">Cancelar</button>
+    </div>
+</div>
 
 @code {
+    // Esta variable ya se inicializa, por lo que no da advertencias.
+    private ServicioRequest nuevoServicio = new();
 
+    private async Task GuardarServicio()
+    {
+        var creado = await ServicioService.Guardar(nuevoServicio);
+        if (creado != null)
+        {
+            Navigation.NavigateTo("/servicios");
+        }
+    }
+
+    private void Cancelar() => Navigation.NavigateTo("/servicios");
 }
