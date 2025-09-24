@@ -1,5 +1,8 @@
-﻿html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+﻿
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+html, body {
+    font-family: "Helvetica Neue", sans-serif;
 }
 
 a, .btn-link {
@@ -89,3 +92,71 @@ h1:focus {
 * {
     background: #F7F7F7;
 }
+
+:root {
+    --blanco: #FFFFFF;
+    --verde: #0AB372;
+    --negro: #0A0A0A;
+    --gris: #5D5D5D;
+    --borde: #E7E7E7;
+}
+
+
+.contenedor {
+    height: 100vh;
+    padding: 24px;
+}
+
+.boton-verde {
+    padding:16px 16px;
+    background-color:var(--verde);
+    border:0px;
+    color:var(--blanco);
+    border-radius:12px;
+    font-size:16px;
+}
+
+.titulo {
+    font-size: 16px;
+    color: var(--negro);
+    font-weight: 500;
+    margin: 0px;
+}
+
+.descripcion {
+    font-size: 14px;
+    font-weight: 200;
+    color: var(--gris);
+}
+
+.home{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.img-perro{
+    height:320px;
+    width:200px;
+    margin:auto;
+}
+
+.input-container{
+    margin-bottom:48px;
+}
+
+.input {
+    padding: 16px 16px;
+    border: 1px solid var(--borde);
+    color: var(--gris);
+    border-radius: 8px;
+    font-size: 16px;
+    width:100%;
+}
+
+.label {
+    font-size: 16px;
+    font-weight:400;
+    color:var(--negro);
+}
+
