@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Veterinaria.MAUIApp.Services;
 
 namespace Veterinaria.MAUIApp
 {
@@ -23,12 +24,13 @@ namespace Veterinaria.MAUIApp
 
             builder.Services.AddScoped(http => new HttpClient
             {
-                BaseAddress = new Uri("https://localhost:7174/")
+                BaseAddress = new Uri("http://localhost:8080/")
             });
 
 
             /*Añadir servicios*/
-            
+            builder.Services.AddScoped<RazaService>();
+            builder.Services.AddScoped<EspecieService>();
 
             return builder.Build();
         }
