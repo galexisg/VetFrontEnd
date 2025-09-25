@@ -1,0 +1,167 @@
+﻿@page "/motivos"
+@inject Veterinaria.MAUIApp.Services.MotivoCitaService MotivoCitaService
+@inject NavigationManager Navigation
+@using Veterinaria.MAUIApp.Models
+
+<div class="d-flex flex-column min-vh-100 bg-light">
+    <!-- Encabezado -->
+    <div class="container py-3 border-bottom">
+        <h5 class="fw-bold mb-0">Motivos de Cita</h5>
+        <small class="text-muted">Gestiona los motivos disponibles</small>
+    </div>
+
+    <!-- Contenido -->
+    <div class="flex-grow-1 px-3 py-3">
+        @if (estaCargando)
+        {
+            <div class="d-flex justify-content-center align-items-center" style="height: 200px;">
+                <div class="spinner-border text-dark" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+            </div>
+        }
+        else if (motivos == null || !motivos.Any())
+        {
+            <div class="text-center py-5">
+                <div class="mb-3">
+                    <i class="bi bi-folder2-open" style="font-size: 3rem; color: #6c757d;"></i>
+                </div>
+                <h6 class="text-muted">No hay motivos registrados</h6>
+                <p class="text-muted small">Agrega el primer motivo de cita</p>
+            </div>
+        }
+        else
+        {
+            <div class="d-flex flex-column gap-3">
+                @foreach (var motivo in motivos)
+                {
+                    <div class="p-3 bg-white rounded-4 shadow-sm">
+                        <h6 class="fw-bold mb-1">@motivo.Nombre</h6>
+                        @if (!string.IsNullOrWhiteSpace(motivo.Descripcion))
+                        {
+                            <p class="text-muted small mb-3">@motivo.Descripcion</p>
+                        }
+
+                        <div class="d-flex gap-2">
+                            @if (motivo.Activo)
+                            {
+                                <button class="btn btn-dark btn-sm rounded-pill px-3"
+                                        @onclick='() => CambiarEstado(motivo.Id, false)'
+                                        disabled="@estaActualizando">
+                                    @if (estaActualizando && motivoActualizandoId == motivo.Id)
+                                    {
+                                        <span class="spinner-border spinner-border-sm me-1" style="width: 12px; height: 12px;"></span>
+                                    }
+                                    Desactivar
+                                </button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-success btn-sm rounded-pill px-3"
+                                        @onclick='() => CambiarEstado(motivo.Id, true)'
+                                        disabled="@estaActualizando">
+                                    @if (estaActualizando && motivoActualizandoId == motivo.Id)
+                                    {
+                                        <span class="spinner-border spinner-border-sm me-1" style="width: 12px; height: 12px;"></span>
+                                    }
+                                    Activar
+                                </button>
+                            }
+
+                            <button class="btn btn-dark btn-sm rounded-pill px-3"
+                                    @onclick='() => Navigation.NavigateTo($"/motivos/editar/{motivo.Id}")'>
+                                Editar motivo
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- Botón fijo abajo -->
+    <div class="p-3 bg-white border-top">
+        <button class="btn btn-success w-100 rounded-pill fw-bold py-2"
+                @onclick='() => Navigation.NavigateTo("/motivos/agregar")'>
+            + Agregar nuevo motivo
+        </button>
+    </div>
+</div>
+
+@code {
+    private List<MotivoCita>? motivos;
+    private bool estaCargando = true;
+    private bool estaActualizando = false;
+    private int? motivoActualizandoId;
+    private string? mensajeExito;
+    private string? mensajeError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarMotivos();
+    }
+
+    private async Task CargarMotivos()
+    {
+        try
+        {
+            estaCargando = true;
+            motivos = await MotivoCitaService.GetActivosAsync();
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error al cargar los motivos: {ex.Message}";
+        }
+        finally
+        {
+            estaCargando = false;
+        }
+    }
+
+    private async Task CambiarEstado(int id, bool activar)
+    {
+        try
+        {
+            estaActualizando = true;
+            motivoActualizandoId = id;
+            mensajeExito = null;
+            mensajeError = null;
+
+            bool resultado;
+            if (activar)
+            {
+                resultado = await MotivoCitaService.ActivarAsync(id);
+                if (resultado) mensajeExito = "Motivo activado exitosamente.";
+            }
+            else
+            {
+                resultado = await MotivoCitaService.DesactivarAsync(id);
+                if (resultado) mensajeExito = "Motivo desactivado exitosamente.";
+            }
+
+            if (!resultado)
+            {
+                mensajeError = "Error al cambiar el estado. Intente nuevamente.";
+            }
+            else
+            {
+                await CargarMotivos();
+                _ = Task.Run(async () =>
+                {
+                    await Task.Delay(3000);
+                    mensajeExito = null;
+                    await InvokeAsync(StateHasChanged);
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error inesperado: {ex.Message}";
+        }
+        finally
+        {
+            estaActualizando = false;
+            motivoActualizandoId = null;
+        }
+    }
+}

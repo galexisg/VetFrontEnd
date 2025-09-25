@@ -6,7 +6,14 @@ using System.Threading.Tasks;
 
 namespace Veterinaria.MAUIApp.Models
 {
-    internal class MotivoCitas
+    public class MotivoCita
     {
+        public int Id { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string? Descripcion { get; set; }
+        public bool Activo { get; set; } = true;
     }
-}
+
+    }
+
+
