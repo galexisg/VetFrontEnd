@@ -48,6 +48,7 @@ namespace Veterinaria.MAUIApp
             builder.Services.AddSingleton<BloqueHorarioService>();
 
 
+
             return builder.Build();
         }
     }
