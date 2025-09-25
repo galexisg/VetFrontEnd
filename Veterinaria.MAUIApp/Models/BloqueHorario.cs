@@ -1,12 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
+using System;
 
-namespace Veterinaria.MAUIApp.Models
+namespace Veterinaria.MAUIApp.Models;
+
+public class BloqueHorario
 {
-    internal class BloqueHorario
-    {
-    }
+    [JsonPropertyName("bloqueHorarioId")]
+    public int BloqueHorarioId { get; set; }
+
+    [JsonPropertyName("inicio")]
+    public TimeSpan Inicio { get; set; }
+
+    [JsonPropertyName("fin")]
+    public TimeSpan Fin { get; set; }
+
+    [JsonPropertyName("activo")]
+    public bool Activo { get; set; }
 }

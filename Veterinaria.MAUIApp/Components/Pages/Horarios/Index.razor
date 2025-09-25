@@ -1,7 +1,182 @@
-﻿@page "/horarios/index"
+﻿@page "/agenda"
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Services
+@inject AgendaService AgendaService
+@inject NavigationManager navManager
 
-<h3>Index</h3>
+<div class="page-container">
+    <div class="header">
+        <button class="back-button" @onclick="GoBack">
+            <span class="material-icons">arrow_back</span>
+        </button>
+        <div class="header-content">
+            <h1>Horarios</h1>
+            <p>Gestiona el registro y control</p>
+        </div>
+        <div class="header-actions">
+            <span class="material-icons">signal_cellular_alt</span>
+            <span class="material-icons">wifi</span>
+            <span class="material-icons">battery_full</span>
+        </div>
+    </div>
+
+    <div class="content">
+        <button class="add-button" @onclick="ShowAddHorario">
+            <span class="add-icon">+</span>
+            <div>
+                <strong>Nuevo horario</strong>
+                <p>Agregar un nuevo horario</p>
+            </div>
+        </button>
+
+        <button class="add-button secondary" @onclick="ShowBloquesHorario">
+            <span class="add-icon">⏰</span>
+            <div>
+                <strong>Bloques de horario</strong>
+                <p>Gestiona los bloques disponibles</p>
+            </div>
+        </button>
+
+        <div class="section-title">
+            <h3>Gestiona tus horarios</h3>
+        </div>
+
+        <div class="search-container">
+            <input type="text" placeholder="Buscar horarios..." @bind="searchText" @oninput="FilterHorarios" />
+            <span class="material-icons search-icon">search</span>
+        </div>
+
+        @if (horarios == null)
+        {
+            <div class="loading-container">
+                <p><em>Cargando horarios...</em></p>
+            </div>
+        }
+        else if (filteredHorarios?.Any() == true)
+        {
+            <div class="horarios-list">
+                @foreach (var horario in filteredHorarios)
+                {
+                    <div class="horario-item" @onclick="() => ShowHorarioDetail(horario)">
+                        <div class="horario-info">
+                            <span class="status-badge @(horario.Estado.ToLower())">@horario.Estado</span>
+                            <h4>@horario.NombreVeterinario</h4>
+                            <p>@horario.Dia - @horario.HoraInicio.ToString(@"hh\:mm") a @horario.HoraFin.ToString(@"hh\:mm")</p>
+                        </div>
+                        <span class="material-icons">more_vert</span>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <span class="material-icons">schedule</span>
+                <p>No se encontraron horarios</p>
+            </div>
+        }
+    </div>
+</div>
+
+@if (showBloquesModal)
+{
+    <BloquesHorario OnClose="CloseBloquesModal" />
+}
+
+@if (showHorarioDetailModal && selectedHorario != null)
+{
+    <HorarioDetail Horario="selectedHorario" OnClose="CloseHorarioDetail" OnSave="SaveHorario" />
+}
+
+@if (showAddHorarioModal)
+{
+    <AddHorario OnClose="CloseAddHorario" OnSave="SaveNewHorario" />
+}
 
 @code {
+    private List<DetalleHorarioVeterinario> horarios;
+    private List<DetalleHorarioVeterinario> filteredHorarios;
+    private string searchText = "";
+    private bool showBloquesModal = false;
+    private bool showHorarioDetailModal = false;
+    private bool showAddHorarioModal = false;
+    private DetalleHorarioVeterinario selectedHorario;
 
+    protected override async Task OnInitializedAsync()
+    {
+        horarios = await AgendaService.GetDetallesHorarioAsync();
+        filteredHorarios = horarios;
+    }
+
+    private void FilterHorarios(ChangeEventArgs e)
+    {
+        searchText = e.Value?.ToString() ?? "";
+
+        if (string.IsNullOrWhiteSpace(searchText))
+        {
+            filteredHorarios = horarios;
+        }
+        else
+        {
+            filteredHorarios = horarios?.Where(h => 
+                h.NombreVeterinario.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                h.Dia.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                h.Estado.Contains(searchText, StringComparison.OrdinalIgnoreCase)
+            ).ToList();
+        }
+    }
+
+    private void ShowAddHorario()
+    {
+        navManager.NavigateTo("/horarios/detalle/crear");
+
+    }
+
+    private void ShowBloquesHorario()
+    {
+        navManager.NavigateTo("/bloqueshorario");
+    }
+
+    private void ShowHorarioDetail(DetalleHorarioVeterinario horario)
+    {
+
+        navManager.NavigateTo("/agenda/{id:int}");
+    }
+
+    private void CloseBloquesModal()
+    {
+        showBloquesModal = false;
+    }
+
+    private void CloseHorarioDetail()
+    {
+        showHorarioDetailModal = false;
+        selectedHorario = null;
+    }
+
+    private void CloseAddHorario()
+    {
+        showAddHorarioModal = false;
+    }
+
+    private async Task SaveHorario(DetalleHorarioVeterinario horario)
+    {
+        CloseHorarioDetail();
+        horarios = await AgendaService.GetDetallesHorarioAsync();
+        filteredHorarios = horarios;
+        StateHasChanged();
+    }
+
+    private async Task SaveNewHorario(DetalleHorarioVeterinario horario)
+    {
+        CloseAddHorario();
+        horarios = await AgendaService.GetDetallesHorarioAsync();
+        filteredHorarios = horarios;
+        StateHasChanged();
+    }
+
+    private void GoBack()
+    {
+        navManager.NavigateTo("/");
+    }
 }

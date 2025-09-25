@@ -1,78 +1,74 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\",
+  "WorkspaceRootPath": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\administrador\\desktop\\vetfrond2\\veterinaria.mauiapp\\components\\pages\\login\\welcome.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\pages\\login\\welcome.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gonsa\\source\\repos\\vetfrontend\\veterinaria.mauiapp\\components\\pages\\horarios\\index.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\pages\\horarios\\index.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\administrador\\desktop\\vetfrond2\\veterinaria.mauiapp\\components\\layout\\navmenu.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\layout\\navmenu.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gonsa\\source\\repos\\vetfrontend\\veterinaria.mauiapp\\components\\pages\\horarios\\bloquehorario\\index.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\pages\\horarios\\bloquehorario\\index.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\administrador\\desktop\\vetfrond2\\veterinaria.mauiapp\\components\\pages\\horarios\\bloquehorario\\diayestadodia.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\pages\\horarios\\bloquehorario\\diayestadodia.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gonsa\\source\\repos\\vetfrontend\\veterinaria.mauiapp\\components\\pages\\horarios\\editar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\pages\\horarios\\editar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\administrador\\desktop\\vetfrond2\\veterinaria.mauiapp\\mauiprogram.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\mauiprogram.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\administrador\\desktop\\vetfrond2\\veterinaria.mauiapp\\services\\estadodiaservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\services\\estadodiaservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\administrador\\desktop\\vetfrond2\\veterinaria.mauiapp\\models\\dia.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\models\\dia.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\administrador\\desktop\\vetfrond2\\veterinaria.mauiapp\\components\\layout\\mainlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\layout\\mainlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\administrador\\desktop\\vetfrond2\\veterinaria.mauiapp\\services\\diaservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gonsa\\source\\repos\\vetfrontend\\veterinaria.mauiapp\\services\\diaservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\services\\diaservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\administrador\\desktop\\vetfrond2\\veterinaria.mauiapp\\models\\estadodia.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\models\\estadodia.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gonsa\\source\\repos\\vetfrontend\\veterinaria.mauiapp\\components\\pages\\horarios\\agregar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\pages\\horarios\\agregar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\administrador\\desktop\\vetfrond2\\veterinaria.mauiapp\\models\\estado.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\models\\estado.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gonsa\\source\\repos\\vetfrontend\\veterinaria.mauiapp\\services\\agendaservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\services\\agendaservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\administrador\\desktop\\vetfrond2\\veterinaria.mauiapp\\models\\bloquehorario.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gonsa\\source\\repos\\vetfrontend\\veterinaria.mauiapp\\components\\pages\\horarios\\bloquehorario\\diayestadodia.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\pages\\horarios\\bloquehorario\\diayestadodia.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gonsa\\source\\repos\\vetfrontend\\veterinaria.mauiapp\\models\\bloquehorario.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\models\\bloquehorario.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\administrador\\desktop\\vetfrond2\\veterinaria.mauiapp\\models\\especialidad.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\models\\especialidad.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gonsa\\source\\repos\\vetfrontend\\veterinaria.mauiapp\\components\\pages\\login\\welcome.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\pages\\login\\welcome.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\administrador\\desktop\\vetfrond2\\veterinaria.mauiapp\\components\\pages\\facturas\\index.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\pages\\facturas\\index.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gonsa\\source\\repos\\vetfrontend\\veterinaria.mauiapp\\models\\detallehorarioveterinario.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\models\\detallehorarioveterinario.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\administrador\\desktop\\vetfrond2\\veterinaria.mauiapp\\components\\pages\\facturas\\agregar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\pages\\facturas\\agregar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gonsa\\source\\repos\\vetfrontend\\veterinaria.mauiapp\\services\\bloquehorarioservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\services\\bloquehorarioservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\administrador\\desktop\\vetfrond2\\veterinaria.mauiapp\\components\\pages\\facturas\\editar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\pages\\facturas\\editar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gonsa\\source\\repos\\vetfrontend\\veterinaria.mauiapp\\components\\pages\\horarios\\bloquehorario\\agregar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\pages\\horarios\\bloquehorario\\agregar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\administrador\\desktop\\vetfrond2\\veterinaria.mauiapp\\components\\pages\\facturas\\pago\\agregar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\pages\\facturas\\pago\\agregar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gonsa\\source\\repos\\vetfrontend\\veterinaria.mauiapp\\components\\pages\\horarios\\bloquehorario\\editar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\pages\\horarios\\bloquehorario\\editar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\administrador\\desktop\\vetfrond2\\veterinaria.mauiapp\\components\\pages\\facturas\\detalles\\agregar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\pages\\facturas\\detalles\\agregar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gonsa\\source\\repos\\vetfrontend\\veterinaria.mauiapp\\models\\bloquehorariorequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\models\\bloquehorariorequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\administrador\\desktop\\vetfrond2\\veterinaria.mauiapp\\wwwroot\\css\\app.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\wwwroot\\css\\app.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gonsa\\source\\repos\\vetfrontend\\veterinaria.mauiapp\\mauiprogram.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\mauiprogram.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gonsa\\source\\repos\\vetfrontend\\veterinaria.mauiapp\\wwwroot\\css\\veterinaria.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\wwwroot\\css\\veterinaria.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gonsa\\source\\repos\\vetfrontend\\veterinaria.mauiapp\\components\\pages\\login\\login.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\pages\\login\\login.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -82,288 +78,222 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 16,
+          "SelectedChildIndex": 15,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:1:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:6:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{a80febb4-e7e0-4147-b476-21aaf2453969}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:7:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:128:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:129:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:129:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:129:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
-            },
-            {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "DiayEstadoDia.razor",
-              "DocumentMoniker": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\BloqueHorario\\DiayEstadoDia.razor",
-              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\BloqueHorario\\DiayEstadoDia.razor",
-              "ToolTip": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\BloqueHorario\\DiayEstadoDia.razor",
-              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\BloqueHorario\\DiayEstadoDia.razor",
-              "ViewState": "AgIAAIIAAAAAAAAAAAAIwI8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-09-25T04:17:58.945Z",
+              "DocumentIndex": 5,
+              "Title": "AgendaService.cs",
+              "DocumentMoniker": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Services\\AgendaService.cs",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Services\\AgendaService.cs",
+              "ToolTip": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Services\\AgendaService.cs",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\Services\\AgendaService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-25T14:05:42.125Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "MauiProgram.cs",
-              "DocumentMoniker": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\MauiProgram.cs",
-              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\MauiProgram.cs",
-              "ToolTip": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\MauiProgram.cs",
-              "RelativeToolTip": "Veterinaria.MAUIApp\\MauiProgram.cs",
-              "ViewState": "AgIAAA4AAAAAAAAAAAAiwBUAAAAhAAAAAAAAAA==",
+              "Title": "DiaService.cs",
+              "DocumentMoniker": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Services\\DiaService.cs",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Services\\DiaService.cs",
+              "ToolTip": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Services\\DiaService.cs",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\Services\\DiaService.cs",
+              "ViewState": "AgIAACoAAAAAAAAAAAAmwBMAAAAwAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-25T04:16:33.755Z",
+              "WhenOpened": "2025-09-25T13:46:10.84Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "EstadoDiaService.cs",
-              "DocumentMoniker": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Services\\EstadoDiaService.cs",
-              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Services\\EstadoDiaService.cs",
-              "ToolTip": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Services\\EstadoDiaService.cs",
-              "RelativeToolTip": "Veterinaria.MAUIApp\\Services\\EstadoDiaService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-25T04:14:58.575Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Welcome.razor",
-              "DocumentMoniker": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Components\\Pages\\Login\\Welcome.razor",
-              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Pages\\Login\\Welcome.razor",
-              "ToolTip": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Components\\Pages\\Login\\Welcome.razor*",
-              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Pages\\Login\\Welcome.razor*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 2,
+              "Title": "Editar.razor",
+              "DocumentMoniker": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\Editar.razor",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\Editar.razor",
+              "ToolTip": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\Editar.razor",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\Editar.razor",
+              "ViewState": "AgIAACcAAAAAAAAAAAAAAAAAAAAHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-09-24T03:27:28.092Z",
+              "WhenOpened": "2025-09-25T11:28:03.18Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "BloqueHorarioRequest.cs",
+              "DocumentMoniker": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Models\\BloqueHorarioRequest.cs",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Models\\BloqueHorarioRequest.cs",
+              "ToolTip": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Models\\BloqueHorarioRequest.cs",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\Models\\BloqueHorarioRequest.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAoAAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-25T10:18:37.028Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "BloqueHorarioService.cs",
+              "DocumentMoniker": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Services\\BloqueHorarioService.cs",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Services\\BloqueHorarioService.cs",
+              "ToolTip": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Services\\BloqueHorarioService.cs",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\Services\\BloqueHorarioService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-25T09:28:43.086Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "BloqueHorario.cs",
+              "DocumentMoniker": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Models\\BloqueHorario.cs",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Models\\BloqueHorario.cs",
+              "ToolTip": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Models\\BloqueHorario.cs",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\Models\\BloqueHorario.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAQwBIAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-25T09:23:58.031Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Agregar.razor",
+              "DocumentMoniker": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\BloqueHorario\\Agregar.razor",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\BloqueHorario\\Agregar.razor",
+              "ToolTip": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\BloqueHorario\\Agregar.razor",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\BloqueHorario\\Agregar.razor",
+              "ViewState": "AgIAAD4AAAAAAAAAAAAAAFAAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-09-25T09:20:17.103Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Editar.razor",
+              "DocumentMoniker": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\BloqueHorario\\Editar.razor",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\BloqueHorario\\Editar.razor",
+              "ToolTip": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\BloqueHorario\\Editar.razor",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\BloqueHorario\\Editar.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-09-25T09:20:14.072Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Index.razor",
+              "DocumentMoniker": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\BloqueHorario\\Index.razor",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\BloqueHorario\\Index.razor",
+              "ToolTip": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\BloqueHorario\\Index.razor",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\BloqueHorario\\Index.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEUAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-09-25T09:20:08.585Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 6,
-              "Title": "MainLayout.razor",
-              "DocumentMoniker": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Components\\Layout\\MainLayout.razor",
-              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Layout\\MainLayout.razor",
-              "ToolTip": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Components\\Layout\\MainLayout.razor",
-              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Layout\\MainLayout.razor",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Title": "DiayEstadoDia.razor",
+              "DocumentMoniker": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\BloqueHorario\\DiayEstadoDia.razor",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\BloqueHorario\\DiayEstadoDia.razor",
+              "ToolTip": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\BloqueHorario\\DiayEstadoDia.razor",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\BloqueHorario\\DiayEstadoDia.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-09-25T04:24:13.059Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "NavMenu.razor",
-              "DocumentMoniker": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Components\\Layout\\NavMenu.razor",
-              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Layout\\NavMenu.razor",
-              "ToolTip": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Components\\Layout\\NavMenu.razor",
-              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Layout\\NavMenu.razor",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-09-25T04:24:20.872Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Dia.cs",
-              "DocumentMoniker": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Models\\Dia.cs",
-              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Models\\Dia.cs",
-              "ToolTip": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Models\\Dia.cs",
-              "RelativeToolTip": "Veterinaria.MAUIApp\\Models\\Dia.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAkwAkAAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-25T04:07:24.979Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "DiaService.cs",
-              "DocumentMoniker": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Services\\DiaService.cs",
-              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Services\\DiaService.cs",
-              "ToolTip": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Services\\DiaService.cs",
-              "RelativeToolTip": "Veterinaria.MAUIApp\\Services\\DiaService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-25T04:13:39.6Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-25T08:59:06.968Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 8,
-              "Title": "EstadoDia.cs",
-              "DocumentMoniker": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Models\\EstadoDia.cs",
-              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Models\\EstadoDia.cs",
-              "ToolTip": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Models\\EstadoDia.cs",
-              "RelativeToolTip": "Veterinaria.MAUIApp\\Models\\EstadoDia.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAtAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-25T04:11:35.209Z",
+              "Title": "Welcome.razor",
+              "DocumentMoniker": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Login\\Welcome.razor",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Pages\\Login\\Welcome.razor",
+              "ToolTip": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Login\\Welcome.razor",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Pages\\Login\\Welcome.razor",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAA4AAAACAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-09-25T08:50:47.235Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Agregar.razor",
+              "DocumentMoniker": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\Agregar.razor",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\Agregar.razor",
+              "ToolTip": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\Agregar.razor*",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\Agregar.razor*",
+              "ViewState": "AgIAAEYAAAAAAAAAAAAuwE8AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-09-25T07:41:40.342Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "Estado.cs",
-              "DocumentMoniker": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Models\\Estado.cs",
-              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Models\\Estado.cs",
-              "ToolTip": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Models\\Estado.cs",
-              "RelativeToolTip": "Veterinaria.MAUIApp\\Models\\Estado.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-25T04:11:13.682Z",
-              "EditorCaption": ""
+              "DocumentIndex": 15,
+              "Title": "Veterinaria.css",
+              "DocumentMoniker": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\wwwroot\\css\\Veterinaria.css",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\wwwroot\\css\\Veterinaria.css",
+              "ToolTip": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\wwwroot\\css\\Veterinaria.css",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\wwwroot\\css\\Veterinaria.css",
+              "ViewState": "AgIAACUDAAAAAAAAAAAswDIDAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2025-09-25T06:48:52.52Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "BloqueHorario.cs",
-              "DocumentMoniker": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Models\\BloqueHorario.cs",
-              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Models\\BloqueHorario.cs",
-              "ToolTip": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Models\\BloqueHorario.cs",
-              "RelativeToolTip": "Veterinaria.MAUIApp\\Models\\BloqueHorario.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAATAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-25T04:05:37.949Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "Especialidad.cs",
-              "DocumentMoniker": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Models\\Especialidad.cs",
-              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Models\\Especialidad.cs",
-              "ToolTip": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Models\\Especialidad.cs",
-              "RelativeToolTip": "Veterinaria.MAUIApp\\Models\\Especialidad.cs",
+              "DocumentIndex": 16,
+              "Title": "Login.razor",
+              "DocumentMoniker": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Login\\Login.razor",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Pages\\Login\\Login.razor",
+              "ToolTip": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Login\\Login.razor",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Pages\\Login\\Login.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-25T04:03:42.443Z",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-09-25T05:18:14.961Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Index.razor",
+              "DocumentMoniker": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\Index.razor",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\Index.razor",
+              "ToolTip": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\Index.razor",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Pages\\Horarios\\Index.razor",
+              "ViewState": "AgIAADMAAAAAAAAAAAAAAI4AAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-09-25T04:45:36.091Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 14,
-              "Title": "Editar.razor",
-              "DocumentMoniker": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Editar.razor",
-              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Editar.razor",
-              "ToolTip": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Editar.razor",
-              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Editar.razor",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-09-24T15:41:12.941Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "Agregar.razor",
-              "DocumentMoniker": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Pago\\Agregar.razor",
-              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Pago\\Agregar.razor",
-              "ToolTip": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Pago\\Agregar.razor",
-              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Pago\\Agregar.razor",
-              "ViewState": "AgIAAAcAAAAAAAAAAADwvycAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-09-24T15:41:05.789Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "Agregar.razor",
-              "DocumentMoniker": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Detalles\\Agregar.razor",
-              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Detalles\\Agregar.razor",
-              "ToolTip": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Detalles\\Agregar.razor",
-              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Detalles\\Agregar.razor",
-              "ViewState": "AgIAACAAAAAAAAAAAADwv0AAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-09-24T15:40:52.18Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 17,
-              "Title": "app.css",
-              "DocumentMoniker": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\wwwroot\\css\\app.css",
-              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\wwwroot\\css\\app.css",
-              "ToolTip": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\wwwroot\\css\\app.css",
-              "RelativeToolTip": "Veterinaria.MAUIApp\\wwwroot\\css\\app.css",
-              "ViewState": "AgIAAJkAAAAAAAAAAAAAAMIAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2025-09-24T15:27:48.92Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "Agregar.razor",
-              "DocumentMoniker": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Agregar.razor",
-              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Agregar.razor",
-              "ToolTip": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Agregar.razor",
-              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Agregar.razor",
-              "ViewState": "AgIAAAQAAAAAAAAAAAAmwGIAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-09-24T15:22:41.477Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "Index.razor",
-              "DocumentMoniker": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Index.razor",
-              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Index.razor",
-              "ToolTip": "C:\\Users\\Administrador\\Desktop\\VetFrond2\\Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Index.razor",
-              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Index.razor",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAAAAAAAAAWAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-09-24T00:37:26.209Z",
+              "Title": "MauiProgram.cs",
+              "DocumentMoniker": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\MauiProgram.cs",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\MauiProgram.cs",
+              "ToolTip": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\MauiProgram.cs",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\MauiProgram.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAAAwC4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-25T03:57:39.359Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "DetalleHorarioVeterinario.cs",
+              "DocumentMoniker": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Models\\DetalleHorarioVeterinario.cs",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Models\\DetalleHorarioVeterinario.cs",
+              "ToolTip": "C:\\Users\\gonsa\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Models\\DetalleHorarioVeterinario.cs",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\Models\\DetalleHorarioVeterinario.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAkwBAAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-25T02:48:25.98Z"
             }
           ]
         }
