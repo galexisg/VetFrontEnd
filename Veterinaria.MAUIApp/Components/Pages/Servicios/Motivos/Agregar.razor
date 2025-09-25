@@ -1,7 +1,38 @@
-﻿@page "/servicios/motivos/agregar"
+﻿@page "/motivos/agregar"
+@using Veterinaria.MAUIApp.Services
+@using Veterinaria.MAUIApp.Models.Dtos
+@inject MotivoService MotivoService
+@inject NavigationManager Navigation
 
-<h3>Agregar</h3>
+<h3>Agregar Nuevo Motivo</h3>
+
+<div class="card">
+    <div class="card-body">
+        <div class="mb-2">
+            <label class="form-label">ID:</label>
+            <input type="number" @bind="nuevoMotivo.Id" class="form-control" placeholder="ID numérico corto" />
+        </div>
+        <div class="mb-2">
+            <label class="form-label">Nombre:</label>
+            <input @bind="nuevoMotivo.Nombre" class="form-control" placeholder="Nombre del motivo" />
+        </div>
+        <button class="btn btn-primary" @onclick="GuardarMotivo">Guardar</button>
+        <button class="btn btn-link" @onclick="Cancelar">Cancelar</button>
+    </div>
+</div>
 
 @code {
+    // Esta variable ya se inicializa, por lo que no da advertencias.
+    private MotivoRequest nuevoMotivo = new();
 
+    private async Task GuardarMotivo()
+    {
+        var creado = await MotivoService.Guardar(nuevoMotivo);
+        if (creado != null)
+        {
+            Navigation.NavigateTo("/motivos");
+        }
+    }
+
+    private void Cancelar() => Navigation.NavigateTo("/motivos");
 }

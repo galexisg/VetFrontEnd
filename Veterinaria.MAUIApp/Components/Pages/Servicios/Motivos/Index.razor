@@ -1,7 +1,116 @@
-﻿@page "/servicios/motivos/index"
+﻿@page "/motivos"
+@using Veterinaria.MAUIApp.Services
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Models.Dtos
+@inject MotivoService MotivoService
+@inject ServicioService ServicioService
+@inject NavigationManager Navigation
 
-<h3>Index</h3>
+<h3>Gestión de Motivos</h3>
+
+@if (motivos == null || servicios == null)
+{
+    <p><em>Cargando datos...</em></p>
+}
+else
+{
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Vincular Motivo a Servicio</h5>
+            <div class="row">
+                <div class="col-md-5">
+                    <label class="form-label">Seleccionar Motivo:</label>
+                    <select class="form-select" @bind="motivoSeleccionadoId">
+                        <option value="0">-- Elija un motivo --</option>
+                        @foreach (var motivo in motivos)
+                        {
+                            <option value="@motivo.Id">@motivo.Nombre</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label">Seleccionar Servicio:</label>
+                    <select class="form-select" @bind="servicioSeleccionadoId">
+                        <option value="0">-- Elija un servicio --</option>
+                        @foreach (var servicio in servicios)
+                        {
+                            <option value="@servicio.Id">@servicio.Nombre</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn btn-success me-2" @onclick="Vincular" disabled="@(motivoSeleccionadoId == 0 || servicioSeleccionadoId == 0)">Vincular</button>
+                    <button class="btn btn-danger" @onclick="Desvincular" disabled="@(motivoSeleccionadoId == 0 || servicioSeleccionadoId == 0)">Desvincular</button>
+                </div>
+            </div>
+            @if (!string.IsNullOrEmpty(mensajeResultado))
+            {
+                <div class="alert @(esError ? "alert-danger" : "alert-success") mt-3">@mensajeResultado</div>
+            }
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h4>Lista de Motivos</h4>
+        <button class="btn btn-primary" @onclick="IrAAgregar">
+            <span class="oi oi-plus" aria-hidden="true"></span> Agregar Nuevo Motivo
+        </button>
+    </div>
+    <table class="table">
+        <thead>
+            <tr><th>ID</th><th>Nombre</th><th>Acciones</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var motivo in motivos)
+            {
+                <tr>
+                    <td>@motivo.Id</td>
+                    <td>@motivo.Nombre</td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" @onclick="() => IrAEditar(motivo.Id)">Editar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
 
 @code {
+    // 👇 Solución: Se inicializan las variables para evitar advertencias.
+    private List<Motivo> motivos = new();
+    private List<Servicio> servicios = new();
+    private short motivoSeleccionadoId;
+    private long servicioSeleccionadoId;
+    private string mensajeResultado = string.Empty;
+    private bool esError;
 
+    protected override async Task OnInitializedAsync()
+    {
+        motivos = await MotivoService.ObtenerTodos();
+        var pagedServicios = await ServicioService.ObtenerPaginado();
+        if (pagedServicios != null)
+        {
+            servicios = pagedServicios.Content;
+        }
+    }
+
+    private async Task Vincular()
+    {
+        var request = new MotivoServicioRequest { MotivoId = motivoSeleccionadoId, ServicioId = servicioSeleccionadoId };
+        bool exito = await MotivoService.Vincular(request);
+        mensajeResultado = exito ? "¡Vinculación exitosa!" : "Error al vincular.";
+        esError = !exito;
+    }
+
+    private async Task Desvincular()
+    {
+        var request = new MotivoServicioRequest { MotivoId = motivoSeleccionadoId, ServicioId = servicioSeleccionadoId };
+        bool exito = await MotivoService.Desvincular(request);
+        mensajeResultado = exito ? "¡Desvinculación exitosa!" : "Error al desvincular.";
+        esError = !exito;
+    }
+
+    private void IrAAgregar() => Navigation.NavigateTo("/motivos/agregar");
+    private void IrAEditar(short id) => Navigation.NavigateTo($"/motivos/editar/{id}");
 }
