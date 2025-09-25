@@ -27,15 +27,40 @@ namespace Veterinaria.MAUIApp.Services
         }
 
         // Crear nuevo motivo
-        public async Task<MotivoCita?> CrearAsync(MotivoCita motivo)
+        //public async Task<MotivoCita?> CrearAsync(MotivoCita motivo)
+        //{
+        //    var response = await _http.PostAsJsonAsync("motivos", motivo);
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        return await response.Content.ReadFromJsonAsync<MotivoCita>();
+        //    }
+        //    return null;
+        //}
+        // Crear nuevo motivo
+        public async Task<(MotivoCita? motivo, string? error)> CrearAsync(MotivoCita motivo)
         {
             var response = await _http.PostAsJsonAsync("motivos", motivo);
+
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadFromJsonAsync<MotivoCita>();
+                var data = await response.Content.ReadFromJsonAsync<MotivoCita>();
+                return (data, null); // No hay error
             }
-            return null;
+            else
+            {
+                // Intentar leer mensaje de error del backend
+                try
+                {
+                    var errorResp = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                    return (null, errorResp?.Message ?? "Error desconocido");
+                }
+                catch
+                {
+                    return (null, $"Error {response.StatusCode}: {response.ReasonPhrase}");
+                }
+            }
         }
+
 
         // Editar motivo existente
         public async Task<bool> EditarAsync(int id, MotivoCita motivo)

@@ -2,6 +2,7 @@
 @inject Veterinaria.MAUIApp.Services.MotivoCitaService MotivoCitaService
 @inject NavigationManager Navigation
 @using Veterinaria.MAUIApp.Models
+@using System.ComponentModel.DataAnnotations
 
 <div class="d-flex flex-column min-vh-100">
     <div class="container py-3 flex-grow-1 d-flex flex-column">
@@ -24,39 +25,32 @@
         }
         else
         {
-            <!-- El form ahora ocupa toda la altura disponible -->
-            <EditForm Id="editForm" Model="@motivo" OnValidSubmit="Guardar" class="d-flex flex-column flex-grow-1">
+            <EditForm Id="editForm" Model="@motivoEdit" OnValidSubmit="Guardar" class="d-flex flex-column flex-grow-1">
                 <DataAnnotationsValidator />
-                <ValidationSummary />
 
                 <div class="mb-3">
                     <label class="form-label">Nombre del motivo</label>
-                    <InputText class="form-control rounded-4 shadow-sm" @bind-Value="motivo.Nombre" />
-                    <ValidationMessage For="@(() => motivo.Nombre)" />
+                    <InputText class="form-control rounded-4 shadow-sm" @bind-Value="motivoEdit.Nombre" />
+                    <ValidationMessage For="@(() => motivoEdit.Nombre)" />
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Descripción del motivo</label>
-                    <InputTextArea class="form-control rounded-4 shadow-sm" rows="3" @bind-Value="motivo.Descripcion" />
-                    <ValidationMessage For="@(() => motivo.Descripcion)" />
+                    <InputTextArea class="form-control rounded-4 shadow-sm" rows="3" @bind-Value="motivoEdit.Descripcion" />
+                    <ValidationMessage For="@(() => motivoEdit.Descripcion)" />
                 </div>
 
-                <div class="mb-3">
-                    <div class="form-check">
-                        <InputCheckbox class="form-check-input" @bind-Value="motivo.Activo" id="activo" />
-                        <label class="form-check-label" for="activo">
-                            Motivo activo
-                        </label>
-                    </div>
+                <div class="mb-3 form-check">
+                    <InputCheckbox class="form-check-input" @bind-Value="motivoEdit.Activo" id="activo" />
+                    <label class="form-check-label" for="activo">Motivo activo</label>
                 </div>
 
-                <!-- Botones pegados abajo -->
-                <div class="mt-auto d-flex gap-2 p-3 border-top">
-                    <button type="button" class="btn btn-dark flex-fill py-2 rounded-pill"
+                <div class="mt-auto d-flex flex-column flex-sm-row gap-2 p-3 border-top">
+                    <button type="button" class="btn btn-dark w-100 py-2 rounded-pill"
                             @onclick="Cancelar">
                         Cancelar
                     </button>
-                    <button type="submit" class="btn btn-success flex-fill py-2 rounded-pill fw-bold">
+                    <button type="submit" class="btn btn-success w-100 py-2 rounded-pill fw-bold">
                         Guardar cambios
                     </button>
                 </div>
@@ -67,7 +61,10 @@
 
 @code {
     [Parameter] public int id { get; set; }
+
     private MotivoCita? motivo;
+
+    private MotivoCitaEdit motivoEdit = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -75,13 +72,23 @@
         if (motivo == null)
         {
             Navigation.NavigateTo("/motivos");
+            return;
         }
+
+        motivoEdit.Id = motivo.Id;
+        motivoEdit.Nombre = motivo.Nombre;
+        motivoEdit.Descripcion = motivo.Descripcion;
+        motivoEdit.Activo = motivo.Activo;
     }
 
     private async Task Guardar()
     {
-        if (motivo != null)
+        if (motivoEdit != null)
         {
+            motivo!.Nombre = motivoEdit.Nombre;
+            motivo.Descripcion = motivoEdit.Descripcion;
+            motivo.Activo = motivoEdit.Activo;
+
             await MotivoCitaService.EditarAsync(id, motivo);
             Navigation.NavigateTo("/motivos");
         }
@@ -89,4 +96,16 @@
 
     private void Cancelar() =>
         Navigation.NavigateTo("/motivos");
+
+    public class MotivoCitaEdit
+    {
+        public int Id { get; set; }
+
+        [Required(ErrorMessage = "El nombre es obligatorio.")]
+        [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "Solo se permiten letras.")]
+        public string Nombre { get; set; } = string.Empty;
+
+        public string? Descripcion { get; set; }
+        public bool Activo { get; set; } = true;
+    }
 }

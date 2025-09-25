@@ -2,10 +2,11 @@
 @inject Veterinaria.MAUIApp.Services.MotivoCitaService MotivoCitaService
 @inject NavigationManager Navigation
 @using Veterinaria.MAUIApp.Models
+@using System.ComponentModel.DataAnnotations
 
 <div class="d-flex flex-column min-vh-100">
-    <!-- Encabezado -->
-    <div class="container py-3">
+    <div class="container py-3 flex-grow-1 d-flex flex-column">
+        <!-- Encabezado con botón volver -->
         <div class="d-flex align-items-center mb-3">
             <button class="btn btn-light rounded-circle shadow-sm me-2"
                     style="width: 36px; height: 36px; line-height: 1;"
@@ -17,56 +18,72 @@
                 <small class="text-muted">Agrega un nuevo motivo</small>
             </div>
         </div>
-    </div>
 
-    <!-- Formulario -->
-    <EditForm class="d-flex flex-column flex-grow-1 px-3" Model="@nuevo" OnValidSubmit="Guardar">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
+        <EditForm Model="@nuevo" OnValidSubmit="Guardar" class="d-flex flex-column flex-grow-1">
+            <DataAnnotationsValidator />
 
-        <div class="mb-3">
-            <label class="form-label">Nombre del motivo</label>
-            <InputText class="form-control rounded-4 shadow-sm" @bind-Value="nuevo.Nombre" />
-            <ValidationMessage For="@(() => nuevo.Nombre)" />
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Descripción del motivo</label>
-            <InputTextArea class="form-control rounded-4 shadow-sm" rows="3" @bind-Value="nuevo.Descripcion" />
-            <ValidationMessage For="@(() => nuevo.Descripcion)" />
-        </div>
-
-        <div class="mb-3">
-            <div class="form-check">
-                <InputCheckbox class="form-check-input" @bind-Value="nuevo.Activo" id="activo" />
-                <label class="form-check-label" for="activo">
-                    Motivo activo
-                </label>
+            <div class="mb-3">
+                <label class="form-label">Nombre del motivo</label>
+                <InputText class="form-control rounded-4 shadow-sm" @bind-Value="nuevo.Nombre" />
+                <ValidationMessage For="@(() => nuevo.Nombre)" />
             </div>
-        </div>
 
-        <!-- Botones al fondo -->
-        <div class="mt-auto pt-3 border-top d-flex gap-2">
-            <button type="button" class="btn btn-dark flex-fill py-2 rounded-pill"
-                    @onclick="Cancelar">
-                Cancelar
-            </button>
-            <button type="submit" class="btn btn-success flex-fill py-2 rounded-pill fw-bold">
-                Guardar
-            </button>
-        </div>
-    </EditForm>
+            <div class="mb-3">
+                <label class="form-label">Descripción del motivo</label>
+                <InputTextArea class="form-control rounded-4 shadow-sm" rows="3" @bind-Value="nuevo.Descripcion" />
+                <ValidationMessage For="@(() => nuevo.Descripcion)" />
+            </div>
+
+            <div class="mb-3 form-check">
+                <InputCheckbox class="form-check-input" @bind-Value="nuevo.Activo" id="activo" />
+                <label class="form-check-label" for="activo">Motivo activo</label>
+            </div>
+
+            <!-- Botones al fondo -->
+            <div class="mt-auto d-flex flex-column flex-sm-row gap-2 p-3 border-top">
+                <button type="button" class="btn btn-dark w-100 py-2 rounded-pill" @onclick="Cancelar">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn btn-success w-100 py-2 rounded-pill fw-bold">
+                    Guardar
+                </button>
+            </div>
+
+            <!-- Mensaje de éxito general debajo del formulario -->
+            @if (!string.IsNullOrEmpty(mensajeExito))
+            {
+                <div class="mt-2 text-success fw-bold">@mensajeExito</div>
+            }
+
+            @if (!string.IsNullOrEmpty(mensajeError))
+            {
+                <div class="mt-2 text-danger fw-bold">@mensajeError</div>
+            }
+        </EditForm>
+    </div>
 </div>
 
 @code {
     private MotivoCita nuevo = new();
+    private string? mensajeError;
+    private string? mensajeExito;
 
     private async Task Guardar()
     {
-        var creado = await MotivoCitaService.CrearAsync(nuevo);
-        if (creado != null)
+        mensajeError = null;
+        mensajeExito = null;
+
+        var (motivoCreado, error) = await MotivoCitaService.CrearAsync(nuevo);
+
+        if (motivoCreado != null)
         {
+            mensajeExito = "Motivo creado exitosamente.";
+            await Task.Delay(1500); // opcional, para que se vea el mensaje
             Navigation.NavigateTo("/motivos");
+        }
+        else
+        {
+            mensajeError = error ?? "Ocurrió un error desconocido.";
         }
     }
 
