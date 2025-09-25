@@ -1,5 +1,54 @@
 ﻿@page "/"
+@inject NavigationManager Nav
 
-<h1>Hello, world!</h1>
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h1 class="display-5">Bienvenido a la Veterinaria</h1>
+        <p class="lead">Selecciona una opción para gestionar veterinarios</p>
+    </div>
 
-Welcome to your new app.
+    <div class="row g-3 justify-content-center">
+        <div class="col-12 col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-list display-4 text-primary"></i>
+                    <h5 class="card-title mt-3">Listado</h5>
+                    <p class="card-text">Ver todos los veterinarios registrados</p>
+                    <button class="btn btn-outline-primary w-100" @onclick='() => Nav.NavigateTo("/veterinarios/index")'>
+                        Ir al listado
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-plus-circle display-4 text-success"></i>
+                    <h5 class="card-title mt-3">Agregar</h5>
+                    <p class="card-text">Registrar un nuevo veterinario</p>
+                    <button class="btn btn-outline-success w-100" @onclick='() => Nav.NavigateTo("/veterinarios/agregar")'>
+                        Agregar Veterinario
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="col-12 col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-pencil-square display-4 text-warning"></i>
+                    <h5 class="card-title mt-3">Editar</h5>
+                    <p class="card-text">Ir a seccion de razas (listado)</p>
+                    <button class="btn btn-outline-warning w-100" @onclick='() => Nav.NavigateTo("/razas/indexmascotas")'>
+                        Ir a agregar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>

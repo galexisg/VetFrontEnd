@@ -1,7 +1,114 @@
 ﻿@page "/veterinarios/index"
+@using Veterinaria.MAUIApp.Models
+@inject Veterinaria.MAUIApp.Services.VeterinarioService VetService
+@inject NavigationManager Nav
+    <link rel="stylesheet" href="css/veterinarios.css" />
 
-<h3>Index</h3>
+<div class="vet-container">
+    <div class="vet-header d-flex justify-content-between align-items-center mb-3">
+        <h2>Gestión de Veterinarios</h2>
+        <button class="btn btn-outline-primary" @onclick="Nuevo">
+            <i class="bi bi-plus-circle me-2"></i> Nuevo Veterinario
+        </button>
+
+
+    </div>
+
+    @if (veterinarios is null)
+    {
+            <div class="alert alert-info text-center">
+                <span class="spinner-border spinner-border-sm me-2"></span> Cargando datos...
+            </div>
+    }
+    else if (!veterinarios.Any())
+    {
+            <div class="alert alert-warning text-center">
+                No hay veterinarios registrados.
+            </div>
+    }
+    else
+    {
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover vet-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Correo</th>
+                            <th>Teléfono</th>
+                            <th>Especialidad</th>
+                            <th>Servicio</th>
+                            <th>Estado</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var v in veterinarios)
+                    {
+                                <tr>
+                                    <td>@v.Id</td>
+                                    <td>@v.Usuario.NombreCompleto</td>
+                                    <td>@v.Usuario.Correo</td>
+                                    <td>@v.Usuario.Telefono</td>
+                                    <td>@v.Especialidad</td>
+                                    <td>@v.Servicio</td>
+                                    <td>
+                                        <span class="badge @(v.Estado == "Activo" ? "bg-success" : "bg-secondary")">
+                                    @v.Estado
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="d-flex justify-content-center gap-2 flex-wrap">
+                                            <button class="btn btn-sm btn-outline-primary" @onclick="() => Editar(v.Id)">
+                                                <i class="bi bi-pencil-square"></i> Editar
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-success" @onclick="() => Activar(v.Id)">
+                                                <i class="bi bi-check-circle"></i> Activar
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" @onclick="() => Inactivar(v.Id)">
+                                                <i class="bi bi-x-circle"></i> Inactivar
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+    }
+</div>
 
 @code {
+    private List<VeterinarioSalidaRes>? veterinarios;
 
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            veterinarios = await VetService.GetAllAsync();
+            Console.WriteLine($"Veterinarios cargados: {veterinarios.Count}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar veterinarios: {ex.Message}");
+        }
+    }
+
+    private void Nuevo() => Nav.NavigateTo("/veterinarios/agregar");
+
+    private void Editar(int id) => Nav.NavigateTo($"/veterinarios/editar/{id}");
+
+    private async Task Activar(int id)
+    {
+        var ok = await VetService.ActivarAsync(id);
+        if (ok)
+            veterinarios = await VetService.GetAllAsync();
+    }
+
+    private async Task Inactivar(int id)
+    {
+        var ok = await VetService.InactivarAsync(id);
+        if (ok)
+            veterinarios = await VetService.GetAllAsync();
+    }
 }
