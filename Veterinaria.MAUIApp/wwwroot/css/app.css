@@ -1,5 +1,8 @@
-﻿html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+﻿
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+html, body {
+    font-family: "Helvetica Neue", sans-serif;
 }
 
 a, .btn-link {
@@ -89,22 +92,3 @@ h1:focus {
 * {
     background: #F7F7F7;
 }
-.page {
-    display: flex;
-    min-height: 100vh;
-}
-
-.sidebar {
-    width: 250px;
-    padding: 1rem;
-}
-
-.nav-link {
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-}
-
-    .nav-link:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 5px;
-    }

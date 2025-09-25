@@ -1,7 +1,39 @@
-﻿@page "/facturas/pago/agregar"
+﻿@page "/facturas/{id:int}/pago/agregar"
+@inject NavigationManager Nav
+@code { [Parameter] public int id { get; set; } }
 
-<h3>Agregar</h3>
+    <div class="contenedor">
+        <div class="status-bar-safe-area"></div>
+        <header class="mb-4">
+            <p class="titulo">Pago de factura</p>
+            <p class="descripcion">Gestiona el registro y control</p>
+        </header>
 
-@code {
+        <div class="input-container">
+            <label class="label">Factura</label>
+            <select class="input">
+                <option>Seleccionar</option>
+                <option>Factura #@id</option>
+            </select>
+        </div>
 
-}
+        <div class="input-container">
+            <label class="label">Método</label>
+            <input class="input" placeholder="Escribe el método" />
+        </div>
+
+        <div class="input-container">
+            <label class="label">Monto</label>
+            <input class="input" inputmode="decimal" placeholder="Ingresa el monto" />
+        </div>
+
+        <div class="input-container">
+            <label class="label">Fecha de pago</label>
+            <input type="date" class="input" placeholder="Ingresa la fecha" />
+        </div>
+
+        <div class="acciones-footer">
+            <button type="button" class="boton-negro" @onclick="@(() => Nav.NavigateTo("/facturas"))">Cancelar</button>
+            <button type="button" class="boton-verde" @onclick="@(() => Nav.NavigateTo("/facturas"))">Guardar cambios</button>
+        </div>
+    </div>
