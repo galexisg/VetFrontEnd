@@ -1,4 +1,4 @@
-﻿@page "/motivos/editar/{Id:short}"
+﻿@page "/motivos/editar/{Id:int}"  
 @using Veterinaria.MAUIApp.Services
 @using Veterinaria.MAUIApp.Models
 @using Veterinaria.MAUIApp.Models.Dtos
@@ -7,9 +7,17 @@
 
 <h3>Editar Motivo</h3>
 
-@if (motivoParaEditar == null)
+@if (cargando)
 {
     <p><em>Cargando motivo...</em></p>
+}
+else if (errorMsg is not null)
+{
+    <div class="alert alert-danger">@errorMsg</div>
+}
+else if (motivoParaEditar is null)
+{
+    <p><em>No se encontró el motivo.</em></p>
 }
 else
 {
@@ -17,11 +25,11 @@ else
         <div class="card-body">
             <div class="mb-2">
                 <label class="form-label">ID:</label>
-                <input type="number" @bind="motivoParaEditar.Id" class="form-control" disabled />
+                <InputNumber class="form-control" @bind-Value="motivoParaEditar.Id" Disabled="true" />
             </div>
             <div class="mb-2">
                 <label class="form-label">Nombre:</label>
-                <input @bind="motivoParaEditar.Nombre" class="form-control" />
+                <InputText class="form-control" @bind-Value="motivoParaEditar.Nombre" />
             </div>
             <button class="btn btn-primary" @onclick="ActualizarMotivo">Actualizar</button>
             <button class="btn btn-link" @onclick="Cancelar">Cancelar</button>
@@ -31,33 +39,58 @@ else
 
 @code {
     [Parameter]
-    public short Id { get; set; }
+    public int Id { get; set; }  // <- ahora int
 
-    // 👇 Solución: Se marca como nulable (?) porque se carga de forma asíncrona.
+    private bool cargando = true;
+    private string? errorMsg;
+
     private MotivoRequest? motivoParaEditar;
 
     protected override async Task OnParametersSetAsync()
     {
-        var motivoExistente = await MotivoService.ObtenerPorId(Id);
-        if (motivoExistente != null)
+        cargando = true;
+        errorMsg = null;
+
+        try
         {
-            motivoParaEditar = new MotivoRequest
-            {
-                Id = motivoExistente.Id,
-                Nombre = motivoExistente.Nombre
-            };
+            // Si tu API recibe short, convierte aquí:
+            short idShort = checked((short)Id);
+
+            var motivoExistente = await MotivoService.ObtenerPorId(idShort);
+            motivoParaEditar = motivoExistente is null
+                ? null
+                : new MotivoRequest
+                {
+                    Id = motivoExistente.Id,
+                    Nombre = motivoExistente.Nombre
+                };
+        }
+        catch (Exception ex)
+        {
+            errorMsg = $"Error cargando motivo: {ex.Message}";
+        }
+        finally
+        {
+            cargando = false;
         }
     }
 
     private async Task ActualizarMotivo()
     {
-        if (motivoParaEditar != null)
+        if (motivoParaEditar is null) return;
+
+        try
         {
-            var actualizado = await MotivoService.Editar(Id, motivoParaEditar);
-            if (actualizado != null)
-            {
+            short idShort = checked((short)Id);
+            var actualizado = await MotivoService.Editar(idShort, motivoParaEditar);
+            if (actualizado is not null)
                 Navigation.NavigateTo("/motivos");
-            }
+            else
+                errorMsg = "No se pudo actualizar el motivo.";
+        }
+        catch (Exception ex)
+        {
+            errorMsg = $"Error al actualizar: {ex.Message}";
         }
     }
 

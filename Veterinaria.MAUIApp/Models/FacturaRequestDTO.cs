@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Veterinaria.MAUIApp.Models
 {
-    internal class FacturaDetalle
+    internal class FacturaRequestDTO
     {
+        public long ClienteId { get; set; }
+        public List<FacturaDetalleDTO> Detalles { get; set; }
     }
 }

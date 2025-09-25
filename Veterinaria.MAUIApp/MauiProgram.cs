@@ -8,6 +8,7 @@ namespace Veterinaria.MAUIApp
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
+
             builder
                 .UseMauiApp<App>()
                 .ConfigureFonts(fonts =>
@@ -24,14 +25,12 @@ namespace Veterinaria.MAUIApp
 
             builder.Services.AddScoped(http => new HttpClient
             {
-                BaseAddress = new Uri("http://localhost:8080/")
+                BaseAddress = new Uri("https://localhost:7174/")
             });
 
 
             /*Añadir servicios*/
-            builder.Services.AddScoped<ServicioService>();
-            builder.Services.AddScoped<MotivoService>();
-
+            
 
             return builder.Build();
         }
