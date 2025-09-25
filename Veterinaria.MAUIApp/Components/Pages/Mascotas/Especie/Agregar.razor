@@ -1,7 +1,75 @@
-﻿@page "/mascotas/especie/agregar"
+﻿@* @page "/mascotas/especies/agregar"
 
-<h3>Agregar</h3>
+@using Microsoft.AspNetCore.Components.Forms
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Services
+
+<PageTitle>Nueva especie</PageTitle>
+
+<div style="padding:20px; font-family:sans-serif;">
+
+    <!-- Encabezado -->
+    <h3 style="margin-bottom:0;">Nueva especie</h3>
+    <p style="color:gray; margin-top:5px;">Agrega una nueva especie</p>
+
+    <!-- Campo Nombre -->
+    <div style="margin-top:25px;">
+        <label for="nombre" style="font-weight:600;">Nombre</label>
+        <InputText @bind-Value="Especie.Nombre"
+                   id="nombre"
+                   placeholder="Ingresa un nombre"
+                   style="width:100%; margin-top:8px; padding:12px; border-radius:20px; border:1px solid #ccc; font-size:16px;" />
+    </div>
+
+    <!-- Botones -->
+    <div style="display:flex; justify-content:space-between; margin-top:40px;">
+        <button style="flex:1; margin-right:5px; padding:14px; background-color:black; color:white; border:none; border-radius:10px; font-size:16px; cursor:pointer;"
+                @onclick="Cancelar">
+            Cancelar
+        </button>
+
+        <button style="flex:1; margin-left:5px; padding:14px; background-color:#00B273; color:white; border:none; border-radius:10px; font-size:16px; cursor:pointer;"
+                @onclick="GuardarCambios">
+            Guardar cambios
+        </button>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Mensaje))
+    {
+        <p style="margin-top:20px; color:green; font-size:14px;">@Mensaje</p>
+    }
+</div>
 
 @code {
+    private Especie Especie { get; set; } = new Especie();
+    private string Mensaje = string.Empty;
 
+    [Inject] private NavigationManager Navigation { get; set; }
+    [Inject] private EspecieService EspecieService { get; set; }
+
+    private void Cancelar()
+    {
+        Navigation.NavigateTo("/mascotas/especies");
+    }
+
+    private async Task GuardarCambios()
+    {
+        if (string.IsNullOrWhiteSpace(Especie.Nombre))
+        {
+            Mensaje = "El nombre de la especie es obligatorio.";
+            return;
+        }
+
+        var nuevaEspecie = await EspecieService.CreateEspecieAsync(Especie);
+        if (nuevaEspecie != null)
+        {
+            Mensaje = $"✅ Especie guardada: {nuevaEspecie.Nombre}";
+            Navigation.NavigateTo("/mascotas/especies");
+        }
+        else
+        {
+            Mensaje = "❌ Error al guardar la especie.";
+        }
+    }
 }
+ *@
