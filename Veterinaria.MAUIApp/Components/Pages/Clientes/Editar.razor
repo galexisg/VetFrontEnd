@@ -1,7 +1,102 @@
-﻿@page "/editar/agregar"
+﻿@page "/clientes/editar/{UsuarioId:int}"
+@inject Services.UsuarioService UsuarioService
+@inject NavigationManager navManager
 
-<h3>Editar</h3>
+<div class="d-flex gap-3 align-items-center" @onclick="Volver">
+    <div class="img-add d-flex justify-content-center align-items-center">
+        <div>‹</div>
+    </div>
+
+    <div class="d-grid gap-1">
+        <p style="font-size:20px;" class="titulo">Editar Cliente</p>
+        <div style="font-size:16px;" class="descripcion">Modifica la información del cliente</div>
+    </div>
+</div>
+
+@if (usuario == null)
+{
+    <p>Cargando usuario...</p>
+}
+else
+{
+    <EditForm Model="usuario" OnValidSubmit="GuardarCambios">
+        <div class="d-grid gap-2 mb-4 mt-4 pt-4">
+            <label class="titulo">Nombre Completo</label>
+            <InputText placeholder="Ingresa un nombre completo" @bind-Value="usuario.NombreCompleto" class="input mb-2" required />
+        </div>
+
+        <div class="d-grid gap-2 mb-4">
+            <label class="titulo">Correo</label>
+            <InputText placeholder="Ingresa un email" @bind-Value="usuario.Correo" class="input mb-2" type="email" required />
+        </div>
+
+        <div class="d-grid gap-2 mb-4">
+            <label class="titulo">Usuario</label>
+            <InputText placeholder="Ingresa un nombre de usuario" @bind-Value="usuario.NickName" class="input mb-2" required />
+        </div>
+
+        <div class="d-grid gap-2 mb-4">
+            <label class="titulo">DUI</label>
+            <InputText placeholder="Ingresa un número de DUI" @bind-Value="usuario.Dui" class="input mb-2" required pattern="[0-9]+" title="Solo se permiten números" />
+        </div>
+
+        <div class="d-grid gap-2 mb-4">
+            <label class="titulo">Teléfono</label>
+            <InputText placeholder="Ingresa un número de teléfono" @bind-Value="usuario.Telefono" class="input mb-2" required pattern="[0-9]+" title="Solo se permiten números" />
+        </div>
+
+        <div class="d-grid gap-2 mb-4">
+            <label class="titulo">Dirección</label>
+            <InputText placeholder="Ingresa una dirección de vivienda" @bind-Value="usuario.Direccion" class="input mb-2" required />
+        </div>
+
+        <div class="d-grid gap-2 mb-4">
+            <label class="titulo">Fecha de Nacimiento</label>
+            <InputDate @bind-Value="usuario.FechaNacimiento" class="input mb-4" required />
+        </div>
+
+        <button type="submit" style="width:100%;" class="boton-verde mt-4">Guardar Cambios</button>
+        <div class="pb-4"></div>
+    </EditForm>
+}
 
 @code {
+    [Parameter]
+    public int UsuarioId { get; set; }
 
+    private Models.UsuarioReq usuario = new Models.UsuarioReq();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var u = await UsuarioService.GetByIdAsync(UsuarioId);
+        if (u != null)
+        {
+            usuario = new Models.UsuarioReq
+                {
+                    NickName = u.NickName,
+                    NombreCompleto = u.NombreCompleto,
+                    Correo = u.Correo,
+                    Dui = u.Dui,
+                    Telefono = u.Telefono,
+                    Direccion = u.Direccion,
+                    FechaNacimiento = u.FechaNacimiento,
+                    RolId = 2,
+                    EstadoId = 1
+                };
+        }
+    }
+
+    private async Task GuardarCambios()
+    {
+        var actualizado = await UsuarioService.EditarAsync(UsuarioId, usuario);
+        if (actualizado != null)
+        {
+            navManager.NavigateTo("/clientes/index");
+        }
+    }
+
+    private void Volver()
+    {
+        navManager.NavigateTo("/clientes/index");
+    }
 }

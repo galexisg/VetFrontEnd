@@ -1,22 +1,63 @@
 ﻿@page "/login/login"
+@inject Services.AuthService AuthService
+@inject NavigationManager NavManager
 
-<div class="contenedor home">
-	<div class="mb-4">
-		<h1 style="font-size:28px;" class="titulo text-center">Inicia sesión en Colitas</h1>
-		<p style="font-size:16px;" class="descripcion text-center">Ingresa tus credenciales para entrar al sistema</p>
-	</div>
-	<div class="d-grid gap-1">
-	<div class="input-container">
-		<p style="font-size:16px;" class="label">Usuario</p>
-		<input placeholder="Ingresa tu nombre de usuario" class="input" type="type" name="name" value="" />
-	</div>
-	<div class="input-container">
-		<p style="font-size:16px;" class="label">Contraseña</p>
-		<input placeholder="Ingresa tu contraseña" class="input" type="type" name="name" value="" />
-	</div>
-	</div>
-	<button class="boton-verde">Iniciar Sesion</button>
+
+<div class="d-flex justify-content-center align-items-center" style="height:100vh; flex-direction: column;">
+    <h3 class="text-center">Iniciar Sesión</h3>
+    <h3 style="font-size:16px;" class="descripcion text-center">Ingresa tus credenciales para entrar</h3>
+
+    <div class="mt-4 pt-4" style="width: 100%;">
+        <div class="d-grid gap-3 mb-3">
+            <label class="titulo">Usuario:</label>
+            <input @bind="nickName" placeholder="Ingresa tu usuario" class="input" />
+
+            <label class="titulo mt-4">Contraseña:</label>
+            <input type="password" @bind="clave" placeholder="Ingresa tu contraseña" class="input" />
+        </div>
+
+        <button class="boton-verde mt-4" style="width: 100%;" @onclick="IniciarSesion">Iniciar Sesión</button>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        { 
+            <p class="error mt-3 text-center">@errorMessage</p>
+        }
+    </div>
 </div>
-@code {
 
+
+@code {
+    private string nickName = string.Empty;
+    private string clave = string.Empty;
+    private string errorMessage = string.Empty;
+
+    private async Task IniciarSesion()
+    {
+        errorMessage = string.Empty;
+
+        // Validación de campos vacíos
+        if (string.IsNullOrWhiteSpace(nickName) || string.IsNullOrWhiteSpace(clave))
+        {
+            errorMessage = "Por favor completa todos los campos para ingresar.";
+            return;
+        }
+
+        var loginReq = new Models.LoginReq
+            {
+                NickName = nickName,
+                Clave = clave
+            };
+
+        var result = await AuthService.LoginAsync(loginReq);
+
+        if (result != null)
+        {
+            App.Token = result.Token;
+            NavManager.NavigateTo("/clientes/index");
+        }
+        else
+        {
+            errorMessage = "Usuario o contraseña incorrectos.";
+        }
+    }
 }

@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using System.ComponentModel.DataAnnotations;
 
 namespace Veterinaria.MAUIApp.Models
 {
-    public class Estado
+    public class Rol
     {
         public byte Id { get; set; }
 

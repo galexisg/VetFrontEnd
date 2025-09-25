@@ -3,6 +3,7 @@
 
 html, body {
     font-family: "Helvetica Neue", sans-serif;
+    background: #F7F7F7;
 }
 
 a, .btn-link {
@@ -89,10 +90,6 @@ h1:focus {
 }
 
 
-* {
-    background: #F7F7F7;
-}
-
 :root {
     --blanco: #FFFFFF;
     --verde: #0AB372;
@@ -125,7 +122,7 @@ h1:focus {
 
 .descripcion {
     font-size: 14px;
-    font-weight: 200;
+    font-weight: 400;
     color: var(--gris);
 }
 
@@ -146,13 +143,20 @@ h1:focus {
 }
 
 .input {
-    padding: 16px 16px;
-    border: 1px solid var(--borde);
+    padding: 12px 16px;
     color: var(--gris);
+    background: var(--blanco);
     border-radius: 8px;
     font-size: 16px;
-    width:100%;
+    width: 100%;
+    border: 1px solid var(--blanco);
+    outline: none; /* quita borde al hacer focus */
 }
+
+    .input:focus {
+        box-shadow: none;
+        border: 1px solid var(--verde);
+    }
 
 .label {
     font-size: 16px;
@@ -160,3 +164,36 @@ h1:focus {
     color:var(--negro);
 }
 
+
+.card-list{
+    padding:16px;
+    border-radius:16px;
+    background:var(--blanco);
+}
+
+.etiqueta {
+    padding: 2px 6px;
+    color: var(--gris);
+    font-size: 14px;
+    background: #F7F7F7;
+    border-radius: 4px;
+    font-weight: 400;
+}
+
+.boton-card{
+    padding:8px 12px;
+    border-radius:8px;
+    background:var(--negro);
+    color:var(--blanco);
+    font-size:16px;
+    border:none;
+}
+
+.img-add{
+    background:var(--verde);
+    color:var(--blanco);
+    border-radius:50px;
+    height:42px;
+    width:42px;
+    font-size:24px;
+}
