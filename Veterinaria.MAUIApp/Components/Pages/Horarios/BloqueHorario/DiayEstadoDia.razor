@@ -1,0 +1,143 @@
+﻿@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Services
+
+@page "/test-dia"
+
+@inject DiaService ServicioDia
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+<PageTitle>Gestión de Días Hábiles</PageTitle>
+
+<div class="container mt-4">
+
+    <div class="mb-4">
+        <button class="btn btn-secondary" @onclick="Regresar">
+            <i class="bi bi-arrow-left"></i> Regresar al Inicio
+        </button>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h3 class="mb-0">Gestión de Días</h3>
+            <p class="text-muted">Administra los días de la semana y su disponibilidad.</p>
+        </div>
+        <button class="btn btn-primary" @onclick="CargarDatos" disabled="@isLoading">
+            @if (isLoading)
+            {
+                <span class="spinner-border spinner-border-sm"></span>
+                <span> Actualizando...</span>
+            }
+            else
+            {
+                <i class="bi bi-arrow-clockwise"></i>
+                <span> Recargar</span>
+            }
+        </button>
+    </div>
+
+    @if (errorMessage != null)
+    {
+        <div class="alert alert-danger"><strong>Error:</strong> @errorMessage</div>
+    }
+    else if (isLoading)
+    {
+        <div class="text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p><em>Conectando con la API...</em></p>
+        </div>
+    }
+    else if (!listaDeDias.Any())
+    {
+        <div class="alert alert-info">No se encontraron días para mostrar.</div>
+    }
+    else
+    {
+        <div class="list-group">
+            @foreach (var dia in listaDeDias)
+            {
+                <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="badge rounded-pill @(dia.Estado.Equals("Activo", StringComparison.OrdinalIgnoreCase) ? "bg-success" : "bg-secondary") me-2">
+                            @dia.Estado
+                        </span>
+                        <span class="fw-bold fs-5">@dia.Nombre</span>
+                    </div>
+
+                    <button class="btn @(dia.Estado.Equals("Activo", StringComparison.OrdinalIgnoreCase) ? "btn-outline-danger" : "btn-outline-success")"
+                            @onclick="() => CambiarEstado(dia)"
+                            title="Cambiar a @(dia.Estado.Equals("Activo", StringComparison.OrdinalIgnoreCase) ? "Inactivo" : "Activo")">
+                        <i class="bi @(dia.Estado.Equals("Activo", StringComparison.OrdinalIgnoreCase) ? "bi-toggle-off" : "bi-toggle-on")"></i>
+                        @(dia.Estado.Equals("Activo", StringComparison.OrdinalIgnoreCase) ? "Desactivar" : "Activar")
+                    </button>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+
+@code {
+    private List<Dia> listaDeDias = new();
+    private bool isLoading = false;
+    private string? errorMessage = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarDatos();
+    }
+
+    private async Task CargarDatos()
+    {
+        isLoading = true;
+        errorMessage = null;
+        StateHasChanged();
+
+        try
+        {
+            listaDeDias = await ServicioDia.GetDiasAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"No se pudo conectar a la API. Detalle: {ex.Message}";
+            listaDeDias.Clear();
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task CambiarEstado(Dia dia)
+    {
+        string nuevoEstado = dia.Estado.Equals("Activo", StringComparison.OrdinalIgnoreCase) ? "Inactivo" : "Activo";
+
+        var datosParaActualizar = new
+        {
+            Nombre = dia.Nombre,
+            EstadoDia = nuevoEstado
+        };
+
+        var response = await HttpClient.PutAsJsonAsync($"api/v1/dias/{dia.DiaId}", datosParaActualizar);
+
+        if (response.IsSuccessStatusCode)
+        {
+            dia.Estado = nuevoEstado;
+            errorMessage = null;
+        }
+        else
+        {
+            errorMessage = $"No se pudo actualizar el día '{dia.Nombre}'. (Error: {response.StatusCode})";
+        }
+
+        StateHasChanged();
+    }
+
+    private void Regresar()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}

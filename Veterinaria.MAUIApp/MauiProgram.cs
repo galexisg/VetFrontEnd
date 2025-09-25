@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Veterinaria.MAUIApp.Services;
 
 namespace Veterinaria.MAUIApp
 {
@@ -21,14 +22,16 @@ namespace Veterinaria.MAUIApp
     		builder.Logging.AddDebug();
 #endif
 
-            builder.Services.AddScoped(http => new HttpClient
+            // HttpClient hacia tu API en IntelliJ
+            builder.Services.AddScoped(sp => new HttpClient
             {
-                BaseAddress = new Uri("https://localhost:7174/")
+                BaseAddress = new Uri("http://localhost:8080/")
+
             });
 
-
-            /*Añadir servicios*/
-            
+            // Registrar servicios
+            builder.Services.AddScoped<DiaService>();
+            builder.Services.AddScoped<EstadoDiaService>();
 
             return builder.Build();
         }

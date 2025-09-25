@@ -3,19 +3,39 @@
 
 <div class="contenedor home">
     <button style="opacity:0%;" @onclick="Login" class="boton-verde">Comenzar a cuidar a mi mascota</button>
-    <img class="img-perro" src="/Images/Perro.png" alt="Alternate Text" />
+    <img class="img-perro" src="/Images/Perro.png" alt="Perro de bienvenida" />
     <div class="d-grid text-center" style="gap:8px;">
         <h1 style="font-size:28px;" class="titulo">¡Bienvenido a Colitas!</h1>
         <p style="font-size:16px;" class="descripcion">
             Cuida de tus peluditos favoritos y mantén a tus mascotas felices y saludables.
         </p>
     </div>
-    <button @onclick="Login" class="boton-verde">Comenzar a cuidar a mi mascota</button>
+
+    <!-- Contenedor para los botones -->
+    <div class="d-grid gap-3 col-10 mx-auto">
+        <!-- Este es el botón que ya tenías -->
+        <button @onclick="Login" class="boton-verde">Comenzar a cuidar a mi mascota</button>
+
+        <!-- ***** BOTÓN NUEVO AGREGADO AQUÍ ***** -->
+        <!-- Usa el mismo estilo "boton-verde" y navega a la página de días -->
+        <button @onclick="GoToGestionDias" class="boton-verde">
+            Gestionar Días Hábiles
+        </button>
+    </div>
 </div>
 
 @code {
+    // La función para tu botón original, no se toca
     private void Login()
     {
         navManager.NavigateTo("/facturas/index");
     }
+
+    // La nueva función para el nuevo botón
+    private void GoToGestionDias()
+    {
+        // Navega a la página de gestión de días que ya funciona
+        navManager.NavigateTo("/test-dia");
+    }
 }
+
