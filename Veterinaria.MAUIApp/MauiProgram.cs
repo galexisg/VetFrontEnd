@@ -18,23 +18,34 @@ namespace Veterinaria.MAUIApp
             builder.Services.AddMauiBlazorWebView();
 
 #if DEBUG
-    		builder.Services.AddBlazorWebViewDeveloperTools();
-    		builder.Logging.AddDebug();
+            builder.Services.AddBlazorWebViewDeveloperTools();
+            builder.Logging.AddDebug();
 #endif
 
-            builder.Services.AddScoped(http => new HttpClient
+            // HttpClient hacia tu API en IntelliJ
+            builder.Services.AddScoped(sp => new HttpClient
             {
                 BaseAddress = new Uri("http://localhost:8080/")
+
             });
 
+            // Registrar servicios
+            builder.Services.AddScoped<DiaService>();
+            builder.Services.AddScoped<EstadoDiaService>();
 
-           
-            builder.Services.AddScoped<VeterinarioService>();
-            builder.Services.AddScoped<UsuarioService>();
-            builder.Services.AddScoped<EspecialidadService>();
-            builder.Services.AddScoped<ServicioService>();
-            builder.Services.AddScoped<RazaService>();
-            builder.Services.AddScoped<EspecieService>();
+            // Instanciar HttpClient una sola vez
+            var httpClient = new HttpClient
+            {
+                BaseAddress = new Uri("http://localhost:8080/") // o la URL correcta para tu API
+            };
+
+            // Registrar el HttpClient como un singleton
+            builder.Services.AddSingleton(httpClient);
+
+            // Registrar tu servicio, pasándole la instancia de HttpClient
+            builder.Services.AddSingleton<AgendaService>();
+
+            builder.Services.AddSingleton<BloqueHorarioService>();
 
 
 

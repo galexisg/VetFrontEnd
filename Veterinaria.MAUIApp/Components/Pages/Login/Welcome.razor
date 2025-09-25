@@ -11,11 +11,41 @@
         </p>
     </div>
     <button @onclick="Login" class="boton-verde">Comenzar a cuidar a mi mascota</button>
+
+    <div class="mt-4">
+        <button @onclick="GoToHorarios" class="boton-verde">Ver Horarios de Veterinarios</button>
+    </div>
+    <div class="mt-4">
+        <button @onclick="GoToBloqueHorario" class="boton-verde">Ver Bloque Horarios</button>
+    </div>
+    <div class="mt-4">
+        <button @onclick="GoToagenda" class="boton-verde">Ver agenda de Veterinarios</button>
+    </div>
+        <div class="mt-4">
+        <button @onclick="GoTocrearagenda" class="boton-verde">crear agenda de Veterinarios</button>
+    </div>
 </div>
 
 @code {
     private void Login()
     {
         navManager.NavigateTo("/facturas/index");
+    }
+
+    private void GoToHorarios()
+    {
+        navManager.NavigateTo("/test-dia");
+    }
+    private void GoToBloqueHorario()
+    {
+        navManager.NavigateTo("/bloqueshorario");
+    }
+    private void GoToagenda()
+    {
+        navManager.NavigateTo("/agenda");
+    }
+    private void GoTocrearagenda()
+    {
+        navManager.NavigateTo("/horarios/detalle/crear");
     }
 }

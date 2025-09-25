@@ -1,7 +1,53 @@
-﻿@page "/horarios/editar"
+﻿@page "/agenda/{id:int}"
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Services
+@inject AgendaService DetalleHorarioService
+@inject AgendaService AgendaService
 
-<h3>Editar</h3>
+<div class="page-container">
+    <div class="header">
+        <div class="header-content">
+            <h1>Detalle de Horario</h1>
+            <p>Información detallada del horario seleccionado.</p>
+        </div>
+    </div>
+
+    @if (detalle == null)
+    {
+            <div class="loading-container">
+                <p><em>Cargando detalles del horario...</em></p>
+            </div>
+    }
+    else
+    {
+            <div class="detail-card">
+                <div class="detail-item">
+                    <strong>ID:</strong> @detalle.DetalleHorarioVeterinarioId
+                </div>
+                <div class="detail-item">
+                    <strong>Día:</strong> @detalle.Dia
+                </div>
+                <div class="detail-item">
+                    <strong>Hora:</strong> @detalle.HoraInicio.ToString(@"hh\:mm") - @detalle.HoraFin.ToString(@"hh\:mm")
+                </div>
+                <div class="detail-item">
+                    <strong>Veterinario:</strong> @detalle.NombreVeterinario
+                </div>
+                <div class="detail-item">
+                    <strong>Estado:</strong> @detalle.Estado
+                </div>
+            </div>
+    }
+</div>
 
 @code {
+    [Parameter]
+    public int Id { get; set; }
 
+    private DetalleHorarioVeterinario detalle;
+
+    protected override async Task OnInitializedAsync()
+    {
+        detalle = await AgendaService.GetDetalleHorarioByIdAsync(Id);
+    }
 }

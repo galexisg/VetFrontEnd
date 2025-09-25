@@ -1,7 +1,90 @@
-﻿@page "/horarios/agregar"
+﻿@*  @page "/horarios/detalle/crear"
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Services
+@inject NavigationManager Navigation
+@inject AgendaService AgendaService
+@inject VeterinarioService VeterinarioService // Asume que tienes este servicio
+@inject DiaService DiaService // Asume que tienes este servicio
 
-<h3>Agregar</h3>
+<PageTitle>Crear Nuevo Horario</PageTitle>
+
+<div class="page-container">
+    <EditForm Model="@nuevoDetalle" OnValidSubmit="GuardarNuevoRegistro" class="form-content">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-field">
+            <label>Veterinario</label>
+            <InputSelect @bind-Value="nuevoDetalle.VeterinarioId" class="custom-select">
+                <option value="">Seleccionar</option>
+                @foreach (var vet in Veterinarios)
+                {
+                    <option value="@vet.Id.ToString()">@vet.NombreCompleto</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => nuevoDetalle.VeterinarioId)" />
+        </div>
+
+        <div class="form-field">
+            <label>Día</label>
+            <InputSelect @bind-Value="nuevoDetalle.DiaId" class="custom-select">
+                <option value="">Seleccionar</option>
+                @foreach (var dia in Dias)
+                {
+                    <option value="@dia.Id.ToString()">@dia.Nombre</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => nuevoDetalle.DiaId)" />
+        </div>
+        
+        <div class="form-field">
+            <label>Bloque Horario</label>
+            <InputSelect @bind-Value="nuevoDetalle.BloqueHorarioId" class="custom-select">
+                <option value="">Seleccionar</option>
+                @foreach (var bloque in BloquesHorario)
+                {
+                    <option value="@bloque.Id.ToString()">@bloque.Nombre</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => nuevoDetalle.BloqueHorarioId)" />
+        </div>
+
+        </EditForm>
+</div>
 
 @code {
+    // Modelo para enviar datos a la API. Es un DTO de Request.
+    public class DetalleHorarioVeterinarioRequest
+    {
+        public int VeterinarioId { get; set; }
+        public int DiaId { get; set; }
+        public int BloqueHorarioId { get; set; }
+    }
+    
+    // Asumiendo que tu API tiene endpoints para esto:
+    private List<Veterinario> Veterinarios;
+    private List<Dia> Dias;
+    private List<BloqueHorario> BloquesHorario;
 
-}
+    private DetalleHorarioVeterinarioRequest nuevoDetalle = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Llama a tus servicios para cargar los datos de los dropdowns
+        Veterinarios = await VeterinarioService.GetVeterinariosAsync();
+        Dias = await DiaService.GetDiasAsync();
+        BloquesHorario = await AgendaService.GetBloquesHorarioAsync(); // Asumiendo este mé todo
+    }
+
+    private async Task GuardarNuevoRegistro()
+    {
+        // Lógica para guardar el nuevo detalle en la API
+        await AgendaService.CreateDetalleHorarioAsync(nuevoDetalle);
+        Navigation.NavigateTo("/agenda");
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/agenda");
+    }
+}; *@
