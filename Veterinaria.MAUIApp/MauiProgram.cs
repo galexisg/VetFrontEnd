@@ -25,7 +25,7 @@ namespace Veterinaria.MAUIApp
             // HttpClient hacia tu API en IntelliJ
             builder.Services.AddScoped(sp => new HttpClient
             {
-                BaseAddress = new Uri("https://db50b2893d4e.ngrok-free.app")
+                BaseAddress = new Uri("http://localhost:8080/")
 
             });
 
@@ -41,12 +41,14 @@ namespace Veterinaria.MAUIApp
 
             builder.Services.AddSingleton<BloqueHorarioService>();
 
-            //agregar builder sobre lo que hare yo
-            builder.Services.AddSingleton<DispensaService>();
+            builder.Services.AddScoped<AlmacenService>();
+
 
 
             // También puedes registrar otros servicios si los necesitas
             builder.Services.AddScoped<UsuarioService>();
+            builder.Services.AddScoped<DispensaService>();
+
             //builder.Services.AddScoped<AlmacenService>();
             //builder.Services.AddScoped<LoteService>();
             //builder.Services.AddScoped<PrescripcionService>();

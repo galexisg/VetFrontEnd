@@ -28,7 +28,13 @@
     <div class="mt-4">
         <button @onclick="GoTodispensa" class="boton-verde">crear dispensa</button>
     </div>
+    <div class="mt-4">
+        <button @onclick="GoTodAlmacen" class="boton-verde">Gestionar Almacenes</button>
+    </div>
 </div>
+
+
+ 
 
 @code {
     private void Login()
@@ -55,5 +61,9 @@
     private void GoTodispensa()
     {
         navManager.NavigateTo("/dispensas/index");
+    }
+    private void GoTodAlmacen()
+    {
+        navManager.NavigateTo("/almacenes/index");
     }
 }

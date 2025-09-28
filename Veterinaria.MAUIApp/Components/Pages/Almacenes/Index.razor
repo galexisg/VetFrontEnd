@@ -1,7 +1,125 @@
 ﻿@page "/almacenes/index"
+@inject AlmacenService AlmacenService
+@inject IJSRuntime JS
 
-<h3>Index</h3>
+@inject NavigationManager Navigation
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Services
+
+<h3>Listado de almacenes</h3>
+
+<div class="mb-3">
+    <label>Filtrar por estado:</label>
+    <InputSelect @bind-Value="filtroEstado" class="form-select">
+        <option value="todos">Todos</option>
+        <option value="activos">Activos</option>
+        <option value="inactivos">Inactivos</option>
+    </InputSelect>
+</div>
+
+@if (almacenesFiltrados.Count == 0)
+{
+    <p>No hay almacenes disponibles.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Ubicación</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var a in almacenesFiltrados)
+            {
+                <tr>
+                    <td>@a.Nombre</td>
+                    <td>@a.Ubicacion</td>
+                    <td>
+                        <span class="badge @(a.Activo ? "bg-success" : "bg-danger")">
+                            @(a.Activo ? "Activo" : "Inactivo")
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-primary me-1" @onclick="@(() => Navigation.NavigateTo($"/almacenes/editar/{a.Id}"))">Editar</button>
+                        <button class="btn btn-sm @(a.Activo ? "btn-inactivar" : "btn-activar")"
+                                @onclick="@(() => ConfirmarCambioEstado(a.Id, !a.Activo))">
+                            <i class="bi @(a.Activo ? "bi-x-circle" : "bi-check-circle")"></i>
+                            @(a.Activo ? "Desactivar" : "Activar")
+                        </button>
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<button class="btn btn-success" @onclick="@(() => Navigation.NavigateTo("/almacenes/agregar"))">Agregar nuevo almacén</button>
 
 @code {
+    private List<AlmacenSalida> almacenes = new();
+    private List<AlmacenSalida> almacenesFiltrados = new();
+    private string filtroEstado = "todos";
 
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarAlmacenes();
+    }
+
+    private async Task CargarAlmacenes()
+    {
+        almacenes = await AlmacenService.ObtenerTodosAsync();
+        AplicarFiltro();
+    }
+    private async Task ConfirmarCambioEstado(int id, bool nuevoEstado)
+    {
+        var mensaje = nuevoEstado
+            ? "¿Está seguro que desea activar este almacén?"
+            : "⚠️ ¿Está seguro que desea desactivar este almacén? Esta acción puede afectar operaciones.";
+
+        var confirmado = await JS.InvokeAsync<bool>("confirm", mensaje);
+        if (confirmado)
+        {
+            var actualizado = await AlmacenService.CambiarEstadoAsync(id, nuevoEstado);
+            if (actualizado is not null)
+            {
+                await CargarAlmacenes();
+            }
+        }
+    }
+
+
+    private void AplicarFiltro()
+    {
+        almacenesFiltrados = filtroEstado switch
+        {
+            "activos" => almacenes.Where(a => a.Activo).ToList(),
+            "inactivos" => almacenes.Where(a => !a.Activo).ToList(),
+            _ => almacenes
+        };
+    }
+
+    private async Task CambiarEstado(int id, bool nuevoEstado)
+    {
+        var actualizado = await AlmacenService.CambiarEstadoAsync(id, nuevoEstado);
+        if (actualizado is not null)
+        {
+            await CargarAlmacenes();
+        }
+    }
+
+    private async Task OnParametersSetAsync()
+    {
+        AplicarFiltro();
+    }
+
+    private void OnFiltroEstadoChanged(ChangeEventArgs e)
+    {
+        filtroEstado = e.Value?.ToString() ?? "todos";
+        AplicarFiltro();
+    }
 }

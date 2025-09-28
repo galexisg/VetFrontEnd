@@ -1,77 +1,131 @@
 ﻿@page "/dispensas/index"
-@inject DispensaService DispensaService
-@inject NavigationManager Navigation
-
 @using Veterinaria.MAUIApp.Models
 @using Veterinaria.MAUIApp.Services
+@inject DispensaService DispensaService
+@inject NavigationManager Nav
+@inject IJSRuntime JSRuntime
 
+<link rel="stylesheet" href="css/dispensas.css" />
 
-<h3>Listado de Dispensas</h3>
+<div class="disp-container">
+    <div class="disp-header d-flex justify-content-between align-items-center mb-3">
+        <h2>Gestión de Dispensas</h2>
+        <button class="btn btn-outline-primary" @onclick="Nuevo">
+            <i class="bi bi-plus-circle me-2"></i> Nueva Dispensa
+        </button>
+    </div>
 
-@if (dispensas is null)
-{
-    <p>Cargando datos...</p>
-}
-else if (!dispensas.Any())
-{
-    <p>No hay dispensas registradas.</p>
-}
-else
-{
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Prescripción</th>
-                <th>Almacén</th>
-                <th>Lote</th>
-                <th>Cantidad</th>
-                <th>Fecha</th>
-                <th>Usuario</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var d in dispensas)
-            {
-                <tr>
-                    <td>@d.Id</td>
-                    <td>@d.PrescripcionDetalleId</td>
-                    <td>@d.AlmacenId</td>
-                    <td>@d.LoteId</td>
-                    <td>@d.Cantidad</td>
-                    <td>@d.Fecha.ToShortDateString()</td>
-                    <td>@d.UsuarioId</td>
-                    <td>
-                        <button class="btn btn-primary btn-sm" @onclick="@(() => Editar(d.Id))">Editar</button>
-                        <button class="btn btn-danger btn-sm" @onclick="@(() => Eliminar(d.Id))">Eliminar</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+    <div class="mb-3 d-flex gap-3 align-items-center">
+        <InputText @bind-Value="searchTerm" placeholder="Buscar por ID, prescripción, almacén, lote o usuario..." class="form-control w-50" />
+        <button class="btn btn-secondary" @onclick="Refrescar">Refrescar</button>
+    </div>
 
-<button class="btn btn-success" @onclick="Crear">Crear nueva dispensa</button>
+    @if (dispensas is null)
+    {
+        <div class="alert alert-info text-center">
+            <span class="spinner-border spinner-border-sm me-2"></span> Cargando datos...
+        </div>
+    }
+    else if (!dispensas.Any())
+    {
+        <div class="alert alert-warning text-center">
+            No hay dispensas registradas.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover disp-table">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Prescripción</th>
+                        <th>Almacén</th>
+                        <th>Lote</th>
+                        <th>Cantidad</th>
+                        <th>Fecha</th>
+                        <th>Usuario</th>
+                        <th>Estado</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var d in dispensasFiltradas)
+                    {
+                        <tr>
+                            <td>@d.Id</td>
+                            <td>@d.PrescripcionDetalleId</td>
+                            <td>@d.AlmacenNombre</td>   @* ✅ Solo nombre *@
+                            <td>@d.LoteId</td>
+                            <td>@d.Cantidad</td>
+                            <td>@d.Fecha.ToShortDateString()</td>
+                            <td>@d.UsuarioNombre</td>   @* ✅ Solo nombre *@
+                            <td>
+                                <span class="badge @(d.Cantidad > 0 ? "bg-success" : "bg-secondary")">
+                                    @(d.Cantidad > 0 ? "Activo" : "Inactivo")
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center gap-2 flex-wrap">
+                                    <button class="btn btn-sm btn-outline-primary" @onclick="() => Editar(d.Id)">
+                                        <i class="bi bi-pencil-square"></i> Editar
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" @onclick="() => Eliminar(d.Id)">
+                                        <i class="bi bi-trash"></i> Eliminar
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
 
 @code {
-    List<Dispensa_Salida>? dispensas;
+    private List<DispensaSalida>? dispensas;
+    private string searchTerm = string.Empty;
+
+    private IEnumerable<DispensaSalida> dispensasFiltradas =>
+        (dispensas ?? new List<DispensaSalida>())
+            .Where(d =>
+                string.IsNullOrWhiteSpace(searchTerm)
+                || d.Id.ToString().Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+                || d.PrescripcionDetalleId.ToString().Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+                || d.AlmacenNombre.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) // ✅ búsqueda por nombre
+                || d.LoteId.ToString().Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+                || d.UsuarioNombre.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) // ✅ búsqueda por nombre
+            );
 
     protected override async Task OnInitializedAsync()
     {
-        dispensas = await DispensaService.GetAllAsync();
+        await CargarDispensasAsync();
     }
 
-    void Crear() => Navigation.NavigateTo("/dispensas/crear");
-
-    void Editar(int id) => Navigation.NavigateTo($"/dispensas/editar/{id}");
-
-    async Task Eliminar(int id)
+    private async Task CargarDispensasAsync()
     {
-        var confirmado = await DispensaService.DeleteAsync(id);
-        if (confirmado)
+        dispensas = await DispensaService.ObtenerTodasAsync();
+        Console.WriteLine($"Dispensas cargadas: {dispensas?.Count ?? 0}");
+    }
+
+    private void Nuevo() => Nav.NavigateTo("/dispensas/agregar");
+    private void Editar(int id) => Nav.NavigateTo($"/dispensas/editar/{id}");
+    private async Task Refrescar() => await CargarDispensasAsync();
+
+    private async Task Eliminar(int id)
+    {
+        var confirmado = await JSRuntime.InvokeAsync<bool>("confirm", $"¿Seguro que deseas eliminar la dispensa {id}?");
+        if (!confirmado) return;
+
+        var ok = await DispensaService.EliminarAsync(id);
+        if (ok)
         {
-            dispensas = await DispensaService.GetAllAsync();
+            await CargarDispensasAsync();
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "No se pudo eliminar la dispensa.");
         }
     }
 }

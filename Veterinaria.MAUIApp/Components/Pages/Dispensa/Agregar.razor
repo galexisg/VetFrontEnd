@@ -1,8 +1,10 @@
 ﻿@page "/dispensas/agregar"
+@inject DispensaService DispensaService
+@inject UsuarioService UsuarioService
+@inject AlmacenService AlmacenService
+@inject NavigationManager Navigation
 @using Veterinaria.MAUIApp.Models
 @using Veterinaria.MAUIApp.Services
-@inject DispensaService DispensaService
-@inject NavigationManager Navigation
 
 <h3>Crear nueva dispensa</h3>
 
@@ -14,25 +16,42 @@
         <label>Prescripción:</label>
         <InputNumber @bind-Value="modelo.PrescripcionDetalleId" class="form-control" />
     </div>
+
     <div class="mb-2">
         <label>Almacén:</label>
-        <InputNumber @bind-Value="modelo.AlmacenId" class="form-control" />
+        <InputSelect @bind-Value="modelo.AlmacenId" class="form-control">
+            <option value="">-- Seleccione un almacén --</option>
+            @foreach (var almacen in almacenes)
+            {
+                <option value="@almacen.Id">@almacen.Nombre</option>
+            }
+        </InputSelect>
     </div>
+
     <div class="mb-2">
         <label>Lote:</label>
         <InputNumber @bind-Value="modelo.LoteId" class="form-control" />
     </div>
+
     <div class="mb-2">
         <label>Cantidad:</label>
         <InputNumber @bind-Value="modelo.Cantidad" class="form-control" />
     </div>
+
     <div class="mb-2">
         <label>Fecha:</label>
         <InputDate @bind-Value="modelo.Fecha" class="form-control" />
     </div>
+
     <div class="mb-2">
         <label>Usuario:</label>
-        <InputNumber @bind-Value="modelo.UsuarioId" class="form-control" />
+        <InputSelect @bind-Value="modelo.UsuarioId" class="form-control">
+            <option value="">-- Seleccione un usuario --</option>
+            @foreach (var usuario in usuarios)
+            {
+                <option value="@usuario.Id">@usuario.NombreCompleto</option>
+            }
+        </InputSelect>
     </div>
 
     <button type="submit" class="btn btn-success">Guardar</button>
@@ -40,16 +59,28 @@
 </EditForm>
 
 @code {
-    private Dispensa_Guardar modelo = new() { Fecha = DateTime.Today };
+    private DispensaGuardar modelo = new() { Fecha = DateTime.Today };
+    private List<UsuarioRes> usuarios = new();
+    private List<AlmacenSalida> almacenes = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        usuarios = await UsuarioService.GetUsuariosAsync();
+        almacenes = await AlmacenService.ObtenerTodosAsync();
+    }
 
     private async Task Guardar()
     {
-        var resultado = await DispensaService.CreateAsync(modelo);
+        var resultado = await DispensaService.CrearAsync(modelo);
         if (resultado is not null)
         {
-            Navigation.NavigateTo("/dispensas");
+            Navigation.NavigateTo("/dispensas/index");
+        }
+        else
+        {
+            Console.WriteLine("❌ Error al crear la dispensa");
         }
     }
 
-    private void Cancelar() => Navigation.NavigateTo("/dispensas");
+    private void Cancelar() => Navigation.NavigateTo("/dispensas/index");
 }

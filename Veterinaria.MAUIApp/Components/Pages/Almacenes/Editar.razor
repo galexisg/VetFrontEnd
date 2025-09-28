@@ -1,7 +1,75 @@
-﻿@page "/almacenes/editar"
+﻿@page "/almacenes/editar/{Id:int}"
+@inject AlmacenService AlmacenService
+@inject NavigationManager Navigation
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Services
 
-<h3>Editar</h3>
+
+<h3>Editar almacén</h3>
+
+@if (modelo is null)
+{
+    <p>Cargando datos...</p>
+}
+else
+{
+    <EditForm Model="modelo" OnValidSubmit="Actualizar">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label>Nombre:</label>
+            <InputText @bind-Value="modelo.Nombre" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label>Ubicación:</label>
+            <InputText @bind-Value="modelo.Ubicacion" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label>Activo:</label>
+            <InputCheckbox @bind-Value="modelo.Activo" class="form-check-input" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Actualizar</button>
+        <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+    </EditForm>
+}
 
 @code {
+    [Parameter] public int Id { get; set; }
+    private AlmacenActualizar? modelo;
 
+    protected override async Task OnInitializedAsync()
+    {
+        var original = await AlmacenService.ObtenerPorIdAsync(Id);
+        if (original is not null)
+        {
+            modelo = new AlmacenActualizar
+                {
+                    Nombre = original.Nombre,
+                    Ubicacion = original.Ubicacion,
+                    Activo = original.Activo
+                };
+        }
+    }
+
+    private async Task Actualizar()
+    {
+        if (modelo is not null)
+        {
+            var resultado = await AlmacenService.EditarAsync(Id, modelo);
+            if (resultado is not null)
+            {
+                Navigation.NavigateTo("/almacenes/index");
+            }
+            else
+            {
+                Console.WriteLine("❌ Error al actualizar almacén");
+            }
+        }
+    }
+
+    private void Cancelar() => Navigation.NavigateTo("/almacenes/index");
 }

@@ -1,5 +1,4 @@
-﻿using System.Net.Http;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using Veterinaria.MAUIApp.Models;
 
 namespace Veterinaria.MAUIApp.Services
@@ -7,63 +6,125 @@ namespace Veterinaria.MAUIApp.Services
     public class DispensaService
     {
         private readonly HttpClient _http;
-        private const string Endpoint = "api/dispensas";
 
-        public DispensaService(HttpClient http)
+        public DispensaService(HttpClient httpClient)
         {
-            _http = http;
+            _http = httpClient;
         }
 
-        public async Task<List<Dispensa_Salida>> GetAllAsync()
+        // ✅ Obtener todas las dispensas
+        public async Task<List<DispensaSalida>> ObtenerTodasAsync()
         {
-            return await _http.GetFromJsonAsync<List<Dispensa_Salida>>($"{Endpoint}/lista")
-                   ?? new List<Dispensa_Salida>();
+            try
+            {
+                var response = await _http.GetAsync("api/dispensas/lista");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadFromJsonAsync<List<DispensaSalida>>()
+                           ?? new List<DispensaSalida>();
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    return new List<DispensaSalida>();
+                }
+                else
+                {
+                    throw new HttpRequestException($"Error al obtener dispensas: {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al llamar API: {ex.Message}");
+                return new List<DispensaSalida>();
+            }
         }
 
-        public async Task<Dispensa_Salida?> GetByIdAsync(int id)
+        // ✅ Obtener una dispensa por ID
+        public async Task<DispensaSalida?> ObtenerPorIdAsync(int id)
         {
-            return await _http.GetFromJsonAsync<Dispensa_Salida>($"{Endpoint}/{id}");
+            try
+            {
+                return await _http.GetFromJsonAsync<DispensaSalida>($"api/dispensas/{id}");
+            }
+            catch
+            {
+                return null;
+            }
         }
 
-        public async Task<List<Dispensa_Salida>> GetByPrescripcionAsync(int prescripcionDetalleId)
+        // ✅ Crear nueva dispensa (usa DTO de guardar)
+        public async Task<DispensaSalida?> CrearAsync(DispensaGuardar dto)
         {
-            return await _http.GetFromJsonAsync<List<Dispensa_Salida>>($"{Endpoint}/prescripcion/{prescripcionDetalleId}")
-                   ?? new List<Dispensa_Salida>();
-        }
-
-        public async Task<List<Dispensa_Salida>> GetByAlmacenAsync(int almacenId)
-        {
-            return await _http.GetFromJsonAsync<List<Dispensa_Salida>>($"{Endpoint}/almacen/{almacenId}")
-                   ?? new List<Dispensa_Salida>();
-        }
-
-        public async Task<List<Dispensa_Salida>> GetByFechaAsync(DateTime fecha)
-        {
-            string fechaStr = fecha.ToString("yyyy-MM-dd");
-            return await _http.GetFromJsonAsync<List<Dispensa_Salida>>($"{Endpoint}/fecha/{fechaStr}")
-                   ?? new List<Dispensa_Salida>();
-        }
-
-        public async Task<Dispensa_Salida?> CreateAsync(Dispensa_Guardar dto)
-        {
-            var response = await _http.PostAsJsonAsync(Endpoint, dto);
+            var response = await _http.PostAsJsonAsync("api/dispensas", dto);
             return response.IsSuccessStatusCode
-                ? await response.Content.ReadFromJsonAsync<Dispensa_Salida>()
+                ? await response.Content.ReadFromJsonAsync<DispensaSalida>()
                 : null;
         }
 
-        public async Task<Dispensa_Salida?> UpdateAsync(int id, Dispensa_Actualizar dto)
+        // ✅ Editar dispensa existente (usa DTO de actualizar)
+        public async Task<DispensaSalida?> EditarAsync(int id, DispensaActualizar dto)
         {
-            var response = await _http.PutAsJsonAsync($"{Endpoint}/{id}", dto);
+            var response = await _http.PutAsJsonAsync($"api/dispensas/{id}", dto);
             return response.IsSuccessStatusCode
-                ? await response.Content.ReadFromJsonAsync<Dispensa_Salida>()
+                ? await response.Content.ReadFromJsonAsync<DispensaSalida>()
                 : null;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        // ✅ Eliminar una dispensa
+        public async Task<bool> EliminarAsync(int id)
         {
-            var response = await _http.DeleteAsync($"{Endpoint}/{id}");
+            var response = await _http.DeleteAsync($"api/dispensas/{id}");
             return response.IsSuccessStatusCode;
         }
+
+        // ✅ Filtrar por prescripción
+        public async Task<List<DispensaSalida>> ObtenerPorPrescripcionAsync(int prescripcionDetalleId)
+        {
+            try
+            {
+                var response = await _http.GetAsync($"api/dispensas/prescripcion/{prescripcionDetalleId}");
+                if (response.IsSuccessStatusCode)
+                    return await response.Content.ReadFromJsonAsync<List<DispensaSalida>>() ?? new List<DispensaSalida>();
+                return new List<DispensaSalida>();
+            }
+            catch { return new List<DispensaSalida>(); }
+        }
+
+        // ✅ Filtrar por almacén
+        public async Task<List<DispensaSalida>> ObtenerPorAlmacenAsync(int almacenId)
+        {
+            try
+            {
+                var response = await _http.GetAsync($"api/dispensas/almacen/{almacenId}");
+                if (response.IsSuccessStatusCode)
+                    return await response.Content.ReadFromJsonAsync<List<DispensaSalida>>() ?? new List<DispensaSalida>();
+                return new List<DispensaSalida>();
+            }
+            catch { return new List<DispensaSalida>(); }
+        }
+
+        // ✅ Filtrar por fecha
+        public async Task<List<DispensaSalida>> ObtenerPorFechaAsync(DateTime fecha)
+        {
+            try
+            {
+                var response = await _http.GetAsync($"api/dispensas/fecha/{fecha:yyyy-MM-dd}");
+                if (response.IsSuccessStatusCode)
+                    return await response.Content.ReadFromJsonAsync<List<DispensaSalida>>() ?? new List<DispensaSalida>();
+                return new List<DispensaSalida>();
+            }
+            catch { return new List<DispensaSalida>(); }
+        }
+    }
+
+    // 🔹 Clase de soporte por si tu backend devuelve paginación
+    public class ApiPageResponse<T>
+    {
+        public List<T> Content { get; set; } = new();
+        public int TotalPages { get; set; }
+        public int TotalElements { get; set; }
+        public int Number { get; set; }
+        public int Size { get; set; }
     }
 }

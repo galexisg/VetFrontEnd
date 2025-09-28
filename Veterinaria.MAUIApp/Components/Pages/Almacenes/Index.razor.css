@@ -1,0 +1,57 @@
+﻿body {
+    background-color: #ffffff;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Botones personalizados */
+.btn-agregar {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-editar {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-activar {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-inactivar {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Etiquetas de estado */
+.badge {
+    font-size: 0.75rem;
+    padding: 0.4em 0.6em;
+    border-radius: 0.5rem;
+}
+
+.bg-success {
+    background-color: #28a745 !important;
+}
+
+.bg-danger {
+    background-color: #dc3545 !important;
+}
+
+/* Responsive tabla */
+@media (max-width: 576px) {
+    table {
+        font-size: 0.85rem;
+    }
+
+    .table td,
+    .table th {
+        padding: 0.4rem;
+    }
+
+    .btn {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.6rem;
+    }
+}

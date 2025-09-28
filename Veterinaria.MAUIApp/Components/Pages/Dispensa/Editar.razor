@@ -1,8 +1,10 @@
 ﻿@page "/dispensas/editar/{Id:int}"
+@inject DispensaService DispensaService
+@inject UsuarioService UsuarioService
+@inject AlmacenService AlmacenService
+@inject NavigationManager Navigation
 @using Veterinaria.MAUIApp.Models
 @using Veterinaria.MAUIApp.Services
-@inject DispensaService DispensaService
-@inject NavigationManager Navigation
 
 <h3>Editar dispensa</h3>
 
@@ -20,25 +22,50 @@ else
             <label>Prescripción:</label>
             <InputNumber @bind-Value="modelo.PrescripcionDetalleId" class="form-control" />
         </div>
+
         <div class="mb-3">
             <label>Almacén:</label>
-            <InputNumber @bind-Value="modelo.AlmacenId" class="form-control" />
+            <InputSelect @bind-Value="modelo.AlmacenId" class="form-control">
+                <option value="">-- Seleccione un almacén --</option>
+                @foreach (var almacen in almacenes)
+                {
+                    <option value="@almacen.Id">@almacen.Nombre</option>
+                }
+            </InputSelect>
+            @if (!string.IsNullOrWhiteSpace(modelo.AlmacenNombre))
+            {
+                <small class="text-muted">Actual: @modelo.AlmacenNombre</small>
+            }
         </div>
+
         <div class="mb-3">
             <label>Lote:</label>
             <InputNumber @bind-Value="modelo.LoteId" class="form-control" />
         </div>
+
         <div class="mb-3">
             <label>Cantidad:</label>
             <InputNumber @bind-Value="modelo.Cantidad" class="form-control" />
         </div>
+
         <div class="mb-3">
             <label>Fecha:</label>
             <InputDate @bind-Value="modelo.Fecha" class="form-control" />
         </div>
+
         <div class="mb-3">
             <label>Usuario:</label>
-            <InputNumber @bind-Value="modelo.UsuarioId" class="form-control" />
+            <InputSelect @bind-Value="modelo.UsuarioId" class="form-control">
+                <option value="">-- Seleccione un usuario --</option>
+                @foreach (var usuario in usuarios)
+                {
+                    <option value="@usuario.Id">@usuario.NombreCompleto</option>
+                }
+            </InputSelect>
+            @if (!string.IsNullOrWhiteSpace(modelo.UsuarioNombre))
+            {
+                <small class="text-muted">Actual: @modelo.UsuarioNombre</small>
+            }
         </div>
 
         <button type="submit" class="btn btn-primary">Actualizar</button>
@@ -48,23 +75,31 @@ else
 
 @code {
     [Parameter] public int Id { get; set; }
-
-    private Dispensa_Actualizar? modelo;
+    private DispensaActualizar? modelo;
+    private List<UsuarioRes> usuarios = new();
+    private List<AlmacenSalida> almacenes = new();
 
     protected override async Task OnInitializedAsync()
     {
-        var original = await DispensaService.GetByIdAsync(Id);
+        var original = await DispensaService.ObtenerPorIdAsync(Id);
+        usuarios = await UsuarioService.GetUsuariosAsync();
+        almacenes = await AlmacenService.ObtenerTodosAsync();
+
         if (original is not null)
         {
-            modelo = new Dispensa_Actualizar
-            {
-                PrescripcionDetalleId = original.PrescripcionDetalleId,
-                AlmacenId = original.AlmacenId,
-                LoteId = original.LoteId,
-                Cantidad = original.Cantidad,
-                Fecha = original.Fecha,
-                UsuarioId = original.UsuarioId
-            };
+            modelo = new DispensaActualizar
+                {
+                    PrescripcionDetalleId = original.PrescripcionDetalleId,
+                    LoteId = original.LoteId,
+                    Cantidad = original.Cantidad,
+                    Fecha = original.Fecha,
+                    AlmacenNombre = original.AlmacenNombre,
+                    UsuarioNombre = original.UsuarioNombre,
+
+                // Si puedes mapear el nombre al ID, hazlo aquí
+                    AlmacenId = almacenes.FirstOrDefault(a => a.Nombre == original.AlmacenNombre)?.Id ?? 0,
+                    UsuarioId = usuarios.FirstOrDefault(u => u.NombreCompleto == original.UsuarioNombre)?.Id ?? 0
+                };
         }
     }
 
@@ -72,13 +107,17 @@ else
     {
         if (modelo is not null)
         {
-            var resultado = await DispensaService.UpdateAsync(Id, modelo);
+            var resultado = await DispensaService.EditarAsync(Id, modelo);
             if (resultado is not null)
             {
-                Navigation.NavigateTo("/dispensas");
+                Navigation.NavigateTo("/dispensas/index");
+            }
+            else
+            {
+                Console.WriteLine("❌ Error al actualizar la dispensa");
             }
         }
     }
 
-    private void Cancelar() => Navigation.NavigateTo("/dispensas");
+    private void Cancelar() => Navigation.NavigateTo("/dispensas/index");
 }
