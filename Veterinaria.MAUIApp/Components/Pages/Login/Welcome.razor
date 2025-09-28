@@ -24,6 +24,10 @@
         <div class="mt-4">
         <button @onclick="GoTocrearagenda" class="boton-verde">crear agenda de Veterinarios</button>
     </div>
+
+    <div class="mt-4">
+        <button @onclick="GoTodispensa" class="boton-verde">crear dispensa</button>
+    </div>
 </div>
 
 @code {
@@ -47,5 +51,9 @@
     private void GoTocrearagenda()
     {
         navManager.NavigateTo("/horarios/detalle/crear");
+    }
+    private void GoTodispensa()
+    {
+        navManager.NavigateTo("/dispensas/index");
     }
 }

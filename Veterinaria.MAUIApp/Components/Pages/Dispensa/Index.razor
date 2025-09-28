@@ -1,7 +1,77 @@
-﻿@page "/dispensa/index"
+﻿@page "/dispensas/index"
+@inject DispensaService DispensaService
+@inject NavigationManager Navigation
 
-<h3>Index</h3>
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Services
+
+
+<h3>Listado de Dispensas</h3>
+
+@if (dispensas is null)
+{
+    <p>Cargando datos...</p>
+}
+else if (!dispensas.Any())
+{
+    <p>No hay dispensas registradas.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Prescripción</th>
+                <th>Almacén</th>
+                <th>Lote</th>
+                <th>Cantidad</th>
+                <th>Fecha</th>
+                <th>Usuario</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var d in dispensas)
+            {
+                <tr>
+                    <td>@d.Id</td>
+                    <td>@d.PrescripcionDetalleId</td>
+                    <td>@d.AlmacenId</td>
+                    <td>@d.LoteId</td>
+                    <td>@d.Cantidad</td>
+                    <td>@d.Fecha.ToShortDateString()</td>
+                    <td>@d.UsuarioId</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" @onclick="@(() => Editar(d.Id))">Editar</button>
+                        <button class="btn btn-danger btn-sm" @onclick="@(() => Eliminar(d.Id))">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<button class="btn btn-success" @onclick="Crear">Crear nueva dispensa</button>
 
 @code {
+    List<Dispensa_Salida>? dispensas;
 
+    protected override async Task OnInitializedAsync()
+    {
+        dispensas = await DispensaService.GetAllAsync();
+    }
+
+    void Crear() => Navigation.NavigateTo("/dispensas/crear");
+
+    void Editar(int id) => Navigation.NavigateTo($"/dispensas/editar/{id}");
+
+    async Task Eliminar(int id)
+    {
+        var confirmado = await DispensaService.DeleteAsync(id);
+        if (confirmado)
+        {
+            dispensas = await DispensaService.GetAllAsync();
+        }
+    }
 }

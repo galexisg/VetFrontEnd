@@ -1,7 +1,84 @@
-﻿@page "/dispensa/editar"
+﻿@page "/dispensas/editar/{Id:int}"
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Services
+@inject DispensaService DispensaService
+@inject NavigationManager Navigation
 
-<h3>Editar</h3>
+<h3>Editar dispensa</h3>
+
+@if (modelo is null)
+{
+    <p>Cargando datos...</p>
+}
+else
+{
+    <EditForm Model="modelo" OnValidSubmit="Actualizar">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label>Prescripción:</label>
+            <InputNumber @bind-Value="modelo.PrescripcionDetalleId" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label>Almacén:</label>
+            <InputNumber @bind-Value="modelo.AlmacenId" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label>Lote:</label>
+            <InputNumber @bind-Value="modelo.LoteId" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label>Cantidad:</label>
+            <InputNumber @bind-Value="modelo.Cantidad" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label>Fecha:</label>
+            <InputDate @bind-Value="modelo.Fecha" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label>Usuario:</label>
+            <InputNumber @bind-Value="modelo.UsuarioId" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Actualizar</button>
+        <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+    </EditForm>
+}
 
 @code {
+    [Parameter] public int Id { get; set; }
 
+    private Dispensa_Actualizar? modelo;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var original = await DispensaService.GetByIdAsync(Id);
+        if (original is not null)
+        {
+            modelo = new Dispensa_Actualizar
+            {
+                PrescripcionDetalleId = original.PrescripcionDetalleId,
+                AlmacenId = original.AlmacenId,
+                LoteId = original.LoteId,
+                Cantidad = original.Cantidad,
+                Fecha = original.Fecha,
+                UsuarioId = original.UsuarioId
+            };
+        }
+    }
+
+    private async Task Actualizar()
+    {
+        if (modelo is not null)
+        {
+            var resultado = await DispensaService.UpdateAsync(Id, modelo);
+            if (resultado is not null)
+            {
+                Navigation.NavigateTo("/dispensas");
+            }
+        }
+    }
+
+    private void Cancelar() => Navigation.NavigateTo("/dispensas");
 }

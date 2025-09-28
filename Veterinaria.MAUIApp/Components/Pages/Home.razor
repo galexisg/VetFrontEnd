@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@* @page "/Home"
 @inject NavigationManager Nav
 
 
@@ -51,6 +51,19 @@
             </div>
         </div>
 
+        <div class="col-12 col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-box-seam display-4 text-info"></i>
+                    <h5 class="card-title mt-3">Dispensas</h5>
+                    <p class="card-text">Gestiona el registro y control de dispensas</p>
+                    <button class="btn btn-outline-info w-100" @onclick='() => Nav.NavigateTo("/dispensas/index")'>
+                        Ir a dispensas
+                    </button>
+                </div>
+            </div>
+        </div>
 
     </div>
 </div>
+ *@

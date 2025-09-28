@@ -1,0 +1,102 @@
+﻿/* Estilo general para la página de inicio */
+body {
+    background-color: #f5f8fa;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Título principal */
+h1.display-5 {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+p.lead {
+    color: #555;
+}
+
+/* Tarjetas */
+.card {
+    border-radius: 10px;
+    transition: transform 0.2s ease-in-out;
+}
+
+    .card:hover {
+        transform: scale(1.02);
+    }
+
+.card-body i {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.card-title {
+    font-weight: 600;
+    color: #333;
+}
+
+.card-text {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Botones */
+.btn {
+    font-weight: 500;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+.btn-outline-primary {
+    border-color: #3498db;
+    color: #3498db;
+}
+
+    .btn-outline-primary:hover {
+        background-color: #3498db;
+        color: white;
+    }
+
+.btn-outline-success {
+    border-color: #27ae60;
+    color: #27ae60;
+}
+
+    .btn-outline-success:hover {
+        background-color: #27ae60;
+        color: white;
+    }
+
+.btn-outline-warning {
+    border-color: #f39c12;
+    color: #f39c12;
+}
+
+    .btn-outline-warning:hover {
+        background-color: #f39c12;
+        color: white;
+    }
+
+.btn-outline-info {
+    border-color: #17a2b8;
+    color: #17a2b8;
+}
+
+    .btn-outline-info:hover {
+        background-color: #17a2b8;
+        color: white;
+    }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .card-body i {
+        font-size: 2.5rem;
+    }
+
+    .card-title {
+        font-size: 16px;
+    }
+
+    .card-text {
+        font-size: 13px;
+    }
+}
