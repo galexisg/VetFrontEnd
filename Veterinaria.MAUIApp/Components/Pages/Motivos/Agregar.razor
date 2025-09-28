@@ -1,0 +1,169 @@
+﻿@page "/motivos/agregar"
+@inject MotivoService MotivoService
+@inject NavigationManager Nav
+
+<div class="contenedor">
+
+    <!-- Header minimal -->
+    <div class="page-header">
+        <button type="button" class="back-chip" @onclick="Volver" title="Volver">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M15 6l-6 6 6 6" />
+            </svg>
+        </button>
+
+        <div class="d-grid gap-1">
+            <div class="page-title">Nuevo motivo</div>
+            <div class="page-subtitle">Gestiona el registro y control</div>
+        </div>
+    </div>
+
+    <!-- Card del formulario -->
+    <div class="card-list mt-3" style="margin-bottom:96px;">
+        <div class="d-grid gap-2">
+            <label class="titulo">Nombre</label>
+            <!-- Validación visual sólo si el usuario intentó guardar (submitted) -->
+            <input class="input @(submitted && NombreInvalid ? "invalid" : "")"
+                   placeholder="Ingresa un nombre completo"
+                   @bind="nombre"
+                   @bind:event="oninput" />
+
+            @if (submitted && NombreInvalid)
+            {
+                <!-- Mensaje de validación tardío (al guardar) -->
+                <small class="validation-message">@NombreErrorMessage</small>
+            }
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(error))
+        {
+            <!-- Tarjeta de error por respuesta HTTP o excepciones -->
+            <div class="card-list mt-3" style="border:1px solid #ffd5d5;background:#fff7f7;color:#b32121">
+                <strong>@errorTitle:</strong> @error
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Barra de acciones fija (estilo iOS) -->
+<div class="action-bar">
+    <div class="action-bar-inner">
+        <button type="button" class="boton-card" @onclick="Volver">Cancelar</button>
+
+        <button type="button"
+                class="boton-verde"
+                disabled="@(isBusy)"
+                @onclick="Guardar">
+            @(isBusy ? "Guardando…" : "Guardar cambios")
+        </button>
+    </div>
+</div>
+
+<!-- Modal de éxito -->
+@if (showSuccess)
+{
+    <div class="modal-backdrop" @onclick="CloseSuccess">
+        <div class="modal-card" @onclick:stopPropagation="true">
+            <div class="modal-header">
+                <div class="modal-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M20 6L9 17l-5-5" />
+                    </svg>
+                </div>
+                <h3 class="modal-title">Motivo creado</h3>
+                <p class="modal-subtitle">Se registró el motivo correctamente.</p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary-soft" @onclick="Volver">Aceptar</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private string nombre = string.Empty;
+
+    // Estado de UI
+    private bool isBusy = false;
+    private bool showSuccess = false;
+    private bool submitted = false;
+
+    // UI de error HTTP/Exception
+    private string? error;
+    private string errorTitle = "No se pudo crear el motivo";
+
+    // Validación: se muestra cuando submitted == true
+    private bool NombreInvalid =>
+        string.IsNullOrWhiteSpace(nombre) || nombre.Trim().Length < 3;
+
+    private string NombreErrorMessage =>
+        string.IsNullOrWhiteSpace(nombre)
+            ? "Ingresa el nombre."
+            : "Debe tener al menos 3 caracteres.";
+
+    private bool FormValido => !NombreInvalid;
+
+    private async Task Guardar()
+    {
+        submitted = true;         // Activa mensajes de validación
+        StateHasChanged();        // Fuerza re-render para mostrar errores
+        if (!FormValido || isBusy) return;
+
+        isBusy = true;
+        error = null;
+
+        try
+        {
+            // Llamada al backend
+            var res = await MotivoService.CrearAsync(new Motivo { Nombre = nombre.Trim() });
+            if (res.IsSuccessStatusCode)
+            {
+                showSuccess = true; // Popup de éxito
+                return;
+            }
+
+            // Manejo fino por status (fallback seguro)
+            var status = (int)res.StatusCode;
+            var content = await SafeReadAsync(res);
+
+            switch (status)
+            {
+                case 400: errorTitle = "Datos inválidos"; error = FirstNonEmpty(content, "Revisa el nombre ingresado."); break;
+                case 409: errorTitle = "Conflicto"; error = FirstNonEmpty(content, "Ya existe un motivo con ese nombre."); break;
+                case 401:
+                case 403: errorTitle = "Sin permisos"; error = "No tienes autorización para realizar esta acción."; break;
+                default: errorTitle = "Error del servidor"; error = FirstNonEmpty(content, $"Código {status}. Intenta nuevamente."); break;
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            // Típico de red: muestra un título claro
+            errorTitle = "Problema de conexión";
+            error = $"No se pudo contactar al servidor. {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            // Fallback genérico
+            errorTitle = "Error inesperado";
+            error = ex.Message;
+        }
+        finally
+        {
+            isBusy = false;
+        }
+    }
+
+    // Helpers para leer contenido del error sin lanzar otra excepción
+    private static async Task<string> SafeReadAsync(HttpResponseMessage res)
+    {
+        try { var s = await res.Content.ReadAsStringAsync(); return string.IsNullOrWhiteSpace(s) ? string.Empty : s.Trim(); }
+        catch { return string.Empty; }
+    }
+
+    private static string FirstNonEmpty(params string[] texts)
+        => texts.FirstOrDefault(t => !string.IsNullOrWhiteSpace(t)) ?? string.Empty;
+
+    private void CloseSuccess() => showSuccess = false;
+
+    private void Volver() => Nav.NavigateTo("/motivos");
+}

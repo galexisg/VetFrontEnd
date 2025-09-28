@@ -1,42 +1,168 @@
 ﻿@page "/servicios/agregar"
-@using Veterinaria.MAUIApp.Services
-@using Veterinaria.MAUIApp.Models.Dtos
+@using System.ComponentModel.DataAnnotations
 @inject ServicioService ServicioService
-@inject NavigationManager Navigation
+@inject NavigationManager Nav
 
-<h3>Agregar Nuevo Servicio</h3>
+<div class="contenedor">
 
-<div class="card">
-    <div class="card-body">
-        <div class="mb-2">
-            <label class="form-label">Nombre:</label>
-            <input @bind="nuevoServicio.Nombre" class="form-control" placeholder="Nombre del servicio" />
+    <!-- Header -->
+    <div class="page-header">
+        <button type="button" class="back-chip" @onclick="Volver" title="Volver">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M15 6l-6 6 6 6" />
+            </svg>
+        </button>
+
+        <div class="d-grid gap-1">
+            <div class="page-title">Nuevo Servicio</div>
+            <div class="page-subtitle">Gestiona el registro y control</div>
         </div>
-        <div class="mb-2">
-            <label class="form-label">Descripción:</label>
-            <input @bind="nuevoServicio.Descripcion" class="form-control" placeholder="Descripción breve" />
-        </div>
-        <div class="mb-2">
-            <label class="form-label">Precio Base:</label>
-            <input type="number" @bind="nuevoServicio.PrecioBase" class="form-control" />
-        </div>
-        <button class="btn btn-primary" @onclick="GuardarServicio">Guardar</button>
-        <button class="btn btn-link" @onclick="Cancelar">Cancelar</button>
     </div>
+
+    <!-- EditForm + DataAnnotations = validación declarativa y mensajes automáticos -->
+    <EditForm Model="modelo" OnValidSubmit="Guardar">
+        <DataAnnotationsValidator />
+        <div class="card-list mt-3">
+            <div class="d-grid gap-2">
+
+                <label class="titulo" for="nombre">Nombre</label>
+                <InputText id="nombre" class="input" placeholder="Ingresa un nombre completo"
+                           @bind-Value="modelo.Nombre" />
+                <ValidationMessage For="() => modelo.Nombre" />
+
+                <label class="titulo" for="desc">Descripción</label>
+                <InputText id="desc" class="input" placeholder="Descripción"
+                           @bind-Value="modelo.Descripcion" />
+                <ValidationMessage For="() => modelo.Descripcion" />
+
+                <label class="titulo" for="precio">Precio</label>
+                <InputNumber id="precio" class="input" @bind-Value="modelo.PrecioBase"
+                             step="0.01" />
+                <small class="descripcion">Ejemplo: 19.99</small>
+                <ValidationMessage For="() => modelo.PrecioBase" />
+
+                <label class="titulo" for="estado">Estado</label>
+                <InputSelect id="estado" class="input" @bind-Value="modelo.Estado">
+                    <option value="ACTIVO">Activo</option>
+                    <option value="INACTIVO">Inactivo</option>
+                </InputSelect>
+                <ValidationMessage For="() => modelo.Estado" />
+
+                @if (!string.IsNullOrEmpty(error))
+                {
+                    <!-- Mensaje de fallo al crear: no bloquea el form -->
+                    <div class="card-list mt-2" style="border:1px solid #ffd5d5;background:#fff7f7;color:#b32121">
+                        @error
+                    </div>
+                }
+
+                <div class="d-flex justify-content-between mt-2">
+                    <button type="button" class="boton-card" @onclick="Volver" disabled="@isBusy">Cancelar</button>
+                    <button type="submit" class="boton-verde" disabled="@isBusy">
+                        @(isBusy ? "Guardando…" : "Guardar")
+                    </button>
+                </div>
+            </div>
+        </div>
+    </EditForm>
 </div>
 
-@code {
-    // Esta variable ya se inicializa, por lo que no da advertencias.
-    private ServicioRequest nuevoServicio = new();
+<!-- Popup de Éxito (top-sheet) -->
+@if (showSuccess)
+{
+    <!-- Nota: con click en backdrop también se cierra -->
+    <div class="modal-backdrop" @onclick="CloseSuccess">
+        <div class="modal-card" @onclick:stopPropagation="true">
+            <div class="modal-header">
+                <div class="modal-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M20 6L9 17l-5-5" />
+                    </svg>
+                </div>
+                <h3 class="modal-title">¡Servicio creado!</h3>
+                <p class="modal-subtitle">El servicio se registró correctamente.</p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary-soft" @onclick="IrServicios">Ir a servicios</button>
+            </div>
+        </div>
+    </div>
+}
 
-    private async Task GuardarServicio()
+@code {
+    // ViewModel desacoplado del dominio: más control sobre validación/UI
+    private ServicioForm modelo = new() { Estado = EstadoServicio.ACTIVO };
+    private string? error;
+    private bool isBusy = false;
+    private bool showSuccess = false;
+
+    private async Task Guardar()
     {
-        var creado = await ServicioService.Guardar(nuevoServicio);
-        if (creado != null)
+        // OnValidSubmit garantiza que sólo entra si pasa validaciones de DataAnnotations
+        error = null;
+        if (isBusy) return;
+        isBusy = true;
+
+        try
         {
-            Navigation.NavigateTo("/servicios");
+            // Map a tu modelo/DTO del backend
+            var dto = new Servicio
+            {
+                Nombre = modelo.Nombre!.Trim(),
+                Descripcion = string.IsNullOrWhiteSpace(modelo.Descripcion) ? null : modelo.Descripcion!.Trim(),
+                PrecioBase = modelo.PrecioBase,
+                Estado = modelo.Estado
+            };
+
+            var res = await ServicioService.CrearAsync(dto);
+            if (!res.IsSuccessStatusCode)
+            {
+                // Feedback no feliz, pero sin romper el flujo
+                error = $"No se pudo crear el servicio. Código: {(int)res.StatusCode}";
+                return;
+            }
+
+            // Muestra modal de éxito; luego navegamos (auto o con botón)
+            showSuccess = true;
         }
+        catch (Exception ex)
+        {
+            // Tip: si usas ILogger, regístralo además de mostrar el mensaje
+            error = ex.Message;
+        }
+        finally
+        {
+            isBusy = false;
+        }
+
+        // Navegación diferida (suave): da tiempo a ver el popup
+        _ = Task.Delay(1600).ContinueWith(_ => InvokeAsync(IrServicios));
     }
 
-    private void Cancelar() => Navigation.NavigateTo("/servicios");
+    private void CloseSuccess() => showSuccess = false;
+    private void IrServicios()
+    {
+        showSuccess = false;
+        Nav.NavigateTo("/servicios");
+    }
+
+    private void Volver() => Nav.NavigateTo("/servicios");
+
+    // ViewModel con DataAnnotations: controla texto y límites en UI
+    public class ServicioForm
+    {
+        [Required(ErrorMessage = "Ingresa el nombre.")]
+        [StringLength(100, ErrorMessage = "Máximo 100 caracteres.")]
+        public string? Nombre { get; set; }
+
+        [StringLength(200, ErrorMessage = "Máximo 200 caracteres.")]
+        public string? Descripcion { get; set; }
+
+        [Required(ErrorMessage = "Ingresa el precio.")]
+        [Range(typeof(decimal), "0.01", "9999999", ErrorMessage = "El precio debe ser mayor a 0.")]
+        public decimal? PrecioBase { get; set; }
+
+        [Required(ErrorMessage = "Selecciona el estado.")]
+        public EstadoServicio Estado { get; set; } = EstadoServicio.ACTIVO;
+    }
 }

@@ -29,8 +29,10 @@ namespace Veterinaria.MAUIApp
 
 
             /*Añadir servicios*/
-            builder.Services.AddScoped<ServicioService>();
             builder.Services.AddScoped<MotivoService>();
+            builder.Services.AddScoped<ServicioService>();
+
+
 
 
             return builder.Build();

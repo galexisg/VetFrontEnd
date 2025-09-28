@@ -1,0 +1,100 @@
+﻿@page "/motivos"
+@inject MotivoService MotivoService
+@inject NavigationManager Nav
+
+<!-- Header minimal: consistente con el resto del sistema -->
+<div class="page-header">
+    <button type="button" class="back-chip" @onclick="Volver" title="Volver">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M15 6l-6 6 6 6" />
+        </svg>
+    </button>
+
+    <div class="d-grid gap-1">
+        <div class="page-title">Motivos</div>
+        <div class="page-subtitle">Gestiona el registro y control</div>
+    </div>
+</div>
+
+@if (lista is null)
+{
+    <!-- Estado de carga inicial -->
+    <div class="loading-message">Cargando motivos...</div>
+}
+else
+{
+    <div class="d-grid gap-3">
+
+        <!-- CTA “Nuevo motivo”: patrón tarjeta tappable -->
+        <div class="card-list d-flex gap-3 align-items-center card-tappable" @onclick="NuevoMotivo">
+            <div class="icon-chip">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 6v12M6 12h12" />
+                </svg>
+            </div>
+            <div class="d-grid gap-1">
+                <p class="titulo mb-0">Nuevo motivo</p>
+                <div class="descripcion">Agrega un nuevo motivo</div>
+            </div>
+        </div>
+
+        <!-- Toolbar (buscador): filtra en memoria, no golpea API -->
+        <div class="filter-toolbar card-list">
+            <div class="input-wrap">
+                <svg class="input-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7"></circle>
+                    <path d="M20 20l-3.2-3.2"></path>
+                </svg>
+                <input class="input input-ghost"
+                       type="text"
+                       placeholder="Buscar motivos..."
+                       @bind="q" @bind:event="oninput" />
+            </div>
+        </div>
+
+        <!-- Lista filtrada -->
+        @if (listaFiltrada.Any())
+        {
+            @foreach (var m in listaFiltrada)
+            {
+                <!-- Cada item navega a editar; chevron visualiza affordance -->
+                <div class="card-list d-flex align-items-center card-tappable"
+                     @onclick="() => EditarMotivo(m.Id)">
+                    <div class="d-grid gap-1 flex-grow-1">
+                        <p class="titulo mb-0">@m.Nombre</p>
+                    </div>
+
+                    <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M9 6l6 6-6 6" />
+                    </svg>
+                </div>
+            }
+        }
+        else
+        {
+            <!-- Vacío por filtro -->
+            <div class="descripcion mt-2">No se encontraron motivos con el filtro.</div>
+        }
+    </div>
+}
+
+@code {
+    private List<Motivo>? lista;
+    private string q = string.Empty;
+
+    // Proyección: si no hay texto, muestra todo; si hay, filtra por nombre (case-insensitive)
+    private IEnumerable<Motivo> listaFiltrada => string.IsNullOrWhiteSpace(q)
+        ? (lista ?? Enumerable.Empty<Motivo>())
+        : (lista ?? Enumerable.Empty<Motivo>())
+            .Where(x => (x.Nombre ?? string.Empty).Contains(q, StringComparison.OrdinalIgnoreCase));
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Carga simple. Mejora opcional: try/catch + tarjeta de error como en /servicios
+        lista = await MotivoService.ListarAsync();
+    }
+
+    private void NuevoMotivo() => Nav.NavigateTo("/motivos/agregar");
+    private void EditarMotivo(short id) => Nav.NavigateTo($"/motivos/editar/{id}");
+    private void Volver() => Nav.NavigateTo("/servicios");
+}
