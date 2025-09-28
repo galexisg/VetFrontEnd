@@ -67,6 +67,12 @@ namespace Veterinaria.MAUIApp.Services
             var response = await _http.PutAsync($"api/veterinarios/{id}/inactivar", null);
             return response.IsSuccessStatusCode;
         }
+        // Obtener inactivos
+        public async Task<List<VeterinarioSalidaRes>> GetInactivosAsync()
+        {
+            return await _http.GetFromJsonAsync<List<VeterinarioSalidaRes>>("api/veterinarios/inactivos")
+                   ?? new List<VeterinarioSalidaRes>();
+        }
 
         public async Task<List<EspecialidadSalidaRes>> GetEspecialidadesAsync()
         {

@@ -1,77 +1,96 @@
 ﻿@page "/veterinarios/agregar"
+@using Veterinaria.MAUIApp.Services
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Models.Dtos
 @inject VeterinarioService veterinarioService
 @inject UsuarioService usuarioService
 @inject EspecialidadService especialidadService
 @inject ServicioService servicioService
 @inject NavigationManager nav
-@using Veterinaria.MAUIApp.Services
-@using Veterinaria.MAUIApp.Models
-@using Veterinaria.MAUIApp.Models.Dtos
-@using static Veterinaria.MAUIApp.Models.Servicio
 
-<h3>Registrar Nuevo Veterinario</h3>
-    <link rel="stylesheet" href="css/veterinarios.css" />
+<link rel="stylesheet" href="css/veterinarios.css" />
 
-<EditForm Model="nuevoVeterinario" OnValidSubmit="GuardarVeterinario">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">
+                <i class="bi bi-plus-circle me-2"></i> Registrar Nuevo Veterinario
+            </h5>
+        </div>
+        <div class="card-body">
+            <EditForm Model="nuevoVeterinario" OnValidSubmit="GuardarVeterinario">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
 
-    <div class="mb-3">
-        <label class="form-label">Número de Licencia</label>
-        <InputText class="form-control" @bind-Value="nuevoVeterinario.NumeroLicencia" />
-    </div>
+                <!-- Número de licencia -->
+                <div class="mb-3">
+                    <label class="form-label">Número de Licencia</label>
+                    <InputText class="form-control" @bind-Value="nuevoVeterinario.NumeroLicencia" />
+                </div>
 
-    <div class="mb-3">
-        <label class="form-label">Usuario</label>
-        <select class="form-select" @bind="nuevoVeterinario.UsuarioId">
-            <option value="">-- Selecciona un usuario --</option>
-            @foreach (var user in usuarios)
+                <!-- Usuario -->
+                <div class="mb-3">
+                    <label class="form-label">Usuario</label>
+                    <select class="form-select" @bind="nuevoVeterinario.UsuarioId">
+                        <option value="">-- Selecciona un usuario --</option>
+                        @foreach (var user in usuarios)
+                        {
+                            <option value="@user.Id">@user.NombreCompleto</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Especialidad -->
+                <div class="mb-3">
+                    <label class="form-label">Especialidad</label>
+                    <select class="form-select" @bind="nuevoVeterinario.EspecialidadId">
+                        <option value="">-- Selecciona una especialidad --</option>
+                        @foreach (var esp in especialidades)
+                        {
+                            <option value="@esp.EspecialidadId">@esp.Nombre</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Servicio -->
+                <div class="mb-3">
+                    <label class="form-label">Servicio</label>
+                    <select class="form-select" @bind="nuevoVeterinario.ServicioId">
+                        <option value="">-- Selecciona un servicio --</option>
+                        @foreach (var serv in servicios)
+                        {
+                            <option value="@serv.Id">@serv.Nombre</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Botones -->
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-circle me-1"></i> Guardar
+                    </button>
+                    <button type="button" class="btn btn-secondary" @onclick="Cancelar">
+                        <i class="bi bi-x-circle me-1"></i> Cancelar
+                    </button>
+                </div>
+            </EditForm>
+
+            <!-- Validaciones de carga -->
+            @if (usuarios.Count == 0)
             {
-                    <option value="@user.Id">@user.NombreCompleto</option>
+                <div class="alert alert-danger mt-3">⚠️ No se cargaron usuarios.</div>
             }
-        </select>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Especialidad</label>
-        <select class="form-select" @bind="nuevoVeterinario.EspecialidadId">
-            <option value="">-- Selecciona una especialidad --</option>
-            @foreach (var esp in especialidades)
+            @if (especialidades.Count == 0)
             {
-                    <option value="@esp.EspecialidadId">@esp.Nombre</option>
+                <div class="alert alert-danger mt-3">⚠️ No se cargaron especialidades.</div>
             }
-        </select>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Servicio</label>
-        <select class="form-select" @bind="nuevoVeterinario.ServicioId">
-            <option value="">-- Selecciona un servicio --</option>
-            @foreach (var serv in servicios)
+            @if (servicios.Count == 0)
             {
-                    <option value="@serv.Id">@serv.Nombre</option>
+                <div class="alert alert-danger mt-3">⚠️ No se cargaron servicios.</div>
             }
-        </select>
+        </div>
     </div>
-
-    <div class="d-flex gap-2">
-        <button type="submit" class="btn btn-success">Guardar</button>
-        <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
-    </div>
-</EditForm>
-
-@if (usuarios.Count == 0)
-{
-        <div class="alert alert-danger mt-3">⚠️ No se cargaron usuarios.</div>
-}
-@if (especialidades.Count == 0)
-{
-        <div class="alert alert-danger mt-3">⚠️ No se cargaron especialidades.</div>
-}
-@if (servicios.Count == 0)
-{
-        <div class="alert alert-danger mt-3">⚠️ No se cargaron servicios.</div>
-}
+</div>
 
 @code {
     private VeterinarioGuardarReq nuevoVeterinario = new();
@@ -85,7 +104,7 @@
         {
             usuarios = await usuarioService.GetUsuariosAsync();
             especialidades = await especialidadService.GetActivasAsync();
-            servicios = await servicioService.ObtenerActivosAsync(); // ← actualizado aquí
+            servicios = await servicioService.ObtenerActivosAsync();
         }
         catch (Exception ex)
         {
@@ -110,5 +129,4 @@
     {
         nav.NavigateTo("/");
     }
-
 }

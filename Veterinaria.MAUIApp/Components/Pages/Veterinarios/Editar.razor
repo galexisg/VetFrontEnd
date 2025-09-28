@@ -1,11 +1,12 @@
 ﻿@page "/veterinarios/editar/{Id:int}"
 @using Veterinaria.MAUIApp.Models
 @using Veterinaria.MAUIApp.Models.Dtos
-@inject Veterinaria.MAUIApp.Services.VeterinarioService VetService
-@inject Veterinaria.MAUIApp.Services.UsuarioService UsuarioService
-@inject Veterinaria.MAUIApp.Services.EspecialidadService EspecialidadService
-@inject Veterinaria.MAUIApp.Services.ServicioService ServicioService
-@inject NavigationManager Nav
+@inject Veterinaria.MAUIApp.Services.VeterinarioService veterinarioService
+@inject Veterinaria.MAUIApp.Services.UsuarioService usuarioService
+@inject Veterinaria.MAUIApp.Services.EspecialidadService especialidadService
+@inject Veterinaria.MAUIApp.Services.ServicioService servicioService
+@inject NavigationManager nav
+
 <link rel="stylesheet" href="css/veterinarios.css" />
 
 <div class="container mt-4">
@@ -14,7 +15,7 @@
             <h5 class="mb-0">Editar Veterinario @modelo?.Id</h5>
         </div>
         <div class="card-body">
-            @if (modelo is null || usuarios is null || especialidades is null || servicios is null)
+            @if (modelo is null || usuarios.Count == 0 || especialidades.Count == 0 || servicios.Count == 0)
             {
                 <div class="alert alert-info text-center">
                     <span class="spinner-border spinner-border-sm me-2"></span> Cargando datos...
@@ -27,13 +28,13 @@
                     <ValidationSummary />
 
                     <div class="mb-3">
-                        <label class="form-label">Número de Licencia:</label>
+                        <label class="form-label">Número de Licencia</label>
                         <InputText @bind-Value="modelo.NumeroLicencia" class="form-control" />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Usuario:</label>
-                        <InputSelect @bind-Value="modelo.UsuarioId" class="form-control">
+                        <label class="form-label">Usuario</label>
+                        <InputSelect @bind-Value="modelo.UsuarioId" class="form-select">
                             @foreach (var u in usuarios)
                             {
                                 <option value="@u.Id">@u.NombreCompleto</option>
@@ -42,8 +43,8 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Especialidad:</label>
-                        <InputSelect @bind-Value="modelo.EspecialidadId" class="form-control">
+                        <label class="form-label">Especialidad</label>
+                        <InputSelect @bind-Value="modelo.EspecialidadId" class="form-select">
                             @foreach (var esp in especialidades)
                             {
                                 <option value="@esp.EspecialidadId">@esp.Nombre</option>
@@ -52,8 +53,8 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Servicio:</label>
-                        <InputSelect @bind-Value="modelo.ServicioId" class="form-control">
+                        <label class="form-label">Servicio</label>
+                        <InputSelect @bind-Value="modelo.ServicioId" class="form-select">
                             @foreach (var srv in servicios)
                             {
                                 <option value="@srv.Id">@srv.Nombre</option>
@@ -62,8 +63,8 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Estado:</label>
-                        <InputSelect @bind-Value="modelo.Estado" class="form-control">
+                        <label class="form-label">Estado</label>
+                        <InputSelect @bind-Value="modelo.Estado" class="form-select">
                             <option value="Activo">Activo</option>
                             <option value="Inactivo">Inactivo</option>
                         </InputSelect>
@@ -71,10 +72,10 @@
 
                     <div class="d-flex justify-content-end gap-2">
                         <button type="submit" class="btn btn-success">
-                            <i class="bi bi-check-circle me-1"></i> Guardar
+                            Guardar
                         </button>
                         <button type="button" class="btn btn-secondary" @onclick="Cancelar">
-                            <i class="bi bi-x-circle me-1"></i> Cancelar
+                            Cancelar
                         </button>
                     </div>
                 </EditForm>
@@ -83,34 +84,54 @@
     </div>
 </div>
 
+@if (usuarios.Count == 0)
+{
+    <div class="alert alert-danger mt-3">⚠️ No se cargaron usuarios.</div>
+}
+@if (especialidades.Count == 0)
+{
+    <div class="alert alert-danger mt-3">⚠️ No se cargaron especialidades.</div>
+}
+@if (servicios.Count == 0)
+{
+    <div class="alert alert-danger mt-3">⚠️ No se cargaron servicios.</div>
+}
+
 @code {
     [Parameter] public int Id { get; set; }
 
-    private VeterinarioModificarReq? modelo; // ← ESTA ES LA VARIABLE QUE FALTABA
-    private List<UsuarioRes>? usuarios;
-    private List<EspecialidadSalidaRes>? especialidades;
-    private List<ServicioRes>? servicios;
+    private VeterinarioModificarReq? modelo;
+    private List<UsuarioRes> usuarios = new();
+    private List<EspecialidadSalidaRes> especialidades = new();
+    private List<ServicioRes> servicios = new();
 
     protected override async Task OnInitializedAsync()
     {
-        usuarios = await UsuarioService.GetUsuariosAsync();
-        especialidades = await EspecialidadService.GetActivasAsync();
-        servicios = await ServicioService.ObtenerActivosAsync();
-
-        var lista = await VetService.GetAllAsync();
-        var actual = lista.FirstOrDefault(x => x.Id == Id);
-
-        if (actual is not null)
+        try
         {
-            modelo = new VeterinarioModificarReq
-                {
-                    Id = actual.Id,
-                    NumeroLicencia = actual.NumeroLicencia,
-                    UsuarioId = actual.Usuario.Id,
-                    EspecialidadId = especialidades.FirstOrDefault(e => e.Nombre == actual.Especialidad)?.EspecialidadId ?? 0,
-                    ServicioId = servicios.FirstOrDefault(s => s.Nombre == actual.Servicio)?.Id ?? 0,
-                    Estado = actual.Estado
-                };
+            usuarios = await usuarioService.GetUsuariosAsync();
+            especialidades = await especialidadService.GetActivasAsync();
+            servicios = await servicioService.ObtenerActivosAsync();
+
+            var lista = await veterinarioService.GetAllAsync();
+            var actual = lista.FirstOrDefault(x => x.Id == Id);
+
+            if (actual is not null)
+            {
+                modelo = new VeterinarioModificarReq
+                    {
+                        Id = actual.Id,
+                        NumeroLicencia = actual.NumeroLicencia,
+                        UsuarioId = actual.Usuario.Id,
+                        EspecialidadId = especialidades.FirstOrDefault(e => e.Nombre == actual.Especialidad)?.EspecialidadId ?? 0,
+                        ServicioId = servicios.FirstOrDefault(s => s.Nombre == actual.Servicio)?.Id ?? 0,
+                        Estado = actual.Estado
+                    };
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar datos: {ex.Message}");
         }
     }
 
@@ -118,11 +139,16 @@
     {
         if (modelo is not null)
         {
-            var actualizado = await VetService.UpdateAsync(Id, modelo);
+            var actualizado = await veterinarioService.UpdateAsync(Id, modelo);
             if (actualizado is not null)
-                Nav.NavigateTo("/veterinarios/index", forceLoad: true);
+                nav.NavigateTo("/veterinarios/index", forceLoad: true);
+            else
+                Console.WriteLine("Error al actualizar veterinario.");
         }
     }
 
-    private void Cancelar() => Nav.NavigateTo("/");
+    private void Cancelar()
+    {
+        nav.NavigateTo("/");
+    }
 }
