@@ -1,4 +1,6 @@
 ﻿@page "/facturas/index"
+@using Veterinaria.MAUIApp.Models
+@inject Veterinaria.MAUIApp.Services.FacturaService FacturaService
 @inject NavigationManager Nav
 
 <div class="contenedor">
@@ -22,40 +24,119 @@
     <!-- Buscador -->
     <div class="input-container" style="display:flex;gap:12px;align-items:center;">
         <div style="position:relative;flex:1;">
-            <input class="input" placeholder="Buscar facturas..." />
+            <input class="input"
+                   placeholder="Buscar por #, cliente o estado..."
+                   @bind="q" @bind:event="oninput" />
             <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#5D5D5D;">🔍</span>
         </div>
+        <button class="boton-verde" @onclick="Refrescar">Refrescar</button>
     </div>
 
-    <!-- Lista (mock visual) -->
-    @foreach (var f in MockFacturas)
+    @if (cargando)
     {
-        <div style="background:var(--blanco);border:1px solid var(--borde);border-radius:12px;padding:12px;margin-bottom:12px;">
-            <p class="titulo" style="margin-bottom:4px;">@f.Nombre</p>
-            <p class="descripcion" style="margin-bottom:12px;">$@f.Total</p>
-
-            <div style="display:flex;gap:8px;">
-                <button class="boton-verde" style="flex:1;"
-                        @onclick="@(() => Nav.NavigateTo($"/facturas/{f.Id}/detalles/agregar"))">
-                    Agregar detalle
-                </button>
-                <button class="boton-verde" style="flex:1;"
-                        @onclick="@(() => Nav.NavigateTo($"/facturas/{f.Id}/pago/agregar"))">
-                    Agregar pago
-                </button>
-            </div>
-        </div>
+        <p class="descripcion">Cargando…</p>
     }
+    else if (!string.IsNullOrWhiteSpace(error))
+    {
+        <div class="alert alert-danger">@error</div>
+    }
+    else if (facturasFiltradas is null || facturasFiltradas.Count == 0)
+    {
+        <p class="descripcion">No hay facturas pendientes.</p>
+    }
+    else
+    {
+        @foreach (var f in facturasFiltradas)
+        {
+            <div style="background:var(--blanco);border:1px solid var(--borde);border-radius:12px;padding:12px;margin-bottom:12px;">
+                <p class="titulo" style="margin-bottom:4px;">Factura #@f.Id</p>
+                <p class="descripcion" style="margin-bottom:6px;">
+                    <b>Cliente:</b> @f.ClienteId &nbsp;•&nbsp; <b>Estado:</b> @f.Estado
+                </p>
+                <p class="descripcion" style="margin-bottom:12px;">
+                    <b>Total:</b> $@f.Total.ToString("0.00") &nbsp;•&nbsp;
+                    <b>Saldo:</b> $@f.Saldo.ToString("0.00") &nbsp;•&nbsp;
+                    <b>Fecha:</b> @f.FechaCreacion.ToString("yyyy-MM-dd HH:mm")
+                </p>
 
+                <div style="display:flex;gap:8px;">
+                    <button class="boton-verde" style="flex:1;"
+                            @onclick="@(() => Nav.NavigateTo($"/facturas/{f.Id}/detalles/agregar"))">
+                        Agregar detalle
+                    </button>
+                    <button class="boton-verde" style="flex:1;"
+                            @onclick="@(() => Nav.NavigateTo($"/facturas/pago/agregar/{f.Id}"))">
+                        Agregar pago
+                    </button>
+                    <button class="boton-verde" style="flex:1;"
+                            @onclick="@(() => Nav.NavigateTo($"/facturas/editar/{f.Id}"))">
+                        Ver/Editar
+                    </button>
+                </div>
+            </div>
+        }
+    }
 </div>
 
 @code {
-    // Solo para mostrar UI en el listado
-    private record Card(int Id, string Nombre, string Total);
-    private List<Card> MockFacturas = new()
+    // estado UI
+    bool cargando = true;
+    string? error;
+
+    // buscador (al asignar, aplica filtro)
+    private string _q = "";
+    private string q
     {
-        new(1,"Jose Miguel Herrera Gonzalez","15.50"),
-        new(2,"Jose Miguel Herrera Gonzalez","15.50"),
-        new(3,"Jose Miguel Herrera Gonzalez","15.50"),
-    };
+        get => _q;
+        set { _q = value; AplicarFiltro(); }
+    }
+
+    // datos
+    List<FacturaDTO>? facturas;           // crudas desde API
+    List<FacturaDTO>? facturasFiltradas;  // aplicando búsqueda
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarPendientes();
+    }
+
+    private async Task CargarPendientes()
+    {
+        cargando = true;
+        error = null;
+        try
+        {
+            // Usamos el endpoint que sí devuelve datos en tu backend
+            facturas = await FacturaService.ObtenerFacturasPorEstado("PENDIENTE");
+            AplicarFiltro();
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+            facturas = new();
+            facturasFiltradas = new();
+        }
+        finally
+        {
+            cargando = false;
+            StateHasChanged();
+        }
+    }
+
+    private Task Refrescar() => CargarPendientes();
+
+    private void AplicarFiltro()
+    {
+        var term = (_q ?? "").Trim().ToLowerInvariant();
+
+        facturasFiltradas = (facturas ?? new())
+            .Where(f =>
+                string.IsNullOrEmpty(term) ||
+                f.Id.ToString().Contains(term) ||
+                f.ClienteId.ToString().Contains(term) ||
+                (f.Estado ?? "").ToLowerInvariant().Contains(term)
+            )
+            .OrderByDescending(f => f.Id)
+            .ToList();
+    }
 }
