@@ -1,4 +1,4 @@
-﻿@page "/razas/agregar"
+﻿@* @page "/razas/editar/{Id:byte}"
 @using Veterinaria.MAUIApp.Models
 @using Veterinaria.MAUIApp.Services
 @inject RazaService razaService
@@ -9,48 +9,54 @@
 
 <div class="container mt-4">
     <div class="card shadow-sm">
-        <div class="card-header bg-success text-white">
+        <div class="card-header bg-warning text-dark">
             <h5 class="mb-0">
-                <i class="bi bi-plus-circle me-2"></i> Nueva Raza
+                <i class="bi bi-pencil-square me-2"></i> Editar Raza @modelo?.Id
             </h5>
         </div>
         <div class="card-body">
-            @if (especies is null)
+            @if (cargando)
             {
                 <div class="alert alert-info text-center">
-                    <span class="spinner-border spinner-border-sm me-2"></span> Cargando especies...
+                    <span class="spinner-border spinner-border-sm me-2"></span> Cargando datos...
+                </div>
+            }
+            else if (modelo is null)
+            {
+                <div class="alert alert-danger text-center">
+                    Error: no se encontró la raza.
                 </div>
             }
             else
             {
-                <EditForm Model="nuevoRaza" OnValidSubmit="GuardarRaza">
+                <EditForm Model="modelo" OnValidSubmit="GuardarCambios">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
 
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Nombre</label>
-                            <InputText class="form-control" @bind-Value="nuevoRaza.Nombre" />
-                            <ValidationMessage For="@(() => nuevoRaza.Nombre)" />
+                            <InputText class="form-control" @bind-Value="modelo.Nombre" />
+                            <ValidationMessage For="@(() => modelo.Nombre)" />
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label">Especie</label>
                             <InputSelect class="form-select"
-                                         @bind-Value="nuevoRaza.EspecieId"
+                                         @bind-Value="modelo.EspecieId"
                                          @onchange="OnEspecieChanged">
-                                <option value="">-- Selecciona especie --</option>
+                                <option value="0">-- Selecciona especie --</option>
                                 @foreach (var e in especies)
                                 {
                                     <option value="@e.EspecieId">@e.Nombre</option>
                                 }
                             </InputSelect>
-                            <ValidationMessage For="@(() => nuevoRaza.EspecieId)" />
+                            <ValidationMessage For="@(() => modelo.EspecieId)" />
                         </div>
                     </div>
 
                     <div class="d-flex justify-content-end gap-2 mt-4">
-                        <button type="submit" class="btn btn-success">
+                        <button type="submit" class="btn btn-warning text-dark">
                             <i class="bi bi-check-circle me-1"></i> Guardar
                         </button>
                         <button type="button" class="btn btn-secondary" @onclick="Cancelar">
@@ -62,7 +68,7 @@
                 @if (guardadoExitoso)
                 {
                     <div class="alert alert-success mt-3 text-center">
-                        <i class="bi bi-check-circle me-1"></i> Raza guardada con éxito.
+                        <i class="bi bi-check-circle me-1"></i> Cambios guardados.
                     </div>
                 }
             }
@@ -71,40 +77,68 @@
 </div>
 
 @code {
-    private RazaGuardarReq nuevoRaza = new();
+    [Parameter] public byte Id { get; set; }
+
+    private RazaModificarReq? modelo;
     private List<EspecieRes>? especies;
+    private bool cargando = true;
     private bool guardadoExitoso;
 
     protected override async Task OnInitializedAsync()
     {
-        especies = await especieService.ListarAsync();
+        try
+        {
+            especies = await especieService.ListarAsync();
+
+            var datos = await razaService.ObtenerPorIdAsync(Id);
+            if (datos is not null)
+            {
+                modelo = new RazaModificarReq
+                    {
+                        Id = datos.Id,
+                        Nombre = datos.Nombre,
+                        EspecieId = datos.EspecieId,   // si es 0 → se mostrará "Selecciona especie"
+                        EspecieNombre = datos.EspecieNombre
+                    };
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error cargando datos: {ex.Message}");
+        }
+        finally
+        {
+            cargando = false;
+        }
     }
 
     private void OnEspecieChanged(ChangeEventArgs args)
     {
         if (byte.TryParse(args.Value?.ToString(), out var id)
-            && especies?.Any(e => e.EspecieId == id) == true)
+            && especies?.Any(e => e.EspecieId == id) == true
+            && modelo is not null)
         {
-            nuevoRaza.EspecieNombre = especies.First(e => e.EspecieId == id).Nombre;
+            modelo.EspecieNombre = especies.First(e => e.EspecieId == id).Nombre;
         }
     }
 
-    private async Task GuardarRaza()
+    private async Task GuardarCambios()
     {
-        var sel = especies?.FirstOrDefault(e => e.EspecieId == nuevoRaza.EspecieId);
-        if (sel is not null)
-        {
-            nuevoRaza.EspecieNombre = sel.Nombre;
-        }
+        if (modelo is null) return;
 
-        var respuesta = await razaService.CrearAsync(nuevoRaza);
+        var sel = especies?.FirstOrDefault(e => e.EspecieId == modelo.EspecieId);
+        if (sel is not null)
+            modelo.EspecieNombre = sel.Nombre;
+
+        var respuesta = await razaService.EditarAsync(Id, modelo);
         if (respuesta is not null)
         {
             guardadoExitoso = true;
             await Task.Delay(1500);
-            nav.NavigateTo("/razas/indexmascotas");
+            nav.NavigateTo("/razas/indexmascotas", forceLoad: true);
         }
     }
 
     private void Cancelar() => nav.NavigateTo("/razas/indexmascotas");
 }
+ *@

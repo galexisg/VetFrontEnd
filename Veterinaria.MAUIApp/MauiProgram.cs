@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Veterinaria.MAUIApp.Models;
+using Veterinaria.MAUIApp.Services;
 
 namespace Veterinaria.MAUIApp
 {
@@ -8,6 +9,7 @@ namespace Veterinaria.MAUIApp
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
+
             builder
                 .UseMauiApp<App>()
                 .ConfigureFonts(fonts =>
@@ -22,15 +24,21 @@ namespace Veterinaria.MAUIApp
             builder.Logging.AddDebug();
 #endif
 
-            builder.Services.AddScoped(http => new HttpClient
+            // Instanciar HttpClient una sola vez
+            var httpClient = new HttpClient
             {
                 BaseAddress = new Uri("http://localhost:8080/") // <-- usar HTTP
-            });
+            };
 
-            builder.Logging.AddDebug();
+            // Registrar el HttpClient como un singleton
+            builder.Services.AddSingleton(httpClient);
 
-            builder.Services.AddScoped<Veterinaria.MAUIApp.Services.MotivoCitaService>();
-
+            // Registrar servicios
+            builder.Services.AddScoped<MotivoCitaService>();
+            builder.Services.AddScoped<DiaService>();
+            builder.Services.AddScoped<EstadoDiaService>();
+            builder.Services.AddSingleton<AgendaService>();
+            builder.Services.AddSingleton<BloqueHorarioService>();
 
             return builder.Build();
         }

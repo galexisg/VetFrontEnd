@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Veterinaria.MAUIApp.Models
 {
-    internal class EstadoDia
+    public class EstadoDia
     {
+        public int EstadoDiaId { get; set; }
+        public string Estado { get; set; } = string.Empty;
     }
 }

@@ -1,7 +1,64 @@
-﻿@page "/facturas/detalles/agregar"
+﻿@page "/facturas/{id:int}/detalles/agregar"
+@inject NavigationManager Nav
+@code { [Parameter] public int id { get; set; } }
 
-<h3>Agregar</h3>
+    <div class="contenedor">
+        <div class="status-bar-safe-area"></div>
+        <header class="mb-4">
+            <p class="titulo">Detalle de la factura</p>
+            <p class="descripcion">Gestiona el registro y control</p>
+        </header>
 
-@code {
+        <div class="input-container">
+            <label class="label">Servicio</label>
+            <input class="input" placeholder="Ingresa un nombre" />
+        </div>
 
-}
+        <div class="input-container">
+            <label class="label">Tratamiento</label>
+            <input class="input" placeholder="Ingresa un tratamiento" />
+        </div>
+
+        <div class="input-container">
+            <label class="label">Descripción</label>
+            <input class="input" placeholder="Ingresa una descripción" />
+        </div>
+
+        <div class="input-container">
+            <label class="label">Cantidad</label>
+            <input class="input" inputmode="numeric" placeholder="Ingresa una cantidad" />
+        </div>
+
+        <div class="input-container">
+            <label class="label">Precio unitario</label>
+            <input class="input" inputmode="decimal" placeholder="Ingresa un precio" />
+        </div>
+
+        <div class="input-container">
+            <label class="label">Descuento (Opcional)</label>
+            <input class="input" inputmode="decimal" placeholder="Puedes ingresar un descuento" />
+        </div>
+
+        <div class="input-container">
+            <label class="label">Subtotal</label>
+            <input class="input" inputmode="decimal" placeholder="Ingresa el subtotal" />
+        </div>
+
+        <button class="boton-verde" style="width:100%;margin-bottom:16px;"
+                @onclick="@(() => Nav.NavigateTo($"/facturas"))">
+            Agregar detalle
+        </button>
+
+        <!-- mock de items agregados -->
+        <div style="background:var(--blanco);border:1px solid var(--borde);border-radius:12px;padding:12px;margin-bottom:12px;">
+            <p class="titulo" style="margin-bottom:4px;">Servicio de baño & Antibiótico Amoxicilina</p>
+            <p class="descripcion" style="margin-bottom:8px;">Servicio y tratamiento aplicados después de la cita realizada.</p>
+            <p class="titulo" style="margin-bottom:12px;">$23.50</p>
+            <button class="boton-negro" style="width:100%;">Eliminar detalle</button>
+        </div>
+
+        <div class="acciones-footer">
+            <button type="button" class="boton-negro" @onclick="@(() => Nav.NavigateTo("/facturas"))">Cancelar</button>
+            <button type="button" class="boton-verde" @onclick="@(() => Nav.NavigateTo("/facturas"))">Guardar cambios</button>
+        </div>
+    </div>

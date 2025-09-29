@@ -1,7 +1,72 @@
-﻿@page "/horarios/bloquehorario/index"
+﻿@page "/bloqueshorario"
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Services
+@inject BloqueHorarioService BloqueHorarioService
+@inject NavigationManager NavManager
 
-<h3>Index</h3>
+<div class="page-container">
+	<div class="header">
+		<div class="mt-4">
+			<button @onclick="atras" class="boton-verde">atras</button>
+		</div>
+		<div class="header-content">
+			<h1>Bloques de Horario</h1>
+			<p>Listado de los bloques de tiempo disponibles.</p>
+		</div>
+	</div>
+	<div class="mt-4">
+		<button @onclick="Crear" class="boton-verde">Crear Nuevo Horario</button>
+	</div>
+		<div class="mt-4">
+		<button @onclick="dias" class="boton-verde">Administrar dias</button>
+	</div>
+	<div class="content">
+		@if (bloquesHorario == null)
+		{
+			<div class="loading-container">
+				<p><em>Cargando bloques de horario...</em></p>
+			</div>
+		}
+		else if (bloquesHorario.Count == 0)
+		{
+			<div class="empty-state">
+				<p>No se encontraron bloques de horario.</p>
+			</div>
+		}
+		else
+		{
+			<div class="horarios-list">
+				@foreach (var bloque in bloquesHorario)
+				{
+					<div class="horario-item">
+						<div class="horario-info">
+							<h4>@bloque.Inicio.ToString(@"hh\:mm") - @bloque.Fin.ToString(@"hh\:mm")</h4>
+							<p>ID: @bloque.BloqueHorarioId</p>
+						</div>
+					</div>
+				}
+			</div>
+		}
+	</div>
+</div>
 
 @code {
+	private List<BloqueHorario> bloquesHorario;
 
+	protected override async Task OnInitializedAsync()
+	{
+		bloquesHorario = await BloqueHorarioService.GetBloquesHorarioAsync();
+	}
+	private void Crear()
+	{
+		NavManager.NavigateTo("/bloqueshorario/crear");
+	}
+		private void atras()
+	{
+		NavManager.NavigateTo("/agenda");
+	}
+	private void dias()
+	{
+		NavManager.NavigateTo("/test-dia");
+	}
 }

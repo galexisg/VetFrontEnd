@@ -1,7 +1,81 @@
-﻿@page "/horarios/bloquehorario/agregar"
+﻿@page "/bloqueshorario/crear"
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Services
+@inject BloqueHorarioService BloqueHorarioService
+@inject NavigationManager NavManager
 
-<h3>Agregar</h3>
+<h3>Crear Nuevo Bloque de Horario</h3>
+
+<EditForm Model="@nuevoBloque" OnValidSubmit="GuardarBloque" OnInvalidSubmit="OnInvalidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-field">
+        <label for="inicio">Hora de Inicio:</label>
+        <InputText id="inicio" @bind-Value="nuevoBloque.Inicio" type="time" class="form-control" />
+        <ValidationMessage For="@(() => nuevoBloque.Inicio)" />
+    </div>
+
+    <div class="form-field mt-3">
+        <label for="fin">Hora de Fin:</label>
+        <InputText id="fin" @bind-Value="nuevoBloque.Fin" type="time" class="form-control" />
+        <ValidationMessage For="@(() => nuevoBloque.Fin)" />
+    </div>
+
+    <div class="form-check mt-3">
+        <InputCheckbox id="activo" @bind-Value="nuevoBloque.Activo" class="form-check-input" />
+        <label class="form-check-label" for="activo">Activo</label>
+    </div>
+
+    <div class="button-footer">
+        <button type="button" class="btn btn-secondary" @onclick="GoBack">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </div>
+</EditForm>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+        <div class="alert alert-danger mt-3">@errorMessage</div>
+}
 
 @code {
+    private BloqueHorarioRequest nuevoBloque = new();
+    private string errorMessage = string.Empty;
 
+    private async Task GuardarBloque()
+    {
+        errorMessage = string.Empty;
+
+        try
+        {
+            var bloqueCreado = await BloqueHorarioService.CreateBloqueHorarioAsync(nuevoBloque);
+
+            if (bloqueCreado != null)
+            {
+                NavManager.NavigateTo("/bloqueshorario", true); // Navegar y forzar recarga
+            }
+            else
+            {
+                errorMessage = "Hubo un error al guardar el bloque. Por favor, inténtelo de nuevo.";
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            errorMessage = $"Error de conexión con la API: {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Ocurrió un error inesperado: {ex.Message}";
+        }
+    }
+
+    private void OnInvalidSubmit()
+    {
+        errorMessage = "Por favor, completa todos los campos obligatorios.";
+    }
+
+    private void GoBack()
+    {
+        NavManager.NavigateTo("/bloqueshorario");
+    }
 }

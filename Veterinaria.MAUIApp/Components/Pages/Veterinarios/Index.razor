@@ -1,7 +1,171 @@
 ﻿@page "/veterinarios/index"
+@using Veterinaria.MAUIApp.Models
+@inject Veterinaria.MAUIApp.Services.VeterinarioService VetService
+@inject NavigationManager Nav
+@inject IJSRuntime js
 
-<h3>Index</h3>
+@page "/veterinarios/index"
+@using Veterinaria.MAUIApp.Models
+@inject Veterinaria.MAUIApp.Services.VeterinarioService VetService
+@inject NavigationManager Nav
+@inject IJSRuntime js
+
+<style>
+  
+</style>
+
+<link rel="stylesheet" href="/css/veterinarios.css" />
+<div class="vet-container">
+
+    <!-- Encabezado -->
+    <div class="vet-header">
+        <h2>Veterinarios</h2>
+        <button class="btn btn-primary" @onclick="Nuevo">
+            <i class="bi bi-plus-circle"></i> Nuevo veterinario
+        </button>
+    </div>
+
+    <!-- Filtro por estado -->
+    <div class="vet-filtros mb-3">
+        <label>Estado</label>
+        <select class="form-select" @bind="FiltroEstado">
+            <option value="Todos">Todos</option>
+            <option value="Activos">Activos</option>
+            <option value="Inactivos">Inactivos</option>
+        </select>
+    </div>
+
+    @if (veterinarios is null)
+    {
+        <div class="alert alert-info text-center">
+            <span class="spinner-border spinner-border-sm me-2"></span> Cargando datos...
+        </div>
+    }
+    else if (!veterinarios.Any())
+    {
+        <div class="alert alert-warning text-center">
+            No hay veterinarios registrados.
+        </div>
+    }
+    else
+    {
+        <!-- Listado en cards -->
+        <div class="vet-lista">
+            @foreach (var v in veterinarios)
+            {
+                <div class="vet-card">
+                    <div class="vet-info">
+                        <h5>@v.Usuario.NombreCompleto</h5>
+                        <p><i class="bi bi-envelope"></i> @v.Usuario.Correo</p>
+                        <p><i class="bi bi-phone"></i> @v.Usuario.Telefono</p>
+                        <p><i class="bi bi-briefcase"></i> @v.Especialidad - @v.Servicio</p>
+                        <span class="estado @(v.Estado == "Activo" ? "activo" : "inactivo")">@v.Estado</span>
+                    </div>
+                    <div class="vet-actions">
+                        <button class="btn btn-outline-primary" @onclick="() => Editar(v.Id)">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-outline-success" @onclick="() => ConfirmarActivar(v.Id)">
+                            <i class="bi bi-check-circle"></i>
+                        </button>
+                        <button class="btn btn-outline-danger" @onclick="() => ConfirmarInactivar(v.Id)">
+                            <i class="bi bi-x-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
 
 @code {
+    private List<VeterinarioSalidaRes>? veterinarios;
 
+    private string filtroEstado = "Todos";
+    private string FiltroEstado
+    {
+        get => filtroEstado;
+        set
+        {
+            if (filtroEstado != value)
+            {
+                filtroEstado = value;
+                _ = CargarVeterinarios();
+            }
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarVeterinarios();
+    }
+
+    private async Task CargarVeterinarios()
+    {
+        if (filtroEstado == "Activos")
+            veterinarios = await VetService.GetActivosAsync();
+        else if (filtroEstado == "Inactivos")
+            veterinarios = await VetService.GetInactivosAsync();
+        else
+            veterinarios = await VetService.GetAllAsync();
+
+        StateHasChanged();
+    }
+
+    private void Nuevo() => Nav.NavigateTo("/veterinarios/agregar");
+    private void Editar(int id) => Nav.NavigateTo($"/veterinarios/editar/{id}");
+
+    // 🔹 Confirmación con SweetAlert2 antes de activar
+    private async Task ConfirmarActivar(int id)
+    {
+        var result = await js.InvokeAsync<SwalResult>("Swal.fire", new
+        {
+            title = "¿Deseas activar este veterinario?",
+            icon = "question",
+            showCancelButton = true,
+            confirmButtonText = "Sí, activar",
+            cancelButtonText = "Cancelar"
+        });
+
+        if (result.IsConfirmed)
+            await Activar(id);
+    }
+
+    // 🔹 Confirmación con SweetAlert2 antes de inactivar
+    private async Task ConfirmarInactivar(int id)
+    {
+        var result = await js.InvokeAsync<SwalResult>("Swal.fire", new
+        {
+            title = "¿Deseas inactivar este veterinario?",
+            icon = "warning",
+            showCancelButton = true,
+            confirmButtonText = "Sí, inactivar",
+            cancelButtonText = "Cancelar"
+        });
+
+        if (result.IsConfirmed)
+            await Inactivar(id);
+    }
+
+    private async Task Activar(int id)
+    {
+        var ok = await VetService.ActivarAsync(id);
+        if (ok)
+            await CargarVeterinarios();
+    }
+
+    private async Task Inactivar(int id)
+    {
+        var ok = await VetService.InactivarAsync(id);
+        if (ok)
+            await CargarVeterinarios();
+    }
+
+    // 🔹 Clase auxiliar para SweetAlert2
+    private class SwalResult
+    {
+        public bool IsConfirmed { get; set; }
+        public bool IsDenied { get; set; }
+        public bool IsDismissed { get; set; }
+    }
 }
