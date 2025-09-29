@@ -1,7 +1,68 @@
-﻿@page "/proveedores/editar"
+﻿@page "/proveedores/editar/{id:int}"
 
-<h3>Editar</h3>
+@inject ProveedorService proveedorService
+@inject NavigationManager nav
+@using Veterinaria.MAUIApplication.Models
+@using Veterinaria.MAUIApplication.Services
+@using Microsoft.AspNetCore.Components.Forms
+
+<div class="container mt-4">
+    <div class="card shadow-sm p-4">
+        <h3 class="mb-4">Editar Proveedor</h3>
+
+        <EditForm Model="proveedor" OnValidSubmit="Guardar">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <InputText class="form-control" @bind-Value="proveedor.Nombre" placeholder="Nombre completo" />
+            </div>
+            <div class="mb-3">
+                <InputText class="form-control" @bind-Value="proveedor.Email" placeholder="Email" />
+            </div>
+            <div class="mb-3">
+                <InputText class="form-control" @bind-Value="proveedor.Nit" placeholder="NIT" />
+            </div>
+            <div class="mb-3">
+                <InputText class="form-control" @bind-Value="proveedor.Telefono" placeholder="Teléfono" />
+            </div>
+            <div class="mb-3">
+                <InputText class="form-control" @bind-Value="proveedor.Direccion" placeholder="Dirección" />
+            </div>
+            <div class="mb-3">
+                <label>Estadoid:</label>
+                <InputNumber class="form-control" @bind-Value="proveedor.Estadoid" placeholder="Estado" />
+            </div>
+            <div class="mb-3">
+                <InputText class="form-control" @bind-Value="proveedor.Notas" placeholder="Notas" />
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <button class="btn btn-outline-secondary" type="button" @onclick="Cancelar">Cancelar</button>
+                <button class="btn btn-success" type="submit">Guardar cambios</button>
+            </div>
+        </EditForm>
+    </div>
+</div>
 
 @code {
+    [Parameter] public int id { get; set; }
 
+    private Proveedor proveedor = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        proveedor = await proveedorService.ObtenerPorId(id);
+    }
+
+    private async Task Guardar()
+    {
+        await proveedorService.Editar(proveedor);
+        nav.NavigateTo("/proveedores");
+    }
+
+    private void Cancelar()
+    {
+        nav.NavigateTo("/proveedores");
+    }
 }

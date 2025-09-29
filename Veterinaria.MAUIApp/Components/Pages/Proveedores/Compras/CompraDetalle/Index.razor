@@ -1,0 +1,62 @@
+﻿```razor
+@page "/compras/{compraId}/detalles/index"
+@inject NavigationManager Nav
+
+<div class="contenedor">
+    <div class="status-bar-safe-area"></div>
+    <header class="mb-4">
+        <p class="titulo">Detalles de la Compra</p>
+        <p class="descripcion">Visualiza y gestiona los productos agregados a la compra</p>
+    </header>
+
+    <div class="input-container" style="display:flex;align-items:center;gap:12px;">
+        <div style="flex:1;">
+            <p class="titulo" style="margin-bottom:4px;">Nuevo Detalle</p>
+            <p class="descripcion">Agrega un producto a esta compra</p>
+        </div>
+        <button class="boton-verde" @onclick="@(() => Nav.NavigateTo($"/compras/{CompraId}/detalles/agregar"))">
+            Agregar Producto
+        </button>
+    </div>
+
+    <div class="input-container" style="display:flex;gap:12px;align-items:center;">
+        <div style="position:relative;flex:1;">
+            <input class="input" placeholder="Buscar producto por nombre o código..." />
+            <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#5D5D5D;">🔍</span>
+        </div>
+    </div>
+
+    @foreach (var d in MockDetalles)
+    {
+        <div style="background:var(--blanco);border:1px solid var(--borde);border-radius:12px;padding:12px;margin-bottom:12px;">
+            <p class="titulo" style="margin-bottom:4px;">@d.ProductoNombre</p>
+            <p class="descripcion" style="margin-bottom:12px;">
+                Cantidad: @d.Cantidad | Precio: $@d.Precio | Subtotal: $@(d.Cantidad* d.Precio)
+            </p>
+
+            <div style="display:flex;gap:8px;">
+                <button class="boton-verde" style="flex:1;"
+                        @onclick="@(() => Nav.NavigateTo($"/compras/{CompraId}/detalles/editar/{d.Id}"))">
+                    Ver/Editar
+                </button>
+                <button class="boton-verde" style="flex:1;">
+                    Eliminar
+                </button>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public int CompraId { get; set; }
+
+    private record DetalleCard(int Id, string ProductoNombre, int Cantidad, decimal Precio);
+
+    private List<DetalleCard> MockDetalles = new()
+    {
+        new(1, "Laptop Dell Inspiron", 2, 650),
+        new(2, "Mouse Logitech", 5, 20),
+        new(3, "Monitor Samsung 24''", 1, 180),
+    };
+}
+```

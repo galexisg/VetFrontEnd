@@ -1,7 +1,91 @@
-﻿@page "/medicamentos/editar"
+﻿@page "/medicamentos/editar/{id:int}"
+@inject MedicamentoService medicamentoService
+@inject NavigationManager nav
+@using Veterinaria.MAUIApplication.Models
+@using Veterinaria.MAUIApplication.Services
+@using Microsoft.AspNetCore.Components.Forms
 
-<h3>Editar</h3>
+<div class="container mt-4">
+    <div class="card shadow-sm p-4">
+        <h3 class="mb-4">Editar Medicamento</h3>
+
+        @if (medicamento == null)
+        {
+            <p>Cargando datos...</p>
+        }
+        else
+        {
+            <EditForm Model="@medicamento" OnValidSubmit="GuardarCambios">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="mb-3">
+                    <InputText class="form-control" @bind-Value="medicamento.Nombre" placeholder="Nombre" />
+                </div>
+                <div class="mb-3">
+                    <InputText class="form-control" @bind-Value="medicamento.Formafarmacautica" placeholder="Forma Farmacéutica" />
+                </div>
+                <div class="mb-3">
+                    <InputText class="form-control" @bind-Value="medicamento.Concentracion" placeholder="Concentración" />
+                </div>
+                <div class="mb-3">
+                    <InputText class="form-control" @bind-Value="medicamento.Unidad" placeholder="Unidad" />
+                </div>
+                <div class="mb-3">
+                    <InputText class="form-control" @bind-Value="medicamento.Via" placeholder="Vía" />
+                </div>
+                <div class="mb-3 form-check">
+                    <InputCheckbox class="form-check-input" @bind-Value="medicamento.RequiereReceta" />
+                    <label class="form-check-label">Requiere Receta</label>
+                </div>
+                <div class="mb-3 form-check">
+                    <InputCheckbox class="form-check-input" @bind-Value="medicamento.Activo" />
+                    <label class="form-check-label">Activo</label>
+                </div>
+                <div class="mb-3">
+                    <InputText class="form-control" @bind-Value="medicamento.Temperaturaalm" placeholder="Temperatura de Almacenamiento" />
+                </div>
+                <div class="mb-3">
+                    <label>Vida útil (meses):</label>
+                    <InputNumber class="form-control" @bind-Value="medicamento.Vidautilmeses" placeholder="Vida Útil (meses)" />
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <button class="btn btn-outline-secondary" type="button" @onclick="Cancelar">Cancelar</button>
+                    <button class="btn btn-success" type="submit">Guardar cambios</button>
+                </div>
+            </EditForm>
+        }
+    </div>
+</div>
 
 @code {
+    [Parameter] public int id { get; set; }
+    private Medicamento? medicamento;
 
+    protected override async Task OnInitializedAsync()
+    {
+        medicamento = await medicamentoService.GetById(id);
+    }
+
+    private async Task GuardarCambios()
+    {
+        if (medicamento != null)
+        {
+            bool ok = await medicamentoService.Update(id, medicamento);
+            if (ok)
+            {
+                nav.NavigateTo("/medicamentos?mensaje=editado");
+            }
+            else
+            {
+                Console.WriteLine("Error al actualizar el medicamento.");
+            }
+        }
+    }
+
+    private void Cancelar()
+    {
+        nav.NavigateTo("/medicamentos");
+    }
 }

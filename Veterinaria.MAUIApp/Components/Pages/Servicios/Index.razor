@@ -143,8 +143,8 @@ else
                             <div class="card-list service-card card-tappable" @onclick="() => EditarServicio(s.Id)">
                                 <!-- Chip de estado: usa tus tokens de color -->
                                 <div class="mb-2">
-                                    <span class="chip @(s.Estado == EstadoServicio.ACTIVO ? "chip-success" : "chip-muted")">
-                            @(s.Estado == EstadoServicio.ACTIVO ? "Activo" : "Inactivo")
+                                    <span class="chip @(s.Estado == Models.EstadoServicio.ACTIVO ? "chip-success" : "chip-muted")">
+                            @(s.Estado == Models.EstadoServicio.ACTIVO ? "Activo" : "Inactivo")
                                     </span>
                                 </div>
 
@@ -161,7 +161,7 @@ else
                                 <div class="d-flex align-items-center justify-content-between mt-2">
                                     <span class="etiqueta">@s.PrecioBase?.ToString("C")</span>
                                     <button class="boton-card-sm" @onclick:stopPropagation="true" @onclick="() => OnToggleClick(s)">
-                            @(s.Estado == EstadoServicio.ACTIVO ? "Desactivar" : "Activar")
+                            @(s.Estado == Models.EstadoServicio.ACTIVO ? "Desactivar" : "Activar")
                                     </button>
                                 </div>
                             </div>
@@ -310,7 +310,7 @@ else
     private void OnToggleClick(Veterinaria.MAUIApp.Models.Servicio s)
     {
         actionError = null;
-        if (s.Estado == EstadoServicio.ACTIVO) { pendingServicio = s; showConfirm = true; }
+        if (s.Estado == Models.EstadoServicio.ACTIVO) { pendingServicio = s; showConfirm = true; }
         else { _ = ActivarServicioAsync(s); } // activar no pide confirmación
     }
 
@@ -320,10 +320,10 @@ else
         var anterior = s.Estado;
 
         // UI optimista: refleja cambio inmediato y revierte si falla
-        s.Estado = EstadoServicio.ACTIVO;
+        s.Estado = Models.EstadoServicio.ACTIVO;
         try
         {
-            await ServicioService.CambiarEstadoAsync(s.Id, EstadoServicio.ACTIVO);
+            await ServicioService.CambiarEstadoAsync(s.Id, Models.EstadoServicio.ACTIVO);
             var lista = await ServicioService.ListarAsync();
             servicios = lista ?? new List<Veterinaria.MAUIApp.Models.Servicio>();
         }
@@ -350,11 +350,11 @@ else
         var anterior = pendingServicio.Estado;
 
         // UI optimista en desactivación (con confirmación previa)
-        pendingServicio.Estado = EstadoServicio.INACTIVO;
+        pendingServicio.Estado = Models.EstadoServicio.INACTIVO;
 
         try
         {
-            await ServicioService.CambiarEstadoAsync(pendingServicio.Id, EstadoServicio.INACTIVO);
+            await ServicioService.CambiarEstadoAsync(pendingServicio.Id, Models.EstadoServicio.INACTIVO);
             var lista = await ServicioService.ListarAsync();
             servicios = lista ?? new List<Veterinaria.MAUIApp.Models.Servicio>();
             CloseConfirm();

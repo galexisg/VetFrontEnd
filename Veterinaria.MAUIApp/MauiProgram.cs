@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Veterinaria.MAUIApp.Services;
 using Veterinaria.MAUIApp.Utils;
+using Veterinaria.MAUIApplication.Services;
 
 namespace Veterinaria.MAUIApp
 {
@@ -80,7 +81,24 @@ namespace Veterinaria.MAUIApp
             builder.Services.AddScoped<AuthService>();
             builder.Services.AddScoped<DiagnosticoService>();
             builder.Services.AddScoped<TratamientosAplicadosService>();
+            builder.Services.AddScoped<VacunaService>();
+
+            builder.Services.AddScoped<TratamientoService>();
             builder.Services.AddScoped<MotivoCitaService>();
+            builder.Services.AddScoped<EstadoDiaService>();
+            builder.Services.AddScoped<DiaService>();
+
+            builder.Services.AddScoped<RazaService>();
+            builder.Services.AddScoped<EspecieService>();
+            builder.Services.AddScoped<EspecialidadService>();
+            builder.Services.AddSingleton<BloqueHorarioService>();
+
+            builder.Services.AddScoped<ProveedorService>();
+            builder.Services.AddScoped<MedicamentoService>();
+
+
+            builder.Services.AddScoped<CompraService>();
+
 
             return builder.Build();
         }

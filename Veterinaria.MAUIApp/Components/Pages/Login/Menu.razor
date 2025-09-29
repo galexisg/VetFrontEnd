@@ -18,6 +18,7 @@
             <a @onclick="@(() => navManager.NavigateTo("/clientes/index"))">Clientes</a>
             <a @onclick="@(() => navManager.NavigateTo("/citas"))">Citas</a>
             <a @onclick="@(() => navManager.NavigateTo("/servicios/index"))">Servicio</a>
+            <a @onclick="@(() => navManager.NavigateTo("/tratamientos/index"))">Tratamientos</a>
         </div>
 
         <!-- CLÍNICA -->
@@ -28,7 +29,7 @@
         <div class="dropdown-content">
             <a @onclick="@(() => navManager.NavigateTo("/medicamentos"))">Medicamentos</a>
             <a @onclick="@(() => navManager.NavigateTo("/lotes"))">Lotes</a>
-            <a @onclick="@(() => navManager.NavigateTo("/vacunas"))">Vacunas</a>
+            <a @onclick="@(() => navManager.NavigateTo("/vacunas/index"))">Vacunas</a>
             <a @onclick="@(() => navManager.NavigateTo("/existencias"))">Existencias</a>
             <a @onclick="@(() => navManager.NavigateTo("/proveedores"))">Proveedores</a>
         </div>
@@ -40,10 +41,15 @@
         </label>
         <div class="dropdown-content">
             <a @onclick="@(() => navManager.NavigateTo("/veterinarios"))">Veterinarios</a>
+
             <a @onclick="@(() => navManager.NavigateTo("/citas/motivocita/indexmotivocita"))">Motivo Citas</a>
             <a @onclick="@(() => navManager.NavigateTo("/especialidades"))">Especialidades</a>
+            <a @onclick="@(() => navManager.NavigateTo("/especialidades/index"))">Especialidades</a>
             <a @onclick="@(() => navManager.NavigateTo("/facturas/index"))">Facturas</a>
+            <a @onclick="@(() => navManager.NavigateTo("/bloques-horario/index"))">Bloque Horarios</a>
             <a @onclick="@(() => navManager.NavigateTo("/horarios"))">Horarios</a>
+            <a @onclick="@(() => navManager.NavigateTo("/test-dia/index"))">Historial dias</a>
+
         </div>
 
         <!-- INVENTARIO -->
@@ -56,6 +62,7 @@
             <a @onclick="@(() => navManager.NavigateTo("/stock"))">Stock</a>
             <a @onclick="@(() => navManager.NavigateTo("/categorias"))">Categorías</a>
             <a @onclick="@(() => navManager.NavigateTo("/citas/2"))">Citas</a>
+            <a @onclick="@(() => navManager.NavigateTo("/razas/indexmascotas"))">Razas</a>
         </div>
 
         <button class="boton-card" @onclick="Logout">Cerrar sesión</button>
