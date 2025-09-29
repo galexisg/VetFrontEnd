@@ -1,23 +1,99 @@
-﻿
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+﻿/* ==========================================================================
+   Base & Reset
+   - Tipografías, normalizaciones leves y tokens globales
+   ========================================================================== */
 
-html, body {
-    font-family: "Helvetica Neue", sans-serif;
+/* Fuente: fallback seguro y system stack */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap');
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
 }
 
-a, .btn-link {
+html,
+body {
+    height: 100%;
+}
+
+html {
+    /* Mejora renderizado de fuentes y layout */
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    margin: 0;
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    background: #F7F7F7;
+    color: #0A0A0A;
+    line-height: 1.4;
+}
+
+/* Enlaces y botones con estilos por defecto accesibles */
+a,
+.btn-link {
     color: #006bb7;
+    text-decoration: none;
 }
 
-.btn-primary {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
+    a:hover,
+    .btn-link:hover {
+        text-decoration: underline;
+    }
+
+/* Focus visible accesible para teclado */
+:focus-visible {
+    outline: 2px solid #258cfb;
+    outline-offset: 2px;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+/* ==========================================================================
+   Design tokens (CSS Custom Properties)
+   ========================================================================== */
+
+:root {
+    /* Colores */
+    --blanco: #FFFFFF;
+    --negro: #0A0A0A;
+    --gris: #5D5D5D;
+    --gris-200: #F7F7F7;
+    --gris-300: #F2F3F5;
+    --gris-400: #EDEDED;
+    --borde: #E7E7E7;
+    --verde: #0AB372;
+    --verde-100: #E6FAF1;
+    --verde-200: #CFF4E5;
+    --rojo: #b32121;
+    --rojo-100: #FFECEC;
+    /* Sombras */
+    --shadow-xs: 0 1px 2px rgba(16,24,40,.06), 0 1px 1px rgba(16,24,40,.03);
+    --shadow-md: 0 10px 30px rgba(0,0,0,.15);
+    /* Espacios */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    /* Radius */
+    --radius-8: 8px;
+    --radius-10: 10px;
+    --radius-12: 12px;
+    --radius-16: 16px;
+    /* Safe areas iOS */
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
 }
+
+/* ==========================================================================
+   Utilitarios de Blazor/Bootstrap (mínimos conservados)
+   ========================================================================== */
 
 .content {
     padding-top: 1.1rem;
@@ -27,6 +103,7 @@ h1:focus {
     outline: none;
 }
 
+/* Estados de validación genéricos */
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }
@@ -39,6 +116,7 @@ h1:focus {
     color: #e50000;
 }
 
+/* Componentes de error Blazor (sin cambios estructurales) */
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;
@@ -65,9 +143,10 @@ h1:focus {
 }
 
     .blazor-error-boundary::after {
-        content: "An error has occurred."
+        content: "An error has occurred.";
     }
 
+/* Oculta banda de notch si no aplica; se muestra solo en iOS */
 .status-bar-safe-area {
     display: none;
 }
@@ -77,118 +156,582 @@ h1:focus {
         display: flex;
         position: sticky;
         top: 0;
-        height: env(safe-area-inset-top);
-        background-color: #f7f7f7;
+        height: var(--safe-top);
+        background-color: var(--gris-200);
         width: 100%;
         z-index: 1;
     }
-
-    .flex-column, .navbar-brand {
-        padding-left: env(safe-area-inset-left);
-    }
 }
 
+/* ==========================================================================
+   Layout & Tipografía de la app
+   ========================================================================== */
 
-* {
-    background: #F7F7F7;
-}
-
-:root {
-    --blanco: #FFFFFF;
-    --verde: #0AB372;
-    --negro: #0A0A0A;
-    --gris: #5D5D5D;
-    --borde: #E7E7E7;
-}
-
-
+/* Contenedor de vistas (padding responsivo) */
 .contenedor {
-    height: 100vh;
-    padding: 24px;
+    min-height: 100vh;
+    padding: var(--space-6);
 }
 
-.boton-verde {
-    padding:16px 16px;
-    background-color:var(--verde);
-    border:0px;
-    color:var(--blanco);
-    border-radius:12px;
-    font-size:16px;
-}
-
+/* Titulares y descripciones homogéneos */
 .titulo {
     font-size: 16px;
     color: var(--negro);
-    font-weight: 500;
-    margin: 0px;
+    font-weight: 600;
+    margin: 0;
 }
 
 .descripcion {
     font-size: 14px;
-    font-weight: 200;
+    font-weight: 400;
     color: var(--gris);
+    margin: 0;
 }
 
-.home{
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-}
-
-.img-perro{
-    height:320px;
-    width:200px;
-    margin:auto;
-}
-
-.input-container{
-    margin-bottom:48px;
-}
-
+/* Inputs base */
 .input {
-    padding: 16px 16px;
-    border: 1px solid var(--borde);
-    color: var(--gris);
-    border-radius: 8px;
+    width: 100%;
+    padding: 12px 16px;
+    color: var(--negro);
+    background: var(--blanco);
+    border-radius: var(--radius-8);
     font-size: 16px;
-    width:100%;
+    border: 1px solid var(--blanco);
+    outline: none;
+}
+
+    .input::placeholder {
+        color: #9CA3AF;
+    }
+
+    .input:focus {
+        border: 1px solid var(--verde);
+        box-shadow: none;
+    }
+
+/* Campo con ícono a la izquierda */
+.input-wrap {
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    stroke: #9CA3AF;
+    fill: none;
+    stroke-width: 1.8;
+}
+
+.input-ghost {
+    padding-left: 40px;
+}
+
+/* Cards contenedoras */
+.card-list {
+    padding: var(--space-4);
+    border-radius: var(--radius-16);
+    background: var(--blanco);
+    box-shadow: none; /* limpio; puedes activar sombra si quieres */
+}
+
+/* ==========================================================================
+   Chips, Badges y Estados
+   ========================================================================== */
+
+.etiqueta {
+    padding: 2px 6px;
+    color: var(--gris);
+    font-size: 14px;
+    background: var(--gris-200);
+    border-radius: 4px;
+    font-weight: 400;
+}
+
+.chip {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 12px;
+    line-height: 1;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    user-select: none;
+}
+
+.chip-success {
+    background: var(--verde-100);
+    color: var(--verde);
+    border-color: var(--verde-200);
+}
+
+.chip-muted {
+    background: var(--gris-300);
+    color: var(--gris);
+    border-color: var(--borde);
+}
+
+/* Tags de motivos (con confirmación inline) */
+.tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    background: var(--gris-200);
+    border: 1px solid var(--borde);
+}
+
+.tag-text {
+    font-size: 14px;
+    color: #222;
+}
+
+.tag-close {
+    border: none;
+    background: var(--negro);
+    color: var(--blanco);
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+    .tag-close:disabled {
+        opacity: .6;
+        cursor: not-allowed;
+    }
+
+.tag-confirm {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tag-action,
+.tag-cancel {
+    border: none;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.tag-action {
+    background: var(--verde);
+    color: #fff;
+}
+
+.tag-cancel {
+    background: var(--gris-400);
+    color: #333;
+}
+
+/* ==========================================================================
+   Botones
+   ========================================================================== */
+
+.boton-verde,
+.boton-card,
+.boton-card-sm,
+.btn-ghost,
+.btn-primary-soft {
+    border: none;
+    border-radius: var(--radius-8);
+    cursor: pointer;
+    transition: transform .06s ease, box-shadow .12s ease, opacity .12s ease;
+}
+
+.boton-verde {
+    padding: 16px;
+    background-color: var(--verde);
+    color: var(--blanco);
+    font-size: 16px;
+}
+
+    .boton-verde:disabled {
+        opacity: .6;
+        cursor: not-allowed;
+    }
+
+.boton-card,
+.boton-card-sm {
+    background: var(--negro);
+    color: var(--blanco);
+}
+
+.boton-card {
+    padding: 8px 12px;
+    font-size: 16px;
+}
+
+.boton-card-sm {
+    padding: 8px 12px;
+    font-size: 14px;
+}
+
+.btn-ghost {
+    background: var(--gris-300);
+    color: #222;
+    padding: 10px 14px;
+    border-radius: var(--radius-10);
+    font-size: 14px;
+}
+
+.btn-primary-soft {
+    background: var(--verde);
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: var(--radius-10);
+    font-size: 14px;
+}
+
+/* Feedback táctil sutil */
+.card-tappable {
+    cursor: pointer;
+    transition: transform .06s ease, box-shadow .06s ease;
+}
+
+    .card-tappable:active {
+        transform: scale(.99);
+    }
+
+/* ==========================================================================
+   Íconos, Avatares, Flechas
+   ========================================================================== */
+
+.icon-chip {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--verde);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 42px;
+}
+
+    .icon-chip svg {
+        width: 20px;
+        height: 20px;
+        stroke: #fff;
+        fill: none;
+        stroke-width: 1.6;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+.chevron {
+    width: 18px;
+    height: 18px;
+    stroke: #9CA3AF;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Avatar circular con “+” (usado como botón back en algunas vistas) */
+.img-add {
+    background: var(--verde);
+    color: var(--blanco);
+    border-radius: 50%;
+    height: 42px;
+    width: 42px;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ==========================================================================
+   Tarjetas específicas
+   ========================================================================== */
+
+.service-card {
+    padding: 14px 16px;
+    border-radius: var(--radius-16);
+}
+
+.price-pill {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 10px;
+    background: #F1F1F1;
+    color: #3a3a3a;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   Toolbar (buscador + filtros + orden)
+   ========================================================================== */
+
+.filter-toolbar {
+    display: grid;
+    gap: 12px;
+    padding: 12px;
+}
+
+.segmented {
+    display: inline-flex;
+    background: var(--gris-300);
+    border-radius: 12px;
+    padding: 4px;
+    gap: 4px;
+}
+
+.seg-btn {
+    border: none;
+    background: transparent;
+    color: #333;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background .12s ease, color .12s ease, box-shadow .12s ease, transform .06s ease;
+}
+
+    .seg-btn.is-active {
+        background: var(--blanco);
+        color: var(--negro);
+        box-shadow: 0 1px 0 rgba(0,0,0,.04), inset 0 0 0 1px var(--borde);
+    }
+
+    .seg-btn:active {
+        transform: translateY(0.5px);
+    }
+
+/* ==========================================================================
+   Encabezado minimal (tipo iOS)
+   ========================================================================== */
+
+.page-header {
+    max-width: 100%; /* ancho completo para armonía */
+    margin: 12px 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 8px;
+}
+
+.back-chip {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: var(--radius-12);
+    background: var(--blanco);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-xs);
+    cursor: pointer;
+}
+
+    .back-chip svg {
+        width: 20px;
+        height: 20px;
+        stroke: #111827;
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+.page-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--negro);
+    line-height: 1.2;
+}
+
+.page-subtitle {
+    font-size: 14px;
+    color: var(--gris);
+    margin-top: 2px;
+}
+
+/* ==========================================================================
+   Modales (top sheet)
+   ========================================================================== */
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(10,10,10,.35);
+    display: flex;
+    align-items: flex-start; /* anclado arriba */
+    justify-content: center;
+    padding: 16px;
+    padding-top: calc(var(--safe-top) + 16px);
+    z-index: 9999;
+    animation: fadeIn .15s ease-out;
+}
+
+.modal-card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--blanco);
+    border-radius: var(--radius-16);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    transform: translateY(-12px); /* posición inicial */
+    animation: slideFromTop .22s ease-out; /* transición desde arriba */
+}
+
+.modal-header {
+    padding: 20px 20px 8px 20px;
+}
+
+.modal-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: var(--verde-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+    .modal-icon svg {
+        width: 20px;
+        height: 20px;
+        stroke: var(--verde);
+        fill: none;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+.modal-title {
+    margin: 0;
+    font-size: 18px;
+    color: var(--negro);
+    font-weight: 600;
+}
+
+.modal-subtitle {
+    margin: 6px 0 0 0;
+    font-size: 14px;
+    color: var(--gris);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    padding: 14px 20px 18px 20px;
+    border-top: 1px solid var(--borde);
+}
+
+/* Animaciones (se deshabilitan si el usuario prefiere reducir movimiento) */
+@keyframes fadeIn {
+    from {
+        opacity: 0
+    }
+
+    to {
+        opacity: 1
+    }
+}
+
+@keyframes slideFromTop {
+    from {
+        transform: translateY(-18px);
+        opacity: .98;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card-tappable,
+    .modal-backdrop,
+    .modal-card,
+    .seg-btn {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+/* ==========================================================================
+   Barra de acciones fija (bottom)
+   ========================================================================== */
+
+.action-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
+    padding: 12px 16px calc(var(--safe-bottom) + 12px);
+    background: linear-gradient(180deg, rgba(247,247,247,0) 0%, rgba(247,247,247,0.7) 10%, #F7F7F7 30%);
+    backdrop-filter: blur(6px);
+}
+
+.action-bar-inner {
+    max-width: 520px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+@media (min-width: 768px) {
+    .action-bar-inner {
+        max-width: 440px;
+    }
+}
+
+/* ==========================================================================
+   Componentes varios heredados (por compatibilidad)
+   ========================================================================== */
+
+/* Imagen de portada (si la usas en home) */
+.home {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.img-perro {
+    height: 320px;
+    width: 200px;
+    margin: auto;
+}
+
+/* Botón primario heredado (si lo usa algún componente Bootstrap) */
+.btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+/* Contenedores de inputs heredados */
+.input-container {
+    margin-bottom: 48px;
 }
 
 .label {
     font-size: 16px;
-    font-weight:400;
-    color:var(--negro);
-}
-
-
-/* Botón secundario negro (cancelar) */
-.boton-negro {
-    padding: 16px 16px;
-    background-color: #0A0A0A;
-    color: var(--blanco);
-    border: 0;
-    border-radius: 12px;
-    font-size: 16px;
-}
-
-/* Contenedor de acciones pegado al fondo, con fondo blanco y borde superior */
-.acciones-footer {
-    position: sticky;
-    bottom: 0;
-    background: var(--blanco);
-    padding: 16px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    border-top: 1px solid var(--borde);
-    border-radius: 12px 12px 0 0;
-}
-
-/* separaciones rápidas */
-.mb-3 {
-    margin-bottom: 12px;
-}
-
-.mb-4 {
-    margin-bottom: 16px;
+    font-weight: 400;
+    color: var(--negro);
 }
