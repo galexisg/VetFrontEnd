@@ -1,7 +1,121 @@
-﻿@page "/citas/tratamientos/editar"
+﻿@page "/tratamientos/{citaId:long}/editar/{id:long}"
+@using System.ComponentModel.DataAnnotations
+@using Veterinaria.MAUIApp.Models
+@inject Veterinaria.MAUIApp.Services.TratamientosAplicadosService TratamientosService
+@inject NavigationManager Navigation
 
-<h3>Editar</h3>
+<div class="container py-3">
+
+  <!-- Header centrado con botón volver -->
+  <div class="row align-items-center mb-3 g-0">
+    <div class="col-auto">
+      <button type="button"
+              class="btn btn-light rounded-circle shadow-sm p-0 d-inline-flex align-items-center justify-content-center lh-1 flex-shrink-0"
+              style="width:36px; height:36px;"
+              @onclick='@(()=> Navigation.NavigateTo($"/tratamientos/{citaId}"))'
+              aria-label="Volver a tratamientos">
+        <i class="bi bi-arrow-left-short fs-5"></i>
+      </button>
+    </div>
+    <div class="col text-center">
+      <h5 class="fw-bold mb-0">Editar tratamiento</h5>
+      <small class="text-muted">Cita #@citaId — Trat. aplicado #@id</small>
+    </div>
+    <div class="col-auto">
+      <button class="btn btn-light rounded-circle p-0 d-inline-flex align-items-center justify-content-center lh-1 invisible"
+              style="width:36px; height:36px;" aria-hidden="true">
+        <i class="bi bi-arrow-left-short fs-5"></i>
+      </button>
+    </div>
+  </div>
+
+  @if (item is null)
+  {
+    <p><em>Cargando…</em></p>
+  }
+  else
+  {
+    <EditForm Model="@vm" OnValidSubmit="Guardar" class="d-flex flex-column">
+      <DataAnnotationsValidator />
+
+      <div class="mb-3">
+        <label class="form-label">Estado</label>
+        <select class="form-select rounded-4" @bind="vm.Estado">
+          @foreach (var e in EstadosPermitidos)
+          {
+            <option value="@e">@MostrarEstado(e)</option>
+          }
+        </select>
+        <ValidationMessage For="@(()=> vm.Estado)" class="text-danger small" />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Observaciones</label>
+        <InputTextArea class="form-control rounded-4" rows="3" @bind-Value="vm.Observaciones" />
+        <ValidationMessage For="@(()=> vm.Observaciones)" class="text-danger small" />
+      </div>
+
+      <div class="d-flex gap-2 mt-2">
+        <button type="button" class="btn btn-dark flex-fill py-2 rounded-pill"
+                @onclick='@(()=> Navigation.NavigateTo($"/tratamientos/{citaId}"))'>
+          Cancelar
+        </button>
+        <button type="submit" class="btn btn-success flex-fill py-2 rounded-pill fw-bold">
+          Guardar cambios
+        </button>
+      </div>
+    </EditForm>
+  }
+</div>
 
 @code {
+  [Parameter] public long citaId { get; set; }
+  [Parameter] public long id { get; set; }
 
+  private TratamientoAplicado? item;
+
+  private static readonly string[] EstadosPermitidos =
+    new[] { "Pendiente","Planificado","EnCurso","Completado","Cancelado" };
+
+  public class EditVM
+  {
+    [Required] public string Estado { get; set; } = "Pendiente";
+    [MaxLength(500, ErrorMessage = "Máximo 500 caracteres")]
+    public string? Observaciones { get; set; }
+  }
+
+  private EditVM vm = new();
+
+  protected override async Task OnInitializedAsync()
+  {
+    // No hay GET /{id}, así que traemos la lista por cita y buscamos el item
+    var lista = await TratamientosService.ListarPorCitaAsync(citaId);
+    item = lista.FirstOrDefault(x => x.Id == id);
+
+    if (item is not null)
+    {
+      vm.Estado = string.IsNullOrWhiteSpace(item.Estado) ? "Pendiente" : item.Estado!;
+      vm.Observaciones = item.Observaciones;
+    }
+  }
+
+  private async Task Guardar()
+  {
+    if (item is null) return;
+
+    // Actualiza estado si cambió
+    if (!string.Equals(item.Estado ?? "", vm.Estado, StringComparison.Ordinal))
+    {
+      var updated = await TratamientosService.ActualizarEstadoAsync(item.Id, vm.Estado);
+      if (updated is not null) item.Estado = updated.Estado;
+    }
+
+    // Actualiza observaciones (siempre enviamos; el backend ya controla nulls)
+    var updatedObs = await TratamientosService.ActualizarObservacionesAsync(item.Id, vm.Observaciones);
+    if (updatedObs is not null) item.Observaciones = updatedObs.Observaciones;
+
+    Navigation.NavigateTo($"/tratamientos/{citaId}");
+  }
+
+  private string MostrarEstado(string e) => e == "EnCurso" ? "En curso" : e;
 }
