@@ -82,6 +82,8 @@ namespace Veterinaria.MAUIApp
             builder.Services.AddScoped<TratamientosAplicadosService>();
             builder.Services.AddScoped<TratamientoService>();
             builder.Services.AddScoped<MotivoCitaService>();
+            builder.Services.AddScoped<RazaService>();
+            builder.Services.AddScoped<EspecieService>();
 
 
             return builder.Build();

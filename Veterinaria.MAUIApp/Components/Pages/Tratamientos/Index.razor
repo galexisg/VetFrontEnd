@@ -2,14 +2,20 @@
 @using Microsoft.AspNetCore.Components
 @using Veterinaria.MAUIApp.Models
 @inject Veterinaria.MAUIApp.Services.TratamientoService TratamientoService
-@inject NavigationManager Nav
+@inject NavigationManager navManager
 
 <div class="contenedor">
 
     <!-- Encabezado -->
-    <div class="mb-4">
+    <div class="mb-4 d-flex gap-2">
+        <button type="button" class="back-chip" @onclick="IrInicio" title="Volver">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+        </button>
+
+        <div>
         <h2 class="titulo">Tratamientos</h2>
         <p class="descripcion">Gestiona el registro y control</p>
+        </div>
     </div>
 
     <!-- Tarjeta "Nuevo tratamiento" -->
@@ -88,6 +94,8 @@
     private string? error;
     private bool cambiandoEstado = false;
 
+    private void IrInicio() => navManager.NavigateTo("/login/menu");
+
     private string TextoBusqueda
     {
         get => _textoBusqueda;
@@ -111,8 +119,8 @@
         ).ToList();
     }
 
-    private void Nuevo() => Nav.NavigateTo("/tratamientos/agregar");
-    private void IrEditar(long id) => Nav.NavigateTo($"/tratamientos/editar/{id}");
+    private void Nuevo() => navManager.NavigateTo("/tratamientos/agregar");
+    private void IrEditar(long id) => navManager.NavigateTo($"/tratamientos/editar/{id}");
 
     private async Task CambiarEstado(long id, bool nuevoEstado)
     {
