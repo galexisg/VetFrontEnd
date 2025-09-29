@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Net.Http.Json;
 using Veterinaria.MAUIApp.Models;
 
+
 namespace Veterinaria.MAUIApp.Services
 {
     public class TratamientoService
@@ -78,9 +79,5 @@ namespace Veterinaria.MAUIApp.Services
         }
     }
 
-    // Clase para manejar respuestas de error de la API
-    public class ErrorResponse
-    {
-        public string? Message { get; set; }
-    }
+    
 }
