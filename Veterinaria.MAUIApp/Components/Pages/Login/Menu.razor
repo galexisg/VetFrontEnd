@@ -1,0 +1,95 @@
+﻿@page "/login/menu"
+@inject NavigationManager navManager
+
+<div class="cont">
+    <div class="dropdown">
+        <!-- PACIENTES -->
+        <input type="checkbox" id="pacientes-toggle">
+        <label class="boton-verde" for="pacientes-toggle">Pacientes </label>
+        <div class="dropdown-content">
+            <a @onclick="@(() => navManager.NavigateTo("/mascotas"))">Mascotas</a>
+            <a @onclick="@(() => navManager.NavigateTo("/clientes/index"))">Clientes</a>
+            <a @onclick="@(() => navManager.NavigateTo("/citas"))">Citas</a>
+            <a @onclick="@(() => navManager.NavigateTo("/servicios/index"))">Servicio</a>
+        </div>
+
+        <!-- CLÍNICA -->
+        <input type="checkbox" id="clinica-toggle">
+        <label class="boton-verde" for="clinica-toggle">Clínica </label>
+        <div class="dropdown-content">
+            <a @onclick="@(() => navManager.NavigateTo("/medicamentos"))">Medicamentos</a>
+            <a @onclick="@(() => navManager.NavigateTo("/lotes"))">Lotes</a>
+            <a @onclick="@(() => navManager.NavigateTo("/vacunas"))">Vacunas</a>
+            <a @onclick="@(() => navManager.NavigateTo("/existencias"))">Existencias</a>
+            <a @onclick="@(() => navManager.NavigateTo("/proveedores"))">Proveedores</a>
+        </div>
+
+        <!-- ADMINISTRACIÓN -->
+        <input type="checkbox" id="admin-toggle">
+        <label class="boton-verde" for="admin-toggle">Administración </label>
+        <div class="dropdown-content">
+            <a @onclick="@(() => navManager.NavigateTo("/veterinarios"))">Veterinarios</a>
+            <a @onclick="@(() => navManager.NavigateTo("/especialidades"))">Especialidades</a>
+            <a @onclick="@(() => navManager.NavigateTo("/facturas/index"))">Facturas</a>
+            <a @onclick="@(() => navManager.NavigateTo("/horarios"))">Horarios</a>
+        </div>
+
+        <!-- INVENTARIO -->
+        <input type="checkbox" id="inventario-toggle">
+        <label class="boton-verde" for="inventario-toggle">Inventario </label>
+        <div class="dropdown-content">
+            <a @onclick="@(() => navManager.NavigateTo("/productos"))">Productos</a>
+            <a @onclick="@(() => navManager.NavigateTo("/stock"))">Stock</a>
+            <a @onclick="@(() => navManager.NavigateTo("/categorias"))">Categorías</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .cont {
+        width: 100%;
+        height: 100vh;
+        display: grid;
+        gap: 8px;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .dropdown {
+        display: grid;
+        gap: 8px;
+        justify-content: center;
+        margin: 20px;
+    }
+
+        .dropdown input {
+            display: none;
+        }
+
+    .dropdown-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease;
+        background-color: #ffffff;
+        border-radius: 5px;
+        margin-bottom: 5px;
+    }
+
+        .dropdown-content a {
+            display: block;
+            padding: 10px 15px;
+            text-decoration: none;
+            color: black;
+            transition: background 0.3s;
+            background: #ffffff;
+            border-radius: 8px;
+        }
+
+    /* Mostrar contenido al activar checkbox */
+    #pacientes-toggle:checked ~ .dropdown-content:nth-of-type(1),
+    #clinica-toggle:checked ~ .dropdown-content:nth-of-type(2),
+    #admin-toggle:checked ~ .dropdown-content:nth-of-type(3),
+    #inventario-toggle:checked ~ .dropdown-content:nth-of-type(4) {
+        max-height: 500px;
+    }
+</style>

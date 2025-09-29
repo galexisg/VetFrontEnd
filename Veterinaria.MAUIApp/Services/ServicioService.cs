@@ -14,7 +14,7 @@ namespace Veterinaria.MAUIApp.Services
         /// </summary>
         public async Task<List<Servicio>> ListarAsync(string? q = null, bool? activo = null, int page = 0, int size = 20)
         {
-            var url = $"api/servicios?page={page}&size={size}";
+            var url = $"servicios?page={page}&size={size}";
             if (!string.IsNullOrWhiteSpace(q)) url += $"&q={Uri.EscapeDataString(q)}";
             if (activo.HasValue) url += $"&activo={(activo.Value ? "true" : "false")}";
 
@@ -37,10 +37,10 @@ namespace Veterinaria.MAUIApp.Services
         }
 
         public Task<Servicio?> ObtenerAsync(long id)
-            => _http.GetFromJsonAsync<Servicio>($"api/servicios/{id}");
+            => _http.GetFromJsonAsync<Servicio>($"servicios/{id}");
 
         public Task<HttpResponseMessage> CrearAsync(Servicio s)
-            => _http.PostAsJsonAsync("api/servicios", new
+            => _http.PostAsJsonAsync("servicios", new
             {
                 nombre = s.Nombre,
                 descripcion = s.Descripcion,
@@ -49,7 +49,7 @@ namespace Veterinaria.MAUIApp.Services
             });
 
         public Task<HttpResponseMessage> ActualizarAsync(long id, Servicio s)
-            => _http.PutAsJsonAsync($"api/servicios/{id}", new
+            => _http.PutAsJsonAsync($"servicios/{id}", new
             {
                 nombre = s.Nombre,
                 descripcion = s.Descripcion,
@@ -58,9 +58,9 @@ namespace Veterinaria.MAUIApp.Services
             });
 
         public Task<HttpResponseMessage> CambiarEstadoAsync(long id, EstadoServicio estado)
-            => _http.PatchAsJsonAsync($"api/servicios/{id}", new { estado = estado.ToString() });
+            => _http.PatchAsJsonAsync($"servicios/{id}", new { estado = estado.ToString() });
 
         public Task<List<Motivo>?> ListarMotivosPorServicioAsync(long servicioId)
-            => _http.GetFromJsonAsync<List<Motivo>>($"api/servicios/{servicioId}/motivos");
+            => _http.GetFromJsonAsync<List<Motivo>>($"servicios/{servicioId}/motivos");
     }
 }
