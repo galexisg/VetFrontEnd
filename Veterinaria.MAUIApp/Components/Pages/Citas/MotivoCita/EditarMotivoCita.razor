@@ -6,11 +6,11 @@
 
 <div class="d-flex flex-column min-vh-100">
     <div class="container py-3 flex-grow-1 d-flex flex-column">
-        <!-- Encabezado con botón volver -->
+        <!-- Encabezado -->
         <div class="d-flex align-items-center mb-3">
             <button class="btn btn-light rounded-circle shadow-sm me-2"
                     style="width: 36px; height: 36px; line-height: 1;"
-                    @onclick='() => Navigation.NavigateTo("/motivos")'>
+                    @onclick='() => Navigation.NavigateTo("/citas/motivocita/indexmotivocita")'>
                 ←
             </button>
             <div>
@@ -25,7 +25,7 @@
         }
         else
         {
-            <EditForm Id="editForm" Model="@motivoEdit" OnValidSubmit="Guardar" class="d-flex flex-column flex-grow-1">
+            <EditForm Model="@motivoEdit" OnValidSubmit="Guardar" class="d-flex flex-column flex-grow-1">
                 <DataAnnotationsValidator />
 
                 <div class="mb-3">
@@ -63,7 +63,6 @@
     [Parameter] public int id { get; set; }
 
     private MotivoCita? motivo;
-
     private MotivoCitaEdit motivoEdit = new();
 
     protected override async Task OnInitializedAsync()
@@ -71,7 +70,7 @@
         motivo = await MotivoCitaService.GetByIdAsync(id);
         if (motivo == null)
         {
-            Navigation.NavigateTo("/motivos");
+            Navigation.NavigateTo("/citas/motivocita/indexmotivocita");
             return;
         }
 
@@ -90,12 +89,12 @@
             motivo.Activo = motivoEdit.Activo;
 
             await MotivoCitaService.EditarAsync(id, motivo);
-            Navigation.NavigateTo("/motivos");
+            Navigation.NavigateTo("/citas/motivocita/indexmotivocita");
         }
     }
 
     private void Cancelar() =>
-        Navigation.NavigateTo("/motivos");
+        Navigation.NavigateTo("/citas/motivocita/indexmotivocita");
 
     public class MotivoCitaEdit
     {

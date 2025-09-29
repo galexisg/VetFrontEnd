@@ -6,13 +6,9 @@
 @if (mostrarModal && motivo != null)
 {
     <div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-
         <div class="shadow-lg rounded-4 text-center p-4" style="max-width: 320px; width: 90%; background-color: white;">
             <h6 class="fw-semibold mb-3 mt-2">¿Deseas desactivar este motivo?</h6>
-
-            <p class="fw-bold mb-4 text-success text-uppercase">
-                @motivo.Nombre
-            </p>
+            <p class="fw-bold mb-4 text-success text-uppercase">@motivo.Nombre</p>
 
             <div class="d-flex flex-column gap-2">
                 <button class="btn btn-dark rounded-pill py-2" @onclick="Cancelar">Cancelar</button>
@@ -33,7 +29,7 @@
         motivo = await MotivoCitaService.GetByIdAsync(id);
         if (motivo == null)
         {
-            Navigation.NavigateTo("/motivos");
+            Navigation.NavigateTo("/citas/motivocita/indexmotivocita");
         }
     }
 
@@ -46,12 +42,12 @@
         }
 
         mostrarModal = false;
-        Navigation.NavigateTo("/motivos");
+        Navigation.NavigateTo("/citas/motivocita/indexmotivocita");
     }
 
     private void Cancelar()
     {
         mostrarModal = false;
-        Navigation.NavigateTo("/motivos");
+        Navigation.NavigateTo("/citas/motivocita/indexmotivocita");
     }
 }

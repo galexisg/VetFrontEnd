@@ -22,7 +22,7 @@
         </div>
 
         <!-- CLÍNICA -->
-        <input type="checkbox" id="clinica-toggle">
+        <input type="checkbox" id="clinic<IndexMotivoCita />a-toggle">
         <label class="boton-verde" style="width:100%; background-color:#ffffff; color:Black;" for="clinica-toggle">
             Clínica
         </label>
@@ -41,9 +41,11 @@
         </label>
         <div class="dropdown-content">
             <a @onclick="@(() => navManager.NavigateTo("/veterinarios"))">Veterinarios</a>
+
+            <a @onclick="@(() => navManager.NavigateTo("/citas/motivocita/indexmotivocita"))">Motivo Citas</a>
+            <a @onclick="@(() => navManager.NavigateTo("/especialidades"))">Especialidades</a>
             <a @onclick="@(() => navManager.NavigateTo("/especialidades/index"))">Especialidades</a>
             <a @onclick="@(() => navManager.NavigateTo("/facturas/index"))">Facturas</a>
-
             <a @onclick="@(() => navManager.NavigateTo("/bloques-horario/index"))">Bloque Horarios</a>
             <a @onclick="@(() => navManager.NavigateTo("/horarios"))">Horarios</a>
             <a @onclick="@(() => navManager.NavigateTo("/test-dia/index"))">Historial dias</a>
