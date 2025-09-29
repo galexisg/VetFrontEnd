@@ -3,9 +3,16 @@
 
 <div class="cont">
     <div class="dropdown">
+        <div class="titulo mb-1">Menu de navegacion</div>
+        <div class="descripcion mb-2">
+            Despliega cada seccion y encuentra el apartado que buscas
+        </div>
+
         <!-- PACIENTES -->
         <input type="checkbox" id="pacientes-toggle">
-        <label class="boton-verde" for="pacientes-toggle">Pacientes </label>
+        <label class="boton-verde" style="width:100%; background-color:#ffffff; color:Black;" for="pacientes-toggle">
+            Pacientes
+        </label>
         <div class="dropdown-content">
             <a @onclick="@(() => navManager.NavigateTo("/mascotas"))">Mascotas</a>
             <a @onclick="@(() => navManager.NavigateTo("/clientes/index"))">Clientes</a>
@@ -15,7 +22,9 @@
 
         <!-- CLÍNICA -->
         <input type="checkbox" id="clinica-toggle">
-        <label class="boton-verde" for="clinica-toggle">Clínica </label>
+        <label class="boton-verde" style="width:100%; background-color:#ffffff; color:Black;" for="clinica-toggle">
+            Clínica
+        </label>
         <div class="dropdown-content">
             <a @onclick="@(() => navManager.NavigateTo("/medicamentos"))">Medicamentos</a>
             <a @onclick="@(() => navManager.NavigateTo("/lotes"))">Lotes</a>
@@ -26,7 +35,9 @@
 
         <!-- ADMINISTRACIÓN -->
         <input type="checkbox" id="admin-toggle">
-        <label class="boton-verde" for="admin-toggle">Administración </label>
+        <label class="boton-verde" style="width:100%; background-color:#ffffff; color:Black;" for="admin-toggle">
+            Administración
+        </label>
         <div class="dropdown-content">
             <a @onclick="@(() => navManager.NavigateTo("/veterinarios"))">Veterinarios</a>
             <a @onclick="@(() => navManager.NavigateTo("/especialidades"))">Especialidades</a>
@@ -36,13 +47,17 @@
 
         <!-- INVENTARIO -->
         <input type="checkbox" id="inventario-toggle">
-        <label class="boton-verde" for="inventario-toggle">Inventario </label>
+        <label class="boton-verde" style="width:100%; background-color:#ffffff; color:Black;" for="inventario-toggle">
+            Inventario
+        </label>
         <div class="dropdown-content">
             <a @onclick="@(() => navManager.NavigateTo("/productos"))">Productos</a>
             <a @onclick="@(() => navManager.NavigateTo("/stock"))">Stock</a>
             <a @onclick="@(() => navManager.NavigateTo("/categorias"))">Categorías</a>
-            <a @onclick="@(() => navManager.NavigateTo("/citas/2"))">citas</a>
+            <a @onclick="@(() => navManager.NavigateTo("/citas/2"))">Citas</a>
         </div>
+
+        <button class="boton-card" @onclick="Logout">Cerrar sesión</button>
     </div>
 </div>
 
@@ -87,10 +102,27 @@
         }
 
     /* Mostrar contenido al activar checkbox */
-    #pacientes-toggle:checked ~ .dropdown-content:nth-of-type(1),
-    #clinica-toggle:checked ~ .dropdown-content:nth-of-type(2),
-    #admin-toggle:checked ~ .dropdown-content:nth-of-type(3),
-    #inventario-toggle:checked ~ .dropdown-content:nth-of-type(4) {
+    #pacientes-toggle:checked + label + .dropdown-content {
+        max-height: 500px;
+    }
+
+    #clinica-toggle:checked + label + .dropdown-content {
+        max-height: 500px;
+    }
+
+    #admin-toggle:checked + label + .dropdown-content {
+        max-height: 500px;
+    }
+
+    #inventario-toggle:checked + label + .dropdown-content {
         max-height: 500px;
     }
 </style>
+
+@code {
+    private void Logout()
+    {
+        App.Token = null;
+        navManager.NavigateTo("/login/login");
+    }
+}

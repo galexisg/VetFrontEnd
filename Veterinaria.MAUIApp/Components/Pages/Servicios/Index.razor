@@ -17,191 +17,191 @@
 <!-- ESTADO: error de carga inicial -->
 @if (!string.IsNullOrWhiteSpace(loadError))
 {
-    <!-- Tarjeta de error: usa el mismo patrón usado en otras vistas -->
-    <div class="card-list mt-3" style="border:1px solid #ffd5d5;background:#fff7f7;color:#b32121">
-        <div class="d-flex justify-content-between align-items-start" style="gap:12px;">
-            <div>
-                <strong>@loadErrorTitle:</strong>
-                <div class="mt-1">@loadError</div>
+        <!-- Tarjeta de error: usa el mismo patrón usado en otras vistas -->
+        <div class="card-list mt-3" style="border:1px solid #ffd5d5;background:#fff7f7;color:#b32121">
+            <div class="d-flex justify-content-between align-items-start" style="gap:12px;">
+                <div>
+                    <strong>@loadErrorTitle:</strong>
+                    <div class="mt-1">@loadError</div>
+                </div>
+                <button class="boton-card-sm" @onclick="ReintentarCarga">Reintentar</button>
             </div>
-            <button class="boton-card-sm" @onclick="ReintentarCarga">Reintentar</button>
         </div>
-    </div>
 }
 else if (isLoading)
 {
-    <!-- ESTADO: cargando -->
-    <div class="loading-message">Cargando servicios...</div>
+        <!-- ESTADO: cargando -->
+        <div class="loading-message">Cargando servicios...</div>
 }
 else if (servicios == null || servicios.Count == 0)
 {
-    <!-- ESTADO: sin datos (empty state) con CTA -->
-    <div class="card-list mt-3">
-        <p class="titulo mb-1">Aún no hay servicios</p>
-        <p class="descripcion mb-2">Crea tu primer servicio para comenzar.</p>
-        <button class="boton-verde" @onclick="NuevoServicio">Nuevo servicio</button>
-    </div>
+        <!-- ESTADO: sin datos (empty state) con CTA -->
+        <div class="card-list mt-3">
+            <p class="titulo mb-1">Aún no hay servicios</p>
+            <p class="descripcion mb-2">Crea tu primer servicio para comenzar.</p>
+            <button class="boton-verde" @onclick="NuevoServicio">Nuevo servicio</button>
+        </div>
 }
 else
 {
-    <div class="d-grid gap-3">
+        <div class="d-grid gap-3">
 
-        <!-- Acceso rápido a “Motivos” en la misma estética que Servicios -->
-        <div class="card-list d-flex gap-3 align-items-center card-tappable" @onclick="IrMotivos">
-            <div class="icon-chip">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M20.6 13.4L11 3H6a2 2 0 0 0-2 2v5l10.6 10.6a2 2 0 0 0 2.8 0l3.8-3.8a2 2 0 0 0 0-2.8z" />
-                    <circle cx="8" cy="7.5" r="1.6" />
-                    <path d="M13.2 11.2L10 8" />
-                </svg>
-            </div>
-            <div class="d-grid gap-1">
-                <p class="titulo mb-0">Motivos</p>
-                <div class="descripcion">Gestionar los motivos agregados</div>
-            </div>
-            <svg class="ms-auto chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
-        </div>
-
-        <!-- CTA: crear nuevo servicio, mismo patrón de tarjeta -->
-        <div class="card-list d-flex gap-3 align-items-center card-tappable" @onclick="NuevoServicio">
-            <div class="icon-chip">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6v12M6 12h12" /></svg>
-            </div>
-            <div class="d-grid gap-1">
-                <p class="titulo mb-0">Nuevo servicio</p>
-                <div class="descripcion">Agrega un nuevo servicio a la veterinaria</div>
-            </div>
-        </div>
-
-        <!-- Toolbar de filtros/orden (buscador + estado + orden) -->
-        <div class="filter-toolbar card-list">
-            <!-- Buscador: actualiza en tiempo real usando oninput -->
-            <div class="input-wrap">
-                <svg class="input-icon" viewBox="0 0 24 24" aria-hidden="true">
-                    <circle cx="11" cy="11" r="7"></circle>
-                    <path d="M20 20l-3.2-3.2"></path>
-                </svg>
-                <input class="input input-ghost" placeholder="Buscar servicios..."
-                       @bind="filtroNombre" @bind:event="oninput" />
+            <!-- Acceso rápido a “Motivos” en la misma estética que Servicios -->
+            <div class="card-list d-flex gap-3 align-items-center card-tappable" @onclick="IrMotivos">
+                <div class="icon-chip">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M20.6 13.4L11 3H6a2 2 0 0 0-2 2v5l10.6 10.6a2 2 0 0 0 2.8 0l3.8-3.8a2 2 0 0 0 0-2.8z" />
+                        <circle cx="8" cy="7.5" r="1.6" />
+                        <path d="M13.2 11.2L10 8" />
+                    </svg>
+                </div>
+                <div class="d-grid gap-1">
+                    <p class="titulo mb-0">Motivos</p>
+                    <div class="descripcion">Gestionar los motivos agregados</div>
+                </div>
+                <svg class="ms-auto chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
             </div>
 
-            <!-- Filtro por estado: segmented control compacto -->
-            <div class="segmented" style="flex-wrap:wrap">
-                <button class="seg-btn @(string.IsNullOrEmpty(filtroEstado) ? "is-active" : "")" @onclick="SetEstadoTodos">Todos</button>
-                <button class="seg-btn @(filtroEstado == "ACTIVO" ? "is-active" : "")" @onclick="SetEstadoActivos">Activos</button>
-                <button class="seg-btn @(filtroEstado == "INACTIVO" ? "is-active" : "")" @onclick="SetEstadoInactivos">Inactivos</button>
+            <!-- CTA: crear nuevo servicio, mismo patrón de tarjeta -->
+            <div class="card-list d-flex gap-3 align-items-center card-tappable" @onclick="NuevoServicio">
+                <div class="icon-chip">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6v12M6 12h12" /></svg>
+                </div>
+                <div class="d-grid gap-1">
+                    <p class="titulo mb-0">Nuevo servicio</p>
+                    <div class="descripcion">Agrega un nuevo servicio a la veterinaria</div>
+                </div>
             </div>
 
-            <!-- Orden: por “recientes” (Id o FechaCreacion) y alfabético -->
-            <div class="d-flex gap-2" style="flex-wrap:wrap">
-                <div class="segmented">
-                    <button class="seg-btn @(sortKey == "recent" ? "is-active" : "")" @onclick="SetSortRecent">
-                        Recientes
-                    </button>
-                    <button class="seg-btn @(sortKey == "alpha" ? "is-active" : "")" @onclick="SetSortAlpha">
-                        A-Z
-                    </button>
+            <!-- Toolbar de filtros/orden (buscador + estado + orden) -->
+            <div class="filter-toolbar card-list">
+                <!-- Buscador: actualiza en tiempo real usando oninput -->
+                <div class="input-wrap">
+                    <svg class="input-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="11" cy="11" r="7"></circle>
+                        <path d="M20 20l-3.2-3.2"></path>
+                    </svg>
+                    <input class="input input-ghost" placeholder="Buscar servicios..."
+                           @bind="filtroNombre" @bind:event="oninput" />
                 </div>
 
-                <!-- Dirección del orden: invierte asc/desc -->
-                <button class="seg-btn" title="Invertir orden" @onclick="ToggleSortDir">
+                <!-- Filtro por estado: segmented control compacto -->
+                <div class="segmented" style="flex-wrap:wrap">
+                    <button class="seg-btn @(string.IsNullOrEmpty(filtroEstado) ? "is-active" : "")" @onclick="SetEstadoTodos">Todos</button>
+                    <button class="seg-btn @(filtroEstado == "ACTIVO" ? "is-active" : "")" @onclick="SetEstadoActivos">Activos</button>
+                    <button class="seg-btn @(filtroEstado == "INACTIVO" ? "is-active" : "")" @onclick="SetEstadoInactivos">Inactivos</button>
+                </div>
+
+                <!-- Orden: por “recientes” (Id o FechaCreacion) y alfabético -->
+                <div class="d-flex gap-2" style="flex-wrap:wrap">
+                    <div class="segmented">
+                        <button class="seg-btn @(sortKey == "recent" ? "is-active" : "")" @onclick="SetSortRecent">
+                            Recientes
+                        </button>
+                        <button class="seg-btn @(sortKey == "alpha" ? "is-active" : "")" @onclick="SetSortAlpha">
+                            A-Z
+                        </button>
+                    </div>
+
+                    <!-- Dirección del orden: invierte asc/desc -->
+                    <button class="seg-btn" title="Invertir orden" @onclick="ToggleSortDir">
                     @if (sortKey == "alpha")
                     {
                         @:(@(sortDesc ? "Z-A" : "A-Z"))
                     }
                     else
                     {
-                        <svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:middle">
+                                <svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:middle">
                             @if (sortDesc)
                             {
-                                <path d="M12 5l4 4H8l4-4zm0 14l-4-4h8l-4 4z" />
+                                            <path d="M12 5l4 4H8l4-4zm0 14l-4-4h8l-4 4z" />
                             }
                             else
                             {
-                                <path d="M12 19l-4-4h8l-4 4zm0-14l4 4H8l4-4z" />
+                                            <path d="M12 19l-4-4h8l-4 4zm0-14l4 4H8l4-4z" />
                             }
-                        </svg>
+                                </svg>
                     }
-                </button>
+                    </button>
+                </div>
             </div>
-        </div>
 
-        <!-- Error de acción (activar/desactivar): muestra feedback no bloqueante -->
+            <!-- Error de acción (activar/desactivar): muestra feedback no bloqueante -->
         @if (!string.IsNullOrWhiteSpace(actionError))
         {
-            <div class="card-list" style="border:1px solid #ffd5d5;background:#fff7f7;color:#b32121">
-                <strong>@actionErrorTitle:</strong> @actionError
-            </div>
+                    <div class="card-list" style="border:1px solid #ffd5d5;background:#fff7f7;color:#b32121">
+                        <strong>@actionErrorTitle:</strong> @actionError
+                    </div>
         }
 
-        <!-- Lista de servicios renderizada con filtros y orden ya aplicados -->
+            <!-- Lista de servicios renderizada con filtros y orden ya aplicados -->
         @if (ServiciosFiltradosOrdenados.Any())
         {
             @foreach (var s in ServiciosFiltradosOrdenados)
             {
-                <!-- Tarjeta de servicio “tappable”: hace navigate al editar al click -->
-                <div class="card-list service-card card-tappable" @onclick="() => EditarServicio(s.Id)">
-                    <!-- Chip de estado: usa tus tokens de color -->
-                    <div class="mb-2">
-                        <span class="chip @(s.Estado == EstadoServicio.ACTIVO ? "chip-success" : "chip-muted")">
+                            <!-- Tarjeta de servicio “tappable”: hace navigate al editar al click -->
+                            <div class="card-list service-card card-tappable" @onclick="() => EditarServicio(s.Id)">
+                                <!-- Chip de estado: usa tus tokens de color -->
+                                <div class="mb-2">
+                                    <span class="chip @(s.Estado == EstadoServicio.ACTIVO ? "chip-success" : "chip-muted")">
                             @(s.Estado == EstadoServicio.ACTIVO ? "Activo" : "Inactivo")
-                        </span>
-                    </div>
+                                    </span>
+                                </div>
 
-                    <!-- Título + descripción (opcional) -->
-                    <div class="d-grid gap-1">
-                        <p class="titulo mb-0">@s.Nombre</p>
+                                <!-- Título + descripción (opcional) -->
+                                <div class="d-grid gap-1">
+                                    <p class="titulo mb-0">@s.Nombre</p>
                         @if (!string.IsNullOrWhiteSpace(s.Descripcion))
                         {
-                            <p class="descripcion mb-0">@s.Descripcion</p>
+                                            <p class="descripcion mb-0">@s.Descripcion</p>
                         }
-                    </div>
+                                </div>
 
-                    <!-- Precio + toggle de estado. stopPropagation evita navegar al editar -->
-                    <div class="d-flex align-items-center justify-content-between mt-2">
-                        <span class="price-pill">@s.PrecioBase?.ToString("C")</span>
-                        <button class="boton-card-sm" @onclick:stopPropagation="true" @onclick="() => OnToggleClick(s)">
+                                <!-- Precio + toggle de estado. stopPropagation evita navegar al editar -->
+                                <div class="d-flex align-items-center justify-content-between mt-2">
+                                    <span class="etiqueta">@s.PrecioBase?.ToString("C")</span>
+                                    <button class="boton-card-sm" @onclick:stopPropagation="true" @onclick="() => OnToggleClick(s)">
                             @(s.Estado == EstadoServicio.ACTIVO ? "Desactivar" : "Activar")
-                        </button>
-                    </div>
-                </div>
+                                    </button>
+                                </div>
+                            </div>
             }
         }
         else
         {
-            <div class="descripcion mt-2">No se encontraron servicios con los filtros seleccionados.</div>
+                    <div class="descripcion mt-2">No se encontraron servicios con los filtros seleccionados.</div>
         }
-    </div>
+        </div>
 }
 
 <!-- Modal de confirmación (top) -->
 @if (showConfirm && pendingServicio is not null)
 {
-    <!-- Backdrop cierra modal al click: UX consistente con vistas previas -->
-    <div class="modal-backdrop" @onclick="CloseConfirm">
-        <div class="modal-card" @onclick:stopPropagation="true">
-            <div class="modal-header">
-                <!-- Icono rojo suave para acciones destructivas -->
-                <div class="modal-icon" style="background:#FFECEC;">
-                    <svg viewBox="0 0 24 24" aria-hidden="true" style="stroke:#D64545;">
-                        <path d="M12 8v5M12 17h.01" />
-                        <circle cx="12" cy="12" r="9" />
-                    </svg>
+        <!-- Backdrop cierra modal al click: UX consistente con vistas previas -->
+        <div class="modal-backdrop" @onclick="CloseConfirm">
+            <div class="modal-card" @onclick:stopPropagation="true">
+                <div class="modal-header">
+                    <!-- Icono rojo suave para acciones destructivas -->
+                    <div class="modal-icon" style="background:#FFECEC;">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" style="stroke:#D64545;">
+                            <path d="M12 8v5M12 17h.01" />
+                            <circle cx="12" cy="12" r="9" />
+                        </svg>
+                    </div>
+                    <h3 class="modal-title">Desactivar servicio</h3>
+                    <p class="modal-subtitle">
+                        ¿Seguro que deseas desactivar <strong>@pendingServicio?.Nombre</strong>?<br />
+                        Podrás activarlo nuevamente cuando quieras.
+                    </p>
                 </div>
-                <h3 class="modal-title">Desactivar servicio</h3>
-                <p class="modal-subtitle">
-                    ¿Seguro que deseas desactivar <strong>@pendingServicio?.Nombre</strong>?<br />
-                    Podrás activarlo nuevamente cuando quieras.
-                </p>
-            </div>
-            <div class="modal-actions">
-                <button class="btn-ghost" @onclick="CloseConfirm" disabled="@(isBusy)">Cancelar</button>
-                <button class="btn-primary-soft" style="background:#D64545" @onclick="ConfirmarDesactivacionAsync" disabled="@(isBusy)">
+                <div class="modal-actions">
+                    <button class="btn-ghost" @onclick="CloseConfirm" disabled="@(isBusy)">Cancelar</button>
+                    <button class="btn-primary-soft" style="background:#D64545" @onclick="ConfirmarDesactivacionAsync" disabled="@(isBusy)">
                     @(isBusy ? "Desactivando…" : "Sí, desactivar")
-                </button>
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
 }
 
 @code {
