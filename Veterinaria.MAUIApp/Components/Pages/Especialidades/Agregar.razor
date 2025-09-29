@@ -1,7 +1,91 @@
-﻿@page "/especialidades/agregar"
+﻿@page "/especialidades/nueva"
+@using Veterinaria.MAUIApp.Services
+@using Veterinaria.MAUIApp.Models
+@inject EspecialidadService EspecialidadService
+@inject IJSRuntime JS
+@inject NavigationManager NavigationManager
 
-<h3>Agregar</h3>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous">
+
+<div class="container mt-4">
+    <h2 class="mb-2">Especialidades</h2>
+    <p class="text-muted mb-4">Agrega una nueva especialidad</p>
+
+    <!-- Campo Nombre -->
+    <div class="mb-3">
+        <label for="nombre" class="form-label fw-bold">Nombre</label>
+        <input type="text" id="nombre" class="form-control"
+               placeholder="Ingresa el nombre de la especialidad"
+               @bind="especialidad.Nombre" />
+    </div>
+
+    <!-- Mensajes -->
+    @if (!string.IsNullOrEmpty(mensajeError))
+    {
+        <div class="alert alert-danger mt-2">@mensajeError</div>
+    }
+    @if (!string.IsNullOrEmpty(mensajeExito))
+    {
+        <div class="alert alert-success mt-2">@mensajeExito</div>
+    }
+
+    <!-- Botones -->
+    <div class="d-flex justify-content-between mt-4">
+        <NavLink class="btn btn-dark" href="/especialidades/index">
+            <i class="bi bi-arrow-left"></i> Cancelar
+        </NavLink>
+
+        <button class="btn btn-success" @onclick="OnGuardar">
+            <i class="bi bi-check-lg"></i> Guardar cambios
+        </button>
+    </div>
+</div>
 
 @code {
+    private Especialidad especialidad = new();
+    private string? mensajeExito;
+    private string? mensajeError;
 
+    private async Task OnGuardar()
+    {
+        mensajeError = "";
+        mensajeExito = "";
+
+        // ✅ Validar que el nombre no esté vacío
+        if (string.IsNullOrWhiteSpace(especialidad.Nombre))
+        {
+            mensajeError = "El nombre es obligatorio.";
+            return;
+        }
+
+        // ✅ Validar que no exista otra especialidad con el mismo nombre
+        var activas = await EspecialidadService.GetActivosAsync();
+        var inactivas = await EspecialidadService.GetInactivosAsync();
+        var todas = activas.Concat(inactivas).ToList();
+
+        bool nombreExiste = todas.Any(e =>
+            e.Nombre.Trim().Equals(especialidad.Nombre.Trim(), StringComparison.OrdinalIgnoreCase));
+
+        if (nombreExiste)
+        {
+            mensajeError = "Ya existe una especialidad con este nombre.";
+            return;
+        }
+
+        // ✅ Guardar si pasa las validaciones
+        var resultado = await EspecialidadService.CrearAsync(especialidad);
+        if (resultado != null)
+        {
+            mensajeExito = "Especialidad creada exitosamente.";
+            await Task.Delay(1500);
+            NavigationManager.NavigateTo("/especialidades/index");
+        }
+        else
+        {
+            mensajeError = "❌ Ocurrió un error al guardar la especialidad.";
+        }
+    }
 }
+
