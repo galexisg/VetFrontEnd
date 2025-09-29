@@ -1,5 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿//BUENOO
+
+using Microsoft.Extensions.Logging;
 using Veterinaria.MAUIApp.Services;
+using Veterinaria.MAUIApplication.Services;
 
 namespace Veterinaria.MAUIApp
 {
@@ -22,34 +25,24 @@ namespace Veterinaria.MAUIApp
             builder.Logging.AddDebug();
 #endif
 
-            // HttpClient hacia tu API en IntelliJ
             builder.Services.AddScoped(sp => new HttpClient
             {
-                BaseAddress = new Uri("http://localhost:8080/")
-
+                BaseAddress = new Uri("http://localhost:8080/") // Ajusta la URL si cambias de puerto/servidor
             });
 
-            // Registrar servicios
+            // ✅ Servicios que usan HttpClient
             builder.Services.AddScoped<DiaService>();
             builder.Services.AddScoped<EstadoDiaService>();
-
-            // Instanciar HttpClient una sola vez
-            var httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("http://localhost:8080/") // o la URL correcta para tu API
-            };
-
-            // Registrar el HttpClient como un singleton
-            builder.Services.AddSingleton(httpClient);
-
-            // Registrar tu servicio, pasándole la instancia de HttpClient
-            builder.Services.AddSingleton<AgendaService>();
-
-            builder.Services.AddSingleton<BloqueHorarioService>();
-
+            builder.Services.AddScoped<AgendaService>();
+            builder.Services.AddScoped<BloqueHorarioService>();
+            builder.Services.AddScoped<ProveedorService>();
+            builder.Services.AddScoped<MedicamentoService>();
 
 
             return builder.Build();
         }
     }
 }
+
+
+

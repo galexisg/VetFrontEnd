@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/Home"
 @inject NavigationManager Nav
 
 
@@ -47,6 +47,25 @@
                     <button class="btn btn-outline-warning w-100" @onclick='() => Nav.NavigateTo("/razas/indexmascotas")'>
                         Ir a agregar
                     </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-pencil-square display-4 text-warning"></i>
+                    <h5 class="card-title mt-3">Proveedores</h5>
+                    <p class="card-text">Ir a seccion de proveedores (listado)</p>
+                   <button class="btn btn-outline-warning w-100"
+                                @onclick='() => Nav.NavigateTo("/proveedores")'>
+                          Ir al listado
+                   </button>
+                    <button class="btn btn-outline-warning w-100"
+                            @onclick='() => Nav.NavigateTo("/proveedores/agregar")'>
+                        Ir a agregar
+                    </button>
+
                 </div>
             </div>
         </div>
