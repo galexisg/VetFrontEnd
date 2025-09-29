@@ -11,7 +11,7 @@
         <div class="d-flex align-items-center mb-3">
             <button class="btn btn-light rounded-circle shadow-sm me-2"
                     style="width: 36px; height: 36px; line-height: 1;"
-                    @onclick='() => Navigation.NavigateTo("/motivos")'>
+                    @onclick='() => Navigation.NavigateTo("/citas/motivocita/indexmotivocita")'>
                 ←
             </button>
             <div>
@@ -84,8 +84,10 @@
         if (motivoCreado != null)
         {
             mensajeExito = "Motivo creado exitosamente.";
-            await Task.Delay(1500);
-            Navigation.NavigateTo("/motivos");
+           
+            await Task.Delay(1000);
+            
+            Navigation.NavigateTo("/citas/motivocita/indexmotivocita");
         }
         else
         {
@@ -95,6 +97,6 @@
 
     private void Cancelar()
     {
-        Navigation.NavigateTo("/motivos");
+        Navigation.NavigateTo("/citas/motivocita/indexmotivocita");
     }
 }
