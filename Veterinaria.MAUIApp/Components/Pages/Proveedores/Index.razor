@@ -1,7 +1,161 @@
-﻿@page "/proveedores/index"
+﻿@page "/proveedores"
 
-<h3>Index</h3>
+@inject ProveedorService proveedorService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+@using Veterinaria.MAUIApplication.Models
+@using Veterinaria.MAUIApplication.Services
+
+<h3>Proveedores</h3>
+
+<!-- Botón superior solo para volver al home -->
+<div class="mb-3 d-flex justify-content-end">
+    <button class="btn btn-gris" @onclick="Volvermenu">Volver al Menu</button>
+</div>
+
+<!-- 🔍 Búsqueda por ID -->
+<div class="mb-3 d-flex">
+    <input type="number" class="form-control me-2" placeholder="Buscar por ID"
+           @bind="idBuscar" @bind:event="oninput" />
+    <button class="btn btn-verde" @onclick="BuscarPorId">Buscar</button>
+    <button class="btn btn-gris ms-2" @onclick="LimpiarBusqueda">Limpiar</button>
+</div>
+
+<!-- ⚠️ Mensaje si no se encontró el ID -->
+@if (!string.IsNullOrEmpty(mensajeBusqueda))
+{
+    <div class="alert alert-warning">@mensajeBusqueda</div>
+}
+
+@if (proveedores == null)
+{
+    <p>Cargando proveedores...</p>
+}
+else if (proveedores.Count == 0 && string.IsNullOrEmpty(mensajeBusqueda))
+{
+    <p>No hay proveedores registrados.</p>
+}
+else
+{
+    @foreach (var p in proveedores)
+    {
+        <div class="card mb-3 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">@p.Nombre</h5>
+                <p class="card-text">
+                    <strong>Dirección:</strong> @p.Direccion <br />
+                    <strong>Teléfono:</strong> @p.Telefono <br />
+                    <strong>Email:</strong> @p.Email
+                </p>
+                <div class="d-flex justify-content-between">
+                    <a class="btn btn-sm btn-verde" href="/proveedores/editar/@p.Id">Editar</a>
+                    <button class="btn btn-sm btn-gris" @onclick="() => ConfirmarEliminar(p.Id, p.Nombre)">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+<!-- Botón flotante para agregar proveedor -->
+<a class="btn btn-verde rounded-circle position-fixed"
+   style="bottom: 20px; right: 20px; width: 56px; height: 56px; font-size: 24px; padding: 0;"
+   href="/proveedores/agregar">
+    +
+</a>
+
+<style>
+    .btn-verde {
+        background-color: #00C853;
+        color: white;
+        border: none;
+    }
+
+        .btn-verde:hover {
+            background-color: #00B44C;
+        }
+
+    .btn-gris {
+        background-color: #444444;
+        color: white;
+        border: none;
+    }
+
+        .btn-gris:hover {
+            background-color: #555555;
+            color: white;
+        }
+</style>
 
 @code {
+    private List<Proveedor> proveedores;
+    private int idBuscar;
+    private bool mostrandoResultadoUnico = false;
+    private string mensajeBusqueda = string.Empty;
 
+    protected override async Task OnInitializedAsync()
+    {
+        proveedores = await proveedorService.ObtenerTodos();
+    }
+
+    private async Task BuscarPorId()
+    {
+        mensajeBusqueda = string.Empty;
+
+        if (idBuscar <= 0)
+        {
+            mensajeBusqueda = "⚠️ Ingresa un ID válido.";
+            return;
+        }
+
+        try
+        {
+            var proveedor = await proveedorService.ObtenerPorId(idBuscar);
+            if (proveedor != null)
+            {
+                proveedores = new List<Proveedor> { proveedor };
+                mostrandoResultadoUnico = true;
+            }
+            else
+            {
+                proveedores = new List<Proveedor>(); // limpiar lista
+                mensajeBusqueda = $" No se encontró proveedor con ID {idBuscar}.";
+            }
+        }
+        catch (Exception ex)
+        {
+            proveedores = new List<Proveedor>();
+            mensajeBusqueda = "⚠️ No se encontro el proveedor";
+        }
+    }
+
+    private async Task LimpiarBusqueda()
+    {
+        idBuscar = 0;
+        mostrandoResultadoUnico = false;
+        mensajeBusqueda = string.Empty;
+        proveedores = await proveedorService.ObtenerTodos();
+    }
+
+    private void Volvermenu()
+    {
+        NavigationManager.NavigateTo("/login/menu");
+    }
+
+    private async Task ConfirmarEliminar(int id, string nombre)
+    {
+        bool confirmado = await JS.InvokeAsync<bool>("confirm", $"¿Estás seguro de eliminar al proveedor '{nombre}'?");
+        if (confirmado)
+        {
+            await proveedorService.Eliminar(id);
+            if (mostrandoResultadoUnico)
+            {
+                await LimpiarBusqueda();
+            }
+            else
+            {
+                proveedores = await proveedorService.ObtenerTodos();
+            }
+        }
+    }
 }
+
