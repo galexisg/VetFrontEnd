@@ -1,0 +1,102 @@
+﻿@page "/razas/indexmascotas"
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Services
+@inject RazaService razaService
+@inject NavigationManager nav
+@inject IJSRuntime js
+
+<link rel="stylesheet" href="css/razas.css" />
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Listado de Razas</h2>
+        <button class="btn btn-primary" @onclick="IrANuevaRaza">
+            <i class="bi bi-plus-circle me-1"></i> Nueva Raza
+        </button>
+    </div>
+
+    @if (razas is null)
+    {
+        <div class="alert alert-info text-center">
+            <span class="spinner-border spinner-border-sm me-2"></span> Cargando datos…
+        </div>
+    }
+    else if (!razas.Any())
+    {
+        <div class="alert alert-warning text-center">
+            No hay razas registradas.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Especie</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in razas)
+                    {
+                        <tr>
+                            <td>@r.Id</td>
+                            <td>@r.Nombre</td>
+                            <td>@r.EspecieNombre</td>
+                            <td class="text-center">
+                               
+                                <button class="btn btn-sm btn-outline-danger"
+                                        @onclick="() => EliminarRaza(r.Id)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@code {
+    private List<RazaSalidaRes>? razas;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarRazas();
+    }
+
+    private async Task CargarRazas()
+    {
+        try
+        {
+            razas = await razaService.ObtenerTodosAsync();
+        }
+        catch
+        {
+            razas = new();
+        }
+    }
+
+    private void IrANuevaRaza() => nav.NavigateTo("/razas/agregar");
+    private void IrAEditarRaza(byte id) => nav.NavigateTo($"/razas/editar/{id}");
+
+    private async Task EliminarRaza(byte id)
+    {
+        var ok = await js.InvokeAsync<bool>("confirm", $"¿Eliminar la raza {id}?");
+        if (!ok) return;
+
+        var eliminado = await razaService.EliminarAsync(id);
+        if (eliminado)
+        {
+            await CargarRazas();
+        }
+        else
+        {
+            await js.InvokeVoidAsync("alert", "Error al eliminar.");
+        }
+    }
+}
