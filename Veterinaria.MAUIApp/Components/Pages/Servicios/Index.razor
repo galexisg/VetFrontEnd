@@ -291,10 +291,10 @@ else
 
     private Task ReintentarCarga() => CargarServiciosAsync();
 
-    private void IrInicio() => navManager.NavigateTo("/");
+    private void IrInicio() => navManager.NavigateTo("/login/menu");
     private void NuevoServicio() => navManager.NavigateTo("/servicios/agregar");
     private void EditarServicio(long id) => navManager.NavigateTo($"/servicios/editar/{id}");
-    private void IrMotivos() => navManager.NavigateTo("/motivos");
+    private void IrMotivos() => navManager.NavigateTo("/motivos/index");
 
     // Handlers de filtro
     private void SetEstadoTodos() => filtroEstado = string.Empty;

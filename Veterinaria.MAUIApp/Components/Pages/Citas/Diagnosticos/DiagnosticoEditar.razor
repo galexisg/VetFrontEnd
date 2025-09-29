@@ -1,0 +1,105 @@
+﻿@page "/diagnosticos/{citaId:long}/editar/{id:long}"
+@inject Veterinaria.MAUIApp.Services.DiagnosticoService DiagnosticoService
+@inject NavigationManager Navigation
+@using Veterinaria.MAUIApp.Models
+
+<div class="d-flex flex-column min-vh-100">
+
+    <div class="container py-3 flex-grow-1 d-flex flex-column">
+
+        <!-- Encabezado: Editar Diagnóstico -->
+        <div class="container py-3">
+            <div class="row align-items-center mb-3 g-0">
+                <!-- Botón volver (izquierda) -->
+                <div class="col-auto">
+                    <button type="button"
+                            class="btn btn-light rounded-circle shadow-sm p-0 d-inline-flex align-items-center justify-content-center lh-1 flex-shrink-0"
+                            style="width:36px; height:36px;"
+                            @onclick='@(() => Navigation.NavigateTo($"/diagnosticos/{citaId}"))'
+                            aria-label="Volver a diagnósticos">
+                        <i class="bi bi-arrow-left-short fs-5"></i>
+                    </button>
+                </div>
+
+                <!-- Centro: título + subtítulo -->
+                <div class="col text-center">
+                    <h5 class="fw-bold mb-0">Diagnóstico</h5>
+                    <small class="text-muted">Edita la información del diagnóstico</small>
+                </div>
+
+                <!-- Derecha: espejo invisible para centrar perfecto -->
+                <div class="col-auto">
+                    <button class="btn btn-light rounded-circle p-0 d-inline-flex align-items-center justify-content-center lh-1 invisible"
+                            style="width:36px; height:36px;" aria-hidden="true">
+                        <i class="bi bi-arrow-left-short fs-5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+
+        @if (diagnostico == null)
+        {
+            <p><em>Cargando datos del diagnóstico...</em></p>
+        }
+        else
+        {
+            <EditForm Id="editForm" Model="@diagnostico" OnValidSubmit="Guardar" class="d-flex flex-column flex-grow-1">
+                <DataAnnotationsValidator />
+                @* <ValidationSummary />  <-- quítalo *@
+
+                <div class="mb-3">
+                    <label class="form-label">Nombre del diagnóstico</label>
+                    <InputText class="form-control rounded-4 shadow-sm" @bind-Value="diagnostico.Nombre" />
+                    <ValidationMessage For="@(() => diagnostico.Nombre)" class="text-danger small" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Descripción del diagnóstico</label>
+                    <InputTextArea class="form-control rounded-4 shadow-sm" rows="3" @bind-Value="diagnostico.Descripcion" />
+                    <ValidationMessage For="@(() => diagnostico.Descripcion)" class="text-danger small" />
+                </div>
+
+                <div class="mt-auto d-flex gap-2 p-3 border-top">
+                    <button type="button" class="btn btn-dark flex-fill py-2 rounded-pill" @onclick="Cancelar">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success flex-fill py-2 rounded-pill fw-bold">
+                        Guardar cambios
+                    </button>
+                </div>
+            </EditForm>
+
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public long citaId { get; set; }
+    [Parameter] public long id { get; set; }
+
+    private Diagnostico? diagnostico;
+
+    protected override async Task OnInitializedAsync()
+    {
+        diagnostico = await DiagnosticoService.GetByIdAsync(citaId, id);
+
+        if (diagnostico == null)
+        {
+            Navigation.NavigateTo($"/diagnosticos/{citaId}");
+        }
+    }
+
+    private async Task Guardar()
+    {
+        if (diagnostico != null)
+        {
+            await DiagnosticoService.EditarAsync(citaId, id, diagnostico);
+            Navigation.NavigateTo($"/diagnosticos/{citaId}");
+        }
+    }
+
+    private void Cancelar() =>
+        Navigation.NavigateTo($"/diagnosticos/{citaId}");
+}
