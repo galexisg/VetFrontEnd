@@ -20,15 +20,19 @@ namespace Veterinaria.MAUIApp
     		builder.Services.AddBlazorWebViewDeveloperTools();
     		builder.Logging.AddDebug();
 #endif
-
+            
             builder.Services.AddScoped(http => new HttpClient
             {
-                BaseAddress = new Uri("https://localhost:7174/")
+                BaseAddress = new Uri("http://localhost:8080/")
             });
 
 
-            /*Añadir servicios*/
-            
+            /*Añadir servicios Gisela*/
+            builder.Services.AddScoped<Veterinaria.MAUIApp.Services.TratamientoService>();
+            builder.Services.AddScoped<Veterinaria.MAUIApp.Services.TratamientoAplicadoService>();
+            builder.Services.AddScoped<Veterinaria.MAUIApp.Services.ServicioTratamientoService>();
+
+
 
             return builder.Build();
         }

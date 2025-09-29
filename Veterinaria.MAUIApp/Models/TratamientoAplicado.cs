@@ -1,12 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace Veterinaria.MAUIApp.Models
 {
-    internal class TratamientoAplicado
+    public class TratamientoAplicado
     {
+        [JsonPropertyName("id")]
+        public long Id { get; set; }
+
+        [JsonPropertyName("citaId")]
+        public long CitaId { get; set; }
+
+        [JsonPropertyName("tratamientoId")]
+        public long TratamientoId { get; set; }
+
+        [JsonPropertyName("veterinarioId")]
+        public long VeterinarioId { get; set; }
+
+        [JsonPropertyName("estado")]
+        public string Estado { get; set; } = string.Empty;
+
+        [JsonPropertyName("observaciones")]
+        public string Observaciones { get; set; } = string.Empty;
     }
 }

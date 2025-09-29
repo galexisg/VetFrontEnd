@@ -1,30 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>Veterinaria.MAUIApp</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- En MAUI Blazor el base puede ser "/" -->
     <base href="/" />
-    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
-    <link rel="stylesheet" href="css/app.css" />
-    <link rel="stylesheet" href="Veterinaria.MAUIApp.styles.css" />
-    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="stylesheet" href="css/app.css">
+    <title>App</title>
 </head>
 
 <body>
-
-    <div class="status-bar-safe-area"></div>
-
+    <!-- Debe existir este contenedor y coincidir con el selector en tu App -->
     <div id="app">Loading...</div>
 
-    <div id="blazor-error-ui">
-        An unhandled error has occurred.
-        <a href="" class="reload">Reload</a>
-        <a class="dismiss">🗙</a>
-    </div>
-
+    <!-- IMPORTANTE: para MAUI Blazor (NO usar blazor.webassembly.js) -->
     <script src="_framework/blazor.webview.js" autostart="false"></script>
-
 </body>
 
 </html>

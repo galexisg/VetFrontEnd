@@ -1,34 +1,46 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\The jont\\source\\repos\\VetFrontEnd\\",
+  "WorkspaceRootPath": "C:\\Users\\Gisela Salazar\\Desktop\\FrontP\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\the jont\\source\\repos\\vetfrontend\\veterinaria.mauiapp\\components\\pages\\facturas\\index.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\pages\\facturas\\index.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\the jont\\source\\repos\\vetfrontend\\veterinaria.mauiapp\\components\\pages\\login\\welcome.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gisela salazar\\desktop\\frontp\\veterinaria.mauiapp\\components\\pages\\login\\welcome.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\pages\\login\\welcome.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\the jont\\source\\repos\\vetfrontend\\veterinaria.mauiapp\\components\\pages\\facturas\\agregar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\pages\\facturas\\agregar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gisela salazar\\desktop\\frontp\\veterinaria.mauiapp\\components\\pages\\tratamientos\\index.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\pages\\tratamientos\\index.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\the jont\\source\\repos\\vetfrontend\\veterinaria.mauiapp\\components\\pages\\facturas\\editar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\pages\\facturas\\editar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gisela salazar\\desktop\\frontp\\veterinaria.mauiapp\\components\\pages\\tratamientos\\editar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\pages\\tratamientos\\editar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\the jont\\source\\repos\\vetfrontend\\veterinaria.mauiapp\\components\\pages\\facturas\\pago\\agregar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\pages\\facturas\\pago\\agregar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gisela salazar\\desktop\\frontp\\veterinaria.mauiapp\\components\\pages\\tratamientos\\agregar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\pages\\tratamientos\\agregar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\the jont\\source\\repos\\vetfrontend\\veterinaria.mauiapp\\components\\pages\\facturas\\detalles\\agregar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\components\\pages\\facturas\\detalles\\agregar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gisela salazar\\desktop\\frontp\\veterinaria.mauiapp\\services\\tratamientoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\services\\tratamientoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\the jont\\source\\repos\\vetfrontend\\veterinaria.mauiapp\\wwwroot\\css\\app.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gisela salazar\\desktop\\frontp\\veterinaria.mauiapp\\models\\tratamiento.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\models\\tratamiento.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gisela salazar\\desktop\\frontp\\veterinaria.mauiapp\\models\\tratamientoaplicado.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\models\\tratamientoaplicado.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gisela salazar\\desktop\\frontp\\veterinaria.mauiapp\\services\\tratamientoaplicadoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\services\\tratamientoaplicadoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gisela salazar\\desktop\\frontp\\veterinaria.mauiapp\\wwwroot\\css\\app.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
       "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\wwwroot\\css\\app.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|c:\\users\\gisela salazar\\desktop\\frontp\\veterinaria.mauiapp\\mauiprogram.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1C893C4D-7E86-43EB-915E-5DBB7729E5F9}|Veterinaria.MAUIApp\\Veterinaria.MAUIApp.csproj|solutionrelative:veterinaria.mauiapp\\mauiprogram.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -38,7 +50,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 11,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Bookmark",
@@ -62,94 +74,124 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Editar.razor",
-              "DocumentMoniker": "C:\\Users\\The jont\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Editar.razor",
-              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Editar.razor",
-              "ToolTip": "C:\\Users\\The jont\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Editar.razor",
-              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Editar.razor",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "Welcome.razor",
+              "DocumentMoniker": "C:\\Users\\Gisela Salazar\\Desktop\\FrontP\\Veterinaria.MAUIApp\\Components\\Pages\\Login\\Welcome.razor",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Pages\\Login\\Welcome.razor",
+              "ToolTip": "C:\\Users\\Gisela Salazar\\Desktop\\FrontP\\Veterinaria.MAUIApp\\Components\\Pages\\Login\\Welcome.razor",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Pages\\Login\\Welcome.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-09-24T15:41:12.941Z",
+              "WhenOpened": "2025-09-28T23:20:11.546Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "Agregar.razor",
-              "DocumentMoniker": "C:\\Users\\The jont\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Pago\\Agregar.razor",
-              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Pago\\Agregar.razor",
-              "ToolTip": "C:\\Users\\The jont\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Pago\\Agregar.razor",
-              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Pago\\Agregar.razor",
-              "ViewState": "AgIAAAcAAAAAAAAAAADwvycAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-09-24T15:41:05.789Z",
-              "EditorCaption": ""
+              "Title": "TratamientoService.cs",
+              "DocumentMoniker": "C:\\Users\\Gisela Salazar\\Desktop\\FrontP\\Veterinaria.MAUIApp\\Services\\TratamientoService.cs",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Services\\TratamientoService.cs",
+              "ToolTip": "C:\\Users\\Gisela Salazar\\Desktop\\FrontP\\Veterinaria.MAUIApp\\Services\\TratamientoService.cs",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\Services\\TratamientoService.cs",
+              "ViewState": "AgIAACkAAAAAAAAAAAAIwDEAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-28T21:39:08.484Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 5,
-              "Title": "Agregar.razor",
-              "DocumentMoniker": "C:\\Users\\The jont\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Detalles\\Agregar.razor",
-              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Detalles\\Agregar.razor",
-              "ToolTip": "C:\\Users\\The jont\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Detalles\\Agregar.razor",
-              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Detalles\\Agregar.razor",
-              "ViewState": "AgIAACAAAAAAAAAAAADwv0AAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-09-24T15:40:52.18Z",
-              "EditorCaption": ""
+              "Title": "Tratamiento.cs",
+              "DocumentMoniker": "C:\\Users\\Gisela Salazar\\Desktop\\FrontP\\Veterinaria.MAUIApp\\Models\\Tratamiento.cs",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Models\\Tratamiento.cs",
+              "ToolTip": "C:\\Users\\Gisela Salazar\\Desktop\\FrontP\\Veterinaria.MAUIApp\\Models\\Tratamiento.cs",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\Models\\Tratamiento.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAAowAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-28T21:35:12.992Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 6,
-              "Title": "app.css",
-              "DocumentMoniker": "C:\\Users\\The jont\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\wwwroot\\css\\app.css",
-              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\wwwroot\\css\\app.css",
-              "ToolTip": "C:\\Users\\The jont\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\wwwroot\\css\\app.css",
-              "RelativeToolTip": "Veterinaria.MAUIApp\\wwwroot\\css\\app.css",
-              "ViewState": "AgIAAJkAAAAAAAAAAAAAAMIAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2025-09-24T15:27:48.92Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Agregar.razor",
-              "DocumentMoniker": "C:\\Users\\The jont\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Agregar.razor",
-              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Agregar.razor",
-              "ToolTip": "C:\\Users\\The jont\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Agregar.razor",
-              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Agregar.razor",
-              "ViewState": "AgIAAAQAAAAAAAAAAAAmwGIAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-09-24T15:22:41.477Z",
-              "EditorCaption": ""
+              "Title": "TratamientoAplicado.cs",
+              "DocumentMoniker": "C:\\Users\\Gisela Salazar\\Desktop\\FrontP\\Veterinaria.MAUIApp\\Models\\TratamientoAplicado.cs",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Models\\TratamientoAplicado.cs",
+              "ToolTip": "C:\\Users\\Gisela Salazar\\Desktop\\FrontP\\Veterinaria.MAUIApp\\Models\\TratamientoAplicado.cs",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\Models\\TratamientoAplicado.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAiwAgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-28T21:24:13.957Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Welcome.razor",
-              "DocumentMoniker": "C:\\Users\\The jont\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Login\\Welcome.razor",
-              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Pages\\Login\\Welcome.razor",
-              "ToolTip": "C:\\Users\\The jont\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Login\\Welcome.razor",
-              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Pages\\Login\\Welcome.razor",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAuAAAAAAAAAA==",
+              "Title": "Index.razor",
+              "DocumentMoniker": "C:\\Users\\Gisela Salazar\\Desktop\\FrontP\\Veterinaria.MAUIApp\\Components\\Pages\\Tratamientos\\Index.razor",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Pages\\Tratamientos\\Index.razor",
+              "ToolTip": "C:\\Users\\Gisela Salazar\\Desktop\\FrontP\\Veterinaria.MAUIApp\\Components\\Pages\\Tratamientos\\Index.razor",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Pages\\Tratamientos\\Index.razor",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAABQAAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-09-24T03:27:28.092Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-28T21:14:00.632Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Index.razor",
-              "DocumentMoniker": "C:\\Users\\The jont\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Index.razor",
-              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Index.razor",
-              "ToolTip": "C:\\Users\\The jont\\source\\repos\\VetFrontEnd\\Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Index.razor*",
-              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Pages\\Facturas\\Index.razor*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAWAAAAAAAAAA==",
+              "DocumentIndex": 3,
+              "Title": "Agregar.razor",
+              "DocumentMoniker": "C:\\Users\\Gisela Salazar\\Desktop\\FrontP\\Veterinaria.MAUIApp\\Components\\Pages\\Tratamientos\\Agregar.razor",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Pages\\Tratamientos\\Agregar.razor",
+              "ToolTip": "C:\\Users\\Gisela Salazar\\Desktop\\FrontP\\Veterinaria.MAUIApp\\Components\\Pages\\Tratamientos\\Agregar.razor",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Pages\\Tratamientos\\Agregar.razor",
+              "ViewState": "AgIAAFIAAAAAAAAAAAAswG0AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-09-24T00:37:26.209Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-28T21:14:14.948Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Editar.razor",
+              "DocumentMoniker": "C:\\Users\\Gisela Salazar\\Desktop\\FrontP\\Veterinaria.MAUIApp\\Components\\Pages\\Tratamientos\\Editar.razor",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Components\\Pages\\Tratamientos\\Editar.razor",
+              "ToolTip": "C:\\Users\\Gisela Salazar\\Desktop\\FrontP\\Veterinaria.MAUIApp\\Components\\Pages\\Tratamientos\\Editar.razor",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\Components\\Pages\\Tratamientos\\Editar.razor",
+              "ViewState": "AgIAAH0AAAAAAAAAAAAswJIAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-09-28T21:14:07.87Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "MauiProgram.cs",
+              "DocumentMoniker": "C:\\Users\\Gisela Salazar\\Desktop\\FrontP\\Veterinaria.MAUIApp\\MauiProgram.cs",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\MauiProgram.cs",
+              "ToolTip": "C:\\Users\\Gisela Salazar\\Desktop\\FrontP\\Veterinaria.MAUIApp\\MauiProgram.cs",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\MauiProgram.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-28T21:14:25.5Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "app.css",
+              "DocumentMoniker": "C:\\Users\\Gisela Salazar\\Desktop\\FrontP\\Veterinaria.MAUIApp\\wwwroot\\css\\app.css",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\wwwroot\\css\\app.css",
+              "ToolTip": "C:\\Users\\Gisela Salazar\\Desktop\\FrontP\\Veterinaria.MAUIApp\\wwwroot\\css\\app.css",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\wwwroot\\css\\app.css",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAALcAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2025-09-28T21:16:34.988Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "TratamientoAplicadoService.cs",
+              "DocumentMoniker": "C:\\Users\\Gisela Salazar\\Desktop\\FrontP\\Veterinaria.MAUIApp\\Services\\TratamientoAplicadoService.cs",
+              "RelativeDocumentMoniker": "Veterinaria.MAUIApp\\Services\\TratamientoAplicadoService.cs",
+              "ToolTip": "C:\\Users\\Gisela Salazar\\Desktop\\FrontP\\Veterinaria.MAUIApp\\Services\\TratamientoAplicadoService.cs",
+              "RelativeToolTip": "Veterinaria.MAUIApp\\Services\\TratamientoAplicadoService.cs",
+              "ViewState": "AgIAABcAAAAAAAAAAAAwwDAAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-28T21:23:52.095Z"
             }
           ]
         }
