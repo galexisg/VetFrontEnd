@@ -1,26 +1,20 @@
-﻿using System.Text.Json.Serialization;
-namespace Veterinaria.MAUIApp.Models;
+﻿using System;
+using System.Text.Json.Serialization;
 
-public class Servicio
+namespace Veterinaria.MAUIApp.Models
 {
-    [JsonPropertyName("id")]
-    public long Id { get; set; }
+    public class Servicio
+    {
+        public long Id { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string? Descripcion { get; set; }
+        public decimal? PrecioBase { get; set; }
+        public EstadoServicio Estado { get; set; } = EstadoServicio.ACTIVO;
 
-    [JsonPropertyName("nombre")]
-    public string Nombre { get; set; } = string.Empty; // Valor inicial
+        [JsonPropertyName("createdAt")]
+        public DateTime? CreatedAt { get; set; }
 
-    [JsonPropertyName("descripcion")]
-    public string Descripcion { get; set; } = string.Empty; // Valor inicial
-
-    [JsonPropertyName("precioBase")]
-    public decimal PrecioBase { get; set; }
-
-    [JsonPropertyName("estado")]
-    public EstadoServicio Estado { get; set; }
-
-    [JsonPropertyName("createdAt")]
-    public DateTime CreatedAt { get; set; }
-
-    [JsonPropertyName("updatedAt")]
-    public DateTime UpdatedAt { get; set; }
+        [JsonPropertyName("updatedAt")]
+        public DateTime? UpdatedAt { get; set; }
+    }
 }

@@ -1,7 +1,12 @@
-﻿namespace Veterinaria.MAUIApp.Models;
+﻿using System.Text.Json.Serialization;
 
-public enum EstadoServicio
+namespace Veterinaria.MAUIApp.Models
 {
-    ACTIVO,
-    INACTIVO
+    // Hace que System.Text.Json (de)serialice "ACTIVO"/"INACTIVO" como texto
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum EstadoServicio
+    {
+        ACTIVO,
+        INACTIVO
+    }
 }

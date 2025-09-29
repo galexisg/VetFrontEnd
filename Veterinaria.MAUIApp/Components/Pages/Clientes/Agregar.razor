@@ -1,7 +1,90 @@
 ﻿@page "/clientes/agregar"
+@inject NavigationManager navManager
+@inject Services.UsuarioService UsuarioService
 
-<h3>Agregar</h3>
+<div class="d-flex gap-3 align-items-center" @onclick="NuevoUsuario">
+    <div class="img-add d-flex justify-content-center align-items-center" @onclick="NuevoUsuario">
+        <div class=""> ‹ </div>
+    </div>
+    <div class="d-grid gap-1">
+        <p style="font-size:20px;" class="titulo">Clientes</p>
+        <div style="font-size:16px;" class="descripcion">Gestiona el registro y control</div>
+    </div>
+</div>
+
+<EditForm Model="nuevoUsuario" OnValidSubmit="GuardarUsuario">
+    <div class="d-grid gap-2 mb-4 mt-4 pt-4">
+        <label class="titulo">Nombre Completo</label>
+        <InputText placeholder="Ingresa un nombre completo" @bind-Value="nuevoUsuario.NombreCompleto" class="input mb-2" required />
+    </div>
+
+    <div class="d-grid gap-2 mb-4">
+        <label class="titulo">Correo</label>
+        <InputText placeholder="Ingresa un email" @bind-Value="nuevoUsuario.Correo" class="input mb-2" type="email" required />
+    </div>
+
+    <div class="d-grid gap-2 mb-4">
+        <label class="titulo">Usuario</label>
+        <InputText placeholder="Ingresa un nombre de usuario" @bind-Value="nuevoUsuario.NickName" class="input mb-2" required />
+    </div>
+
+    <div class="d-grid gap-2 mb-4">
+        <label class="titulo">Contraseña</label>
+        <InputText placeholder="Ingresa una contraseña" @bind-Value="nuevoUsuario.Clave" type="password" class="input mb-2" required minlength="6" />
+    </div>
+
+    <div class="d-grid gap-2 mb-4">
+        <label class="titulo">DUI</label>
+        <InputText @bind-Value="nuevoUsuario.Dui" placeholder="Ingresa un número de DUI" class="input mb-2" required pattern="[0-9]+" title="Solo se permiten números" />
+    </div>
+
+    <div class="d-grid gap-2 mb-4">
+        <label class="titulo">Teléfono</label>
+        <InputText @bind-Value="nuevoUsuario.Telefono" placeholder="Ingresa un número de teléfono" class="input mb-2" required pattern="[0-9]+" title="Solo se permiten números" />
+    </div>
+
+
+    <div class="d-grid gap-2 mb-4">
+        <label class="titulo">Dirección</label>
+        <InputText placeholder="Ingresa una dirección de vivienda" @bind-Value="nuevoUsuario.Direccion" class="input mb-2" required />
+    </div>
+
+    <div class="d-grid gap-2 mb-4">
+        <label class="titulo">Fecha de Nacimiento</label>
+        <InputDate @bind-Value="nuevoUsuario.FechaNacimiento" class="input mb-4" required />
+    </div>
+
+    <button type="submit" style="width:100%;" class="boton-verde mt-4">Guardar nuevo cliente</button>
+    <div class="pb-4"></div>
+</EditForm>
 
 @code {
+    private Models.UsuarioReq nuevoUsuario = new Models.UsuarioReq
+    {
+        EstadoId = 1,
+        RolId = 2
+    };
 
+    private void NuevoUsuario()
+    {
+        navManager.NavigateTo("/clientes/index");
+    }
+
+    private async Task GuardarUsuario()
+    {
+        var creado = await UsuarioService.CrearAsync(nuevoUsuario);
+        if (creado != null)
+        {
+            nuevoUsuario = new Models.UsuarioReq
+            {
+                EstadoId = 1,
+                RolId = 2
+            };
+            await Application.Current.MainPage.DisplayAlert("Éxito", "Usuario creado correctamente", "OK");
+        }
+        else
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", "No se pudo crear el usuario", "OK");
+        }
+    }
 }

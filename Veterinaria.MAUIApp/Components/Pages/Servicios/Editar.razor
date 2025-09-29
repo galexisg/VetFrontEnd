@@ -1,71 +1,315 @@
 ﻿@page "/servicios/editar/{Id:long}"
-@using Veterinaria.MAUIApp.Services
-@using Veterinaria.MAUIApp.Models
-@using Veterinaria.MAUIApp.Models.Dtos
 @inject ServicioService ServicioService
-@inject NavigationManager Navigation
+@inject MotivoService MotivoService
+@inject NavigationManager Nav
 
-<h3>Editar Servicio</h3>
+<div class="contenedor">
+    <!-- Header -->
+    <div class="page-header">
+        <button type="button" class="back-chip" @onclick="Volver" title="Volver">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M15 6l-6 6 6 6" />
+            </svg>
+        </button>
 
-@if (servicioParaEditar == null)
+        <div class="d-grid gap-1">
+            <div class="page-title">Editar Servicio</div>
+            <div class="page-subtitle">Gestiona el registro y control</div>
+        </div>
+    </div>
+
+    @if (form is null)
+    {
+        <!-- Estado de carga simple (podrías replicar tarjeta de error si falla la carga) -->
+        <div class="descripcion mt-4">Cargando…</div>
+    }
+    else
+    {
+        <!-- Datos del servicio: form “manual” con oninput para detectar cambios -->
+        <div class="card-list mt-3">
+            <div class="d-grid gap-2">
+                <label class="titulo">Nombre</label>
+                <input class="input" placeholder="Ingresa un nombre completo"
+                       @bind-value="form.Nombre" @bind-value:event="oninput" />
+
+                <label class="titulo">Descripción</label>
+                <input class="input" placeholder="Descripción"
+                       @bind-value="form.Descripcion" @bind-value:event="oninput" />
+
+                <label class="titulo">Precio</label>
+                <input type="number" step="0.01" class="input" placeholder="0.00"
+                       @bind-value="form.PrecioBase" @bind-value:event="oninput" />
+
+                <label class="titulo">Estado</label>
+                <select class="input" @bind="form.Estado">
+                    <option value="ACTIVO">Activo</option>
+                    <option value="INACTIVO">Inactivo</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Motivos -->
+        <div class="d-grid gap-1 mt-4">
+            <p class="titulo">Motivos del servicio</p>
+            <div class="descripcion">Vincula o retira motivos asociados a este servicio</div>
+        </div>
+
+        <!-- Selector + Agregar motivo -->
+        <div class="d-flex gap-2 mt-2">
+            <select class="input" style="flex:1" @bind="motivoSelId">
+                <option value="0">Selecciona un motivo</option>
+                @foreach (var m in motivos)
+                {
+                    <option value="@m.Id">@m.Nombre</option>
+                }
+            </select>
+
+            <button type="button"
+                    class="boton-verde"
+                    style="white-space:nowrap"
+                    disabled="@(motivoSelId == 0 || isBusy)"
+                    @onclick="AgregarMotivo">
+                @(isBusy && accionActual == "add" ? "Agregando…" : "Agregar")
+            </button>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(motivosError))
+        {
+            <!-- Error contextual al agregar/quitar motivo -->
+            <div class="descripcion" style="color:#b32121;margin-top:8px;">@motivosError</div>
+        }
+
+        <!-- Lista de motivos (chips con confirmación inline) -->
+        <div class="card-list mt-2">
+            @if (vinculados.Count == 0)
+            {
+                <div class="descripcion">Aún no hay motivos vinculados.</div>
+            }
+            else
+            {
+                <div class="d-flex flex-wrap gap-2">
+                    @foreach (var m in vinculados)
+                    {
+                        var isConfirm = (confirmRemoveId == m.Id);
+
+                        <div class="tag">
+                            <span class="tag-text">@m.Nombre</span>
+
+                            @if (!isConfirm)
+                            {
+                                <!-- Botón “X”: pasa a estado de confirmación inline -->
+                                <button class="tag-close"
+                                        title="Quitar"
+                                        disabled="@(isBusy)"
+                                        @onclick="() => confirmRemoveId = m.Id">
+                                    ✕
+                                </button>
+                            }
+                            else
+                            {
+                                <!-- Confirmación inline: Sí / No -->
+                                <span class="tag-confirm">
+                                    ¿Quitar?
+                                    <button class="tag-action"
+                                            disabled="@(isBusy)"
+                                            @onclick="() => EliminarMotivo(m.Id)">
+                                        @(isBusy && accionActual == "del" ? "..." : "Sí")
+                                    </button>
+                                    <button class="tag-cancel"
+                                            disabled="@(isBusy)"
+                                            @onclick="() => confirmRemoveId = (short)0">
+                                        No
+                                    </button>
+                                </span>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- Acciones de la pantalla -->
+        <div class="d-flex justify-content-between mt-3">
+            <button type="button" class="boton-card" @onclick="Volver">Cancelar</button>
+            <button type="button" class="boton-verde"
+                    disabled="@(form is null || !HasChanges())"
+                    @onclick="OnGuardarClick">
+                Guardar cambios
+            </button>
+        </div>
+    }
+</div>
+
+<!-- Modal confirmación: sólo aparece si HasChanges() = true -->
+@if (showConfirm)
 {
-    <p><em>Cargando servicio...</em></p>
-}
-else
-{
-    <div class="card">
-        <div class="card-body">
-            <div class="mb-2">
-                <label class="form-label">Nombre:</label>
-                <input @bind="servicioParaEditar.Nombre" class="form-control" />
+    <div class="modal-backdrop" @onclick="CloseIfBackdrop">
+        <div class="modal-card" @onclick:stopPropagation="true">
+            <div class="modal-header">
+                <div class="modal-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 8v5M12 16h.01M12 3a9 9 0 100 18 9 9 0 000-18Z"></path>
+                    </svg>
+                </div>
+                <h3 class="modal-title">Confirmar guardado</h3>
+                <p class="modal-subtitle">¿Deseas aplicar los cambios del servicio?</p>
             </div>
-            <div class="mb-2">
-                <label class="form-label">Descripción:</label>
-                <input @bind="servicioParaEditar.Descripcion" class="form-control" />
+
+            <div class="modal-actions">
+                <button class="btn-ghost" @onclick="() => showConfirm = false">Cancelar</button>
+                <button class="btn-primary-soft" @onclick="Guardar">Guardar</button>
             </div>
-            <div class="mb-2">
-                <label class="form-label">Precio Base:</label>
-                <input type="number" @bind="servicioParaEditar.PrecioBase" class="form-control" />
-            </div>
-            <button class="btn btn-primary" @onclick="ActualizarServicio">Actualizar</button>
-            <button class="btn btn-link" @onclick="Cancelar">Cancelar</button>
         </div>
     </div>
 }
 
 @code {
-    [Parameter]
-    public long Id { get; set; }
+    [Parameter] public long Id { get; set; }
 
-    // 👇 Solución: Se marca como nulable (?) porque se carga de forma asíncrona.
-    private ServicioRequest? servicioParaEditar;
+    // Snapshot (original) + copia editable (form)
+    private Servicio? originalSvc;
+    private Servicio? form;
 
-    protected override async Task OnParametersSetAsync()
+    // Datos para motivos
+    private List<Motivo> motivos = new();
+    private List<Motivo> vinculados = new();
+    private HashSet<short> originalMotivoIds = new();
+    private short motivoSelId;
+
+    // Estado UI de operaciones con motivos
+    private bool isBusy = false;
+    private string accionActual = ""; // "add" | "del"
+    private short confirmRemoveId = 0;
+    private string? motivosError;
+
+    // Modal de confirmación
+    private bool showConfirm = false;
+
+    protected override async Task OnInitializedAsync()
     {
-        var servicioExistente = await ServicioService.ObtenerPorId(Id);
-        if (servicioExistente != null)
+        // Carga de servicio + motivos. (Mejora futura: try/catch y tarjeta de error como /servicios.)
+        var svc = await ServicioService.ObtenerAsync(Id);
+        motivos = await (MotivoService.ListarAsync() ?? Task.FromResult(new List<Motivo>()));
+        vinculados = await (ServicioService.ListarMotivosPorServicioAsync(Id) ?? Task.FromResult(new List<Motivo>()));
+
+        // Snapshot original: sirve para comparar cambios
+        originalSvc = new Servicio
         {
-            servicioParaEditar = new ServicioRequest
-            {
-                Nombre = servicioExistente.Nombre,
-                Descripcion = servicioExistente.Descripcion,
-                PrecioBase = servicioExistente.PrecioBase,
-                Estado = servicioExistente.Estado
-            };
+            Id = svc.Id,
+            Nombre = svc.Nombre,
+            Descripcion = svc.Descripcion,
+            PrecioBase = svc.PrecioBase,
+            Estado = svc.Estado
+        };
+        originalMotivoIds = vinculados.Select(v => v.Id).ToHashSet();
+
+        // Copia editable (lo que el usuario toca)
+        form = new Servicio
+        {
+            Id = svc.Id,
+            Nombre = svc.Nombre,
+            Descripcion = svc.Descripcion,
+            PrecioBase = svc.PrecioBase,
+            Estado = svc.Estado
+        };
+    }
+
+    // Click en “Guardar cambios”: no persiste, sólo abre modal si hay cambios
+    private void OnGuardarClick()
+    {
+        if (HasChanges()) showConfirm = true;
+        // Si no hay cambios, el botón ya viene deshabilitado
+    }
+
+    // Confirmación del modal: ahora sí persiste y actualiza snapshots
+    private async Task Guardar()
+    {
+        showConfirm = false;
+        await ServicioService.ActualizarAsync(form!.Id, form);
+
+        // Refresca snapshots para que HasChanges() vuelva a false
+        originalSvc = new Servicio
+        {
+            Id = form.Id,
+            Nombre = form.Nombre,
+            Descripcion = form.Descripcion,
+            PrecioBase = form.PrecioBase,
+            Estado = form.Estado
+        };
+        originalMotivoIds = vinculados.Select(v => v.Id).ToHashSet();
+
+        Volver();
+    }
+
+    // Comparación robusta campo a campo + set de motivos
+    private bool HasChanges()
+    {
+        if (form is null || originalSvc is null) return false;
+
+        bool camposCambiaron =
+            !string.Equals((form.Nombre ?? "").Trim(), (originalSvc.Nombre ?? "").Trim(), StringComparison.Ordinal) ||
+            !string.Equals((form.Descripcion ?? "").Trim(), (originalSvc.Descripcion ?? "").Trim(), StringComparison.Ordinal) ||
+            !Nullable.Equals(form.PrecioBase, originalSvc.PrecioBase) ||
+            form.Estado != originalSvc.Estado;
+
+        // Compara conjuntos de ids (ignora orden)
+        var currentIds = vinculados.Select(v => v.Id);
+        bool motivosCambiaron = !currentIds.ToHashSet().SetEquals(originalMotivoIds);
+
+        return camposCambiaron || motivosCambiaron;
+    }
+
+    private void CloseIfBackdrop() => showConfirm = false;
+
+    // Agregar motivo con control de duplicados y feedback de error
+    private async Task AgregarMotivo()
+    {
+        if (motivoSelId == 0 || isBusy) return;
+        if (vinculados.Any(v => v.Id == motivoSelId))
+        {
+            motivosError = "Ese motivo ya está vinculado.";
+            return;
+        }
+
+        motivosError = null;
+        isBusy = true; accionActual = "add";
+        try
+        {
+            await MotivoService.VincularAsync(motivoSelId, Id);
+            vinculados = await (ServicioService.ListarMotivosPorServicioAsync(Id) ?? Task.FromResult(new List<Motivo>()));
+            motivoSelId = 0;
+        }
+        catch (Exception ex)
+        {
+            motivosError = $"No se pudo agregar: {ex.Message}";
+        }
+        finally
+        {
+            isBusy = false; accionActual = "";
         }
     }
 
-    private async Task ActualizarServicio()
+    // Quitar motivo con confirmación inline
+    private async Task EliminarMotivo(short id)
     {
-        if (servicioParaEditar != null)
+        if (isBusy) return;
+        motivosError = null;
+        isBusy = true; accionActual = "del";
+        try
         {
-            var actualizado = await ServicioService.Editar(Id, servicioParaEditar);
-            if (actualizado != null)
-            {
-                Navigation.NavigateTo("/servicios");
-            }
+            await MotivoService.DesvincularAsync(id, Id);
+            vinculados = await (ServicioService.ListarMotivosPorServicioAsync(Id) ?? Task.FromResult(new List<Motivo>()));
+            confirmRemoveId = 0;
+        }
+        catch (Exception ex)
+        {
+            motivosError = $"No se pudo quitar: {ex.Message}";
+        }
+        finally
+        {
+            isBusy = false; accionActual = "";
         }
     }
 
-    private void Cancelar() => Navigation.NavigateTo("/servicios");
+    private void Volver() => Nav.NavigateTo("/servicios");
 }

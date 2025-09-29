@@ -1,0 +1,187 @@
+﻿@page "/motivos/editar/{Id:int}"
+@inject MotivoService MotivoService
+@inject NavigationManager Nav
+
+<div class="contenedor">
+
+    <!-- Header minimal -->
+    <div class="page-header">
+        <button type="button" class="back-chip" @onclick="Volver" title="Volver">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M15 6l-6 6 6 6" />
+            </svg>
+        </button>
+
+        <div class="d-grid gap-1">
+            <div class="page-title">Editar motivo</div>
+            <div class="page-subtitle">Actualiza el nombre</div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(error))
+    {
+        <!-- Error al cargar o al guardar (cuando no es éxito) -->
+        <div class="card-list mt-3" style="border:1px solid #ffd5d5;background:#fff7f7;color:#b32121">
+            @error
+        </div>
+    }
+    else if (modelo is null)
+    {
+        <!-- Estado de carga -->
+        <div class="descripcion mt-4">Cargando…</div>
+    }
+    else
+    {
+        <div class="card-list mt-3" style="margin-bottom:96px;">
+            <!-- margen inferior para que no lo tape la action-bar -->
+            <div class="d-grid gap-2">
+                <label class="titulo">Nombre</label>
+                <!-- Validación en vivo: coherente con agregar -->
+                <input class="input @(NombreInvalid ? "invalid" : "")"
+                       placeholder="Ingresa el nombre del motivo"
+                       @bind="modelo.Nombre"
+                       @bind:event="oninput" />
+
+                @if (NombreInvalid)
+                {
+                    <small class="validation-message">
+                        @NombreErrorMessage
+                    </small>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Action bar fija -->
+@if (modelo is not null)
+{
+    <div class="action-bar">
+        <div class="action-bar-inner">
+            <button type="button" class="boton-card" @onclick="Volver">Cancelar</button>
+
+            <button type="button"
+                    class="boton-verde"
+                    disabled="@(!FormValido || !HayCambios || isBusy)"
+                    @onclick="OnGuardarClick">
+                @(isBusy ? "Guardando…" : "Guardar cambios")
+            </button>
+        </div>
+    </div>
+}
+
+<!-- Modal éxito (consistente con agregar) -->
+@if (showSuccess)
+{
+    <div class="modal-backdrop" @onclick="CloseSuccess">
+        <div class="modal-card" @onclick:stopPropagation="true">
+            <div class="modal-header">
+                <div class="modal-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M20 6L9 17l-5-5" />
+                    </svg>
+                </div>
+                <h3 class="modal-title">Motivo actualizado</h3>
+                <p class="modal-subtitle">Los cambios se guardaron correctamente.</p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary-soft" @onclick="Volver">Aceptar</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Motivo? modelo;
+    private string? error;
+
+    // UI/estado
+    private bool isBusy = false;
+    private bool showSuccess = false;
+
+    // Snapshot para detectar cambios (optimiza botón y evita modal innecesario)
+    private string originalNombre = string.Empty;
+
+    // ===== Validación mínima =====
+    private bool NombreInvalid =>
+        string.IsNullOrWhiteSpace(modelo?.Nombre) || (modelo?.Nombre?.Trim().Length ?? 0) < 3;
+
+    private string NombreErrorMessage
+        => string.IsNullOrWhiteSpace(modelo?.Nombre)
+            ? "Ingresa el nombre."
+            : "Debe tener al menos 3 caracteres.";
+
+    private bool FormValido => !NombreInvalid;
+
+    private bool HayCambios =>
+        (modelo?.Nombre?.Trim() ?? string.Empty) != (originalNombre.Trim());
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Carga inicial con manejo de casting del parámetro
+            var idShort = checked((short)Id);
+            modelo = await MotivoService.ObtenerAsync(idShort);
+            originalNombre = modelo?.Nombre ?? string.Empty;
+        }
+        catch (Exception ex)
+        {
+            error = $"No se pudo cargar el motivo: {ex.Message}";
+        }
+    }
+
+    private async Task OnGuardarClick()
+    {
+        if (modelo is null) return;
+        if (!FormValido) return;
+
+        // Si no hay cambios, se va sin modal (UX rápida)
+        if (!HayCambios)
+        {
+            Volver();
+            return;
+        }
+
+        await Guardar();
+    }
+
+    private async Task Guardar()
+    {
+        if (modelo is null) return;
+
+        error = null;
+        isBusy = true;
+
+        try
+        {
+            var idShort = checked((short)Id);
+            var res = await MotivoService.ActualizarAsync(idShort, new Motivo { Nombre = modelo.Nombre });
+
+            if (!res.IsSuccessStatusCode)
+            {
+                // Feedback negativo no bloqueante del UI
+                error = $"No se pudo actualizar el motivo. Código: {(int)res.StatusCode}";
+                return;
+            }
+
+            // Éxito: actualiza snapshot y muestra modal
+            originalNombre = modelo.Nombre ?? string.Empty;
+            showSuccess = true;
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+        finally
+        {
+            isBusy = false;
+        }
+    }
+
+    private void CloseSuccess() => showSuccess = false;
+
+    private void Volver() => Nav.NavigateTo("/motivos");
+}
