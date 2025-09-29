@@ -6,12 +6,12 @@
 <div class="d-flex flex-column min-vh-100 bg-light">
     <!-- Encabezado -->
     <div class="container py-3 border-bottom">
-        <h5 class="fw-bold mb-0">Motivos de Cita</h5>
-        <small class="text-muted">Gestiona los motivos disponibles</small>
+        <h5 class="fw-bold mb-0 fs-5">Motivos de Cita</h5>
+        <small class="text-muted fs-6">Gestiona los motivos disponibles</small>
     </div>
 
     <!-- Contenido -->
-    <div class="flex-grow-1 px-3 py-3">
+    <div class="flex-grow-1 px-2 px-sm-3 py-3">
         @if (estaCargando)
         {
             <div class="d-flex justify-content-center align-items-center" style="height: 200px;">
@@ -26,7 +26,7 @@
                 <div class="mb-3">
                     <i class="bi bi-folder2-open" style="font-size: 3rem; color: #6c757d;"></i>
                 </div>
-                <h6 class="text-muted">No hay motivos registrados</h6>
+                <h6 class="text-muted fs-6">No hay motivos registrados</h6>
                 <p class="text-muted small">Agrega el primer motivo de cita</p>
             </div>
         }
@@ -35,18 +35,18 @@
             <div class="d-flex flex-column gap-3">
                 @foreach (var motivo in motivos)
                 {
-                    <div class="p-3 bg-white rounded-4 shadow-sm">
-                        <h6 class="fw-bold mb-1">@motivo.Nombre</h6>
+                    <div class="p-2 p-sm-3 bg-white rounded-4 shadow-sm">
+                        <h6 class="fw-bold mb-1 fs-6">@motivo.Nombre</h6>
                         @if (!string.IsNullOrWhiteSpace(motivo.Descripcion))
                         {
-                            <p class="text-muted small mb-3">@motivo.Descripcion</p>
+                            <p class="text-muted small mb-3 fs-7">@motivo.Descripcion</p>
                         }
 
-                        <div class="d-flex gap-2">
+                        <div class="d-flex flex-wrap gap-2">
                             @if (motivo.Activo)
                             {
-                                <button class="btn btn-dark btn-sm rounded-pill px-3"
-                                        @onclick='() => CambiarEstado(motivo.Id, false)'
+                                <button class="btn btn-dark btn-sm rounded-pill px-3 flex-fill"
+                                        @onclick='() => MostrarConfirmacion(motivo.Id, motivo.Nombre)'
                                         disabled="@estaActualizando">
                                     @if (estaActualizando && motivoActualizandoId == motivo.Id)
                                     {
@@ -57,7 +57,7 @@
                             }
                             else
                             {
-                                <button class="btn btn-success btn-sm rounded-pill px-3"
+                                <button class="btn btn-success btn-sm rounded-pill px-3 flex-fill"
                                         @onclick='() => CambiarEstado(motivo.Id, true)'
                                         disabled="@estaActualizando">
                                     @if (estaActualizando && motivoActualizandoId == motivo.Id)
@@ -68,7 +68,7 @@
                                 </button>
                             }
 
-                            <button class="btn btn-dark btn-sm rounded-pill px-3"
+                            <button class="btn btn-dark btn-sm rounded-pill px-3 flex-fill"
                                     @onclick='() => Navigation.NavigateTo($"/motivos/editar/{motivo.Id}")'>
                                 Editar motivo
                             </button>
@@ -80,12 +80,37 @@
     </div>
 
     <!-- Botón fijo abajo -->
-    <div class="p-3 bg-white border-top">
+    <div class="p-2 p-sm-3 bg-white border-top">
         <button class="btn btn-success w-100 rounded-pill fw-bold py-2"
                 @onclick='() => Navigation.NavigateTo("/motivos/agregar")'>
-            + Agregar nuevo motivo
+            Agregar nuevo motivo
         </button>
     </div>
+
+    <!-- ✅ Modal de confirmación fijo y centrado responsive -->
+    @if (mostrarModalConfirmacion && motivoSeleccionadoId != 0)
+    {
+        <div style="position: fixed; top:0; left:0; width:100%; height:100%;
+                        background-color: rgba(0,0,0,0.5); display:flex;
+                        justify-content:center; align-items:center; z-index:1050; padding:1rem;">
+            <div class="modal-dialog modal-dialog-centered" style="max-width: 320px; width: 100%;">
+                <div class="modal-content border-0 shadow-lg rounded-4 text-center p-3">
+                    <div class="modal-body">
+                        <h6 class="fw-semibold mb-3 mt-2 fs-6">¿Deseas desactivar este motivo?</h6>
+
+                        <p class="fw-bold mb-3 text-uppercase text-success fs-7">
+                            @motivoSeleccionadoNombre
+                        </p>
+
+                        <div class="d-flex flex-wrap justify-content-center gap-2">
+                            <button class="btn btn-dark w-100 w-sm-50 rounded-pill mb-2 mb-sm-0" @onclick="CerrarModal">Cancelar</button>
+                            <button class="btn btn-success w-100 w-sm-50 rounded-pill fw-bold" @onclick="ConfirmarDesactivacion">Desactivar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
 @code {
@@ -95,6 +120,10 @@
     private int? motivoActualizandoId;
     private string? mensajeExito;
     private string? mensajeError;
+
+    private bool mostrarModalConfirmacion = false;
+    private int motivoSeleccionadoId;
+    private string motivoSeleccionadoNombre = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -116,6 +145,26 @@
         {
             estaCargando = false;
         }
+    }
+
+    private void MostrarConfirmacion(int id, string nombre)
+    {
+        motivoSeleccionadoId = id;
+        motivoSeleccionadoNombre = nombre;
+        mostrarModalConfirmacion = true;
+    }
+
+    private void CerrarModal()
+    {
+        mostrarModalConfirmacion = false;
+        motivoSeleccionadoId = 0;
+        motivoSeleccionadoNombre = "";
+    }
+
+    private async Task ConfirmarDesactivacion()
+    {
+        mostrarModalConfirmacion = false;
+        await CambiarEstado(motivoSeleccionadoId, false);
     }
 
     private async Task CambiarEstado(int id, bool activar)
