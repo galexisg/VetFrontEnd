@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Veterinaria.MAUIApp.Models
 {
-    internal class PagoRequest
+    public class PagoRequest
     {
         public long FacturaId { get; set; }
-        public string Metodo { get; set; }
+        public string Metodo { get; set; } = "";
         public decimal Monto { get; set; }
         public DateTime FechaPago { get; set; }
     }

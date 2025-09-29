@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 
 namespace Veterinaria.MAUIApp.Models
 {
-    internal class PagoDTO
+    public class PagoDTO
     {
         public long Id { get; set; }
         public long FacturaId { get; set; }
-        public string Metodo { get; set; }
+        public string Metodo { get; set; } = "";
         public decimal Monto { get; set; }
-        public DateTime FechaPago { get; set; }
+        public string FechaPago { get; set; } = ""; // <-- string
+                                                    // parseas cuando lo muestres:
+                                                    // DateTime.ParseExact(FechaPago, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)
     }
+
 }

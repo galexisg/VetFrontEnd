@@ -1,6 +1,8 @@
 ﻿@page "/facturas/agregar"
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Components.Forms
+@using Veterinaria.MAUIApp.Models
+@inject Veterinaria.MAUIApp.Services.FacturaService FacturaService
 @inject NavigationManager Nav
 
 <div class="contenedor">
@@ -15,84 +17,184 @@
         <DataAnnotationsValidator />
         <ValidationSummary class="mb-3" />
 
+        <!-- CLIENTE -->
         <div class="input-container">
             <label class="label">Cliente</label>
-            <InputText class="input" placeholder="Ingresa un nombre completo"
-                       @bind-Value="form.Cliente" />
-            <ValidationMessage For="@(() => form.Cliente)" class="validation-message" />
+            <InputSelect class="input" @bind-Value="form.ClienteId">
+                <option value="">Seleccionar</option>
+                @foreach (var c in clientes)
+                {
+                    <option value="@c.UsuarioId">
+                        @(string.IsNullOrWhiteSpace(c.NombreCompleto) ? $"Usuario {c.UsuarioId}" : c.NombreCompleto)
+                    </option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => form.ClienteId)" class="validation-message" />
         </div>
 
+        <!-- CITA -->
         <div class="input-container">
             <label class="label">Cita</label>
             <InputSelect class="input" @bind-Value="form.CitaId">
                 <option value="">Seleccionar</option>
-                <option value="1">Corte y barba - 9:00 AM</option>
-                <option value="2">Tinte - 10:30 AM</option>
-                <option value="3">Afeitado - 2:00 PM</option>
+                <option value="1">Cita #1 (demo)</option>
+                <option value="2">Cita #2 (demo)</option>
             </InputSelect>
             <ValidationMessage For="@(() => form.CitaId)" class="validation-message" />
         </div>
 
+        <!-- SERVICIO -->
         <div class="input-container">
-            <label class="label">Total</label>
-            <InputNumber class="input"
-                         step="0.01" inputmode="decimal"
-                         placeholder="Ingresa el total"
-                         @bind-Value="form.Total" />
-            <ValidationMessage For="@(() => form.Total)" class="validation-message" />
+            <label class="label">Servicio</label>
+            <InputSelect class="input" @bind-Value="form.ServicioId" @onchange="OnServicioChanged">
+                <option value="">Seleccionar</option>
+                @foreach (var s in servicios)
+                {
+                    <option value="@s.Id">@s.Nombre (@(s.PrecioBase?.ToString("0.00") ?? "0.00"))</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => form.ServicioId)" class="validation-message" />
         </div>
 
+        <!-- CANTIDAD -->
         <div class="input-container">
-            <label class="label">Saldo</label>
-            <InputNumber class="input"
-                         step="0.01" inputmode="decimal"
-                         placeholder="Ingresa el saldo"
-                         @bind-Value="form.Saldo" />
-            <ValidationMessage For="@(() => form.Saldo)" class="validation-message" />
+            <label class="label">Cantidad</label>
+            <InputNumber class="input" @bind-Value="form.Cantidad" />
+            <ValidationMessage For="@(() => form.Cantidad)" class="validation-message" />
         </div>
 
+        <!-- PRECIO UNITARIO -->
+        <div class="input-container">
+            <label class="label">Precio unitario</label>
+            <InputNumber class="input" step="0.01" inputmode="decimal" @bind-Value="form.PrecioUnitario" />
+            <ValidationMessage For="@(() => form.PrecioUnitario)" class="validation-message" />
+        </div>
+
+        <!-- DESCUENTO -->
+        <div class="input-container">
+            <label class="label">Descuento (opcional)</label>
+            <InputNumber class="input" step="0.01" inputmode="decimal" @bind-Value="form.Descuento" />
+        </div>
+
+        <!-- Motivo anulación (opcional) -->
         <div class="input-container">
             <label class="label">Motivo Anulación (Opcional)</label>
-            <InputText class="input" placeholder="Ingresa un motivo opcional"
-                       @bind-Value="form.MotivoAnulacion" />
+            <InputText class="input" placeholder="Ingresa un motivo opcional" @bind-Value="form.MotivoAnulacion" />
         </div>
 
         <!-- Barra de acciones -->
         <div class="acciones-footer">
-            <button type="button" class="boton-negro"
-                    @onclick="@(() => Nav.NavigateTo("/facturas"))">
+            <button type="button" class="boton-negro" @onclick="@(() => Nav.NavigateTo("/facturas"))">
                 Cancelar
             </button>
-            <button type="submit" class="boton-verde">
-                Guardar cambios
+            <button type="submit" class="boton-verde" disabled="@guardando">
+                @(guardando ? "Guardando..." : "Guardar cambios")
             </button>
         </div>
     </EditForm>
 </div>
 
 @code {
+    // ---------- Estado UI ----------
+    bool guardando = false;
+    List<UsuarioMiniDTO> clientes = new();
+    List<ServicioMiniDTO> servicios = new();
+
+    // ---------- Form model ----------
     public class FacturaForm
     {
-        [Required(ErrorMessage = "El cliente es requerido")]
-        public string? Cliente { get; set; }
+        [Required(ErrorMessage = "Selecciona un cliente")]
+        public int? ClienteId { get; set; }
 
-        [Required(ErrorMessage = "Selecciona una cita")]
-        public int? CitaId { get; set; }
+        // Si el backend permite null en cita_id, puedes dejarla sin Required
+        public long? CitaId { get; set; }
 
-        [Range(0, 9999999, ErrorMessage = "Total inválido")]
-        public decimal Total { get; set; }
+        [Required(ErrorMessage = "Selecciona un servicio")]
+        public long? ServicioId { get; set; }
 
-        [Range(0, 9999999, ErrorMessage = "Saldo inválido")]
-        public decimal Saldo { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "Cantidad debe ser > 0")]
+        public int Cantidad { get; set; } = 1;
 
+        [Range(typeof(decimal), "0.01", "9999999999", ErrorMessage = "Precio unitario inválido")]
+        public decimal PrecioUnitario { get; set; }
+
+        public decimal? Descuento { get; set; }
         public string? MotivoAnulacion { get; set; }
     }
 
     private readonly FacturaForm form = new();
 
-    private void Guardar()
+    protected override async Task OnInitializedAsync()
     {
-        // Solo navegación de demo tras "guardar"
-        Nav.NavigateTo("/facturas");
+        // Clientes (rol 2)
+        try { clientes = await FacturaService.ObtenerClientes(); }
+        catch { clientes = await FacturaService.ObtenerClientesPorRol(); }
+
+        // Servicios (activos)
+        try { servicios = await FacturaService.ObtenerServiciosActivos(); }
+        catch { servicios = new(); }
+    }
+
+    private void OnServicioChanged(ChangeEventArgs e)
+    {
+        // Autollenar precio unitario con el precio_base del servicio
+        if (long.TryParse(e?.Value?.ToString(), out var sid))
+        {
+            var s = servicios.FirstOrDefault(x => x.Id == sid);
+            if (s?.PrecioBase is not null)
+                form.PrecioUnitario = s.PrecioBase.Value;
+        }
+    }
+
+    private async Task Guardar()
+    {
+        if (guardando) return;
+        guardando = true;
+
+        try
+        {
+            // Si no eligieron cita, manda null (no 0)
+            long? cita = (form.CitaId.HasValue && form.CitaId.Value > 0) ? form.CitaId : null;
+
+            // Validaciones rápidas
+            if (!form.ClienteId.HasValue || form.ClienteId.Value <= 0)
+                throw new InvalidOperationException("Selecciona un cliente.");
+            if (!form.ServicioId.HasValue || form.ServicioId.Value <= 0)
+                throw new InvalidOperationException("Selecciona un servicio.");
+            if (form.Cantidad <= 0)
+                throw new InvalidOperationException("Cantidad debe ser > 0.");
+            if (form.PrecioUnitario <= 0)
+                throw new InvalidOperationException("Precio unitario debe ser > 0.");
+
+            var req = new FacturaRequestDTO
+            {
+                ClienteId = (long)form.ClienteId!.Value,
+                CitaId = cita,                // <- null si no hay cita
+                Estado = "PENDIENTE",
+                Detalles = new List<FacturaRequestDTO.DetalleRequestDTO>
+        {
+          new FacturaRequestDTO.DetalleRequestDTO
+          {
+            ServicioId      = form.ServicioId,   // long? -> se serializa ok
+            TratamientoId   = null,
+            DescripcionItem = null,
+            Cantidad        = form.Cantidad,
+            PrecioUnitario  = form.PrecioUnitario,
+            Descuento       = form.Descuento ?? 0m
+          }
+        }
+            };
+
+            await FacturaService.CrearFactura(req);  // si 2xx
+            Nav.NavigateTo("/facturas/index");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex); // aquí puedes disparar un toast
+        }
+        finally
+        {
+            guardando = false;
+        }
     }
 }

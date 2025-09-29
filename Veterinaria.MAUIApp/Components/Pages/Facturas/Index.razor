@@ -21,14 +21,25 @@
         </button>
     </div>
 
-    <!-- Buscador -->
+    <!-- Filtros y buscador -->
     <div class="input-container" style="display:flex;gap:12px;align-items:center;">
+        <!-- Filtro por estado -->
+        <select class="input" style="max-width:220px" @bind="filtro">
+            <option value="PENDIENTE">Pendientes</option>
+            <option value="PARCIAL">Parciales</option>
+            <option value="ANULADA">Anuladas</option>
+            <option value="PAGADA">Pagadas</option>
+            <option value="NO_PAGADAS">No pagadas (Pendiente + Parcial)</option>
+        </select>
+
+        <!-- Buscador -->
         <div style="position:relative;flex:1;">
             <input class="input"
                    placeholder="Buscar por #, cliente o estado..."
                    @bind="q" @bind:event="oninput" />
             <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#5D5D5D;">🔍</span>
         </div>
+
         <button class="boton-verde" @onclick="Refrescar">Refrescar</button>
     </div>
 
@@ -42,7 +53,7 @@
     }
     else if (facturasFiltradas is null || facturasFiltradas.Count == 0)
     {
-        <p class="descripcion">No hay facturas pendientes.</p>
+        <p class="descripcion">No hay facturas para “@LabelFiltroActual”.</p>
     }
     else
     {
@@ -51,23 +62,23 @@
             <div style="background:var(--blanco);border:1px solid var(--borde);border-radius:12px;padding:12px;margin-bottom:12px;">
                 <p class="titulo" style="margin-bottom:4px;">Factura #@f.Id</p>
                 <p class="descripcion" style="margin-bottom:6px;">
-                    <b>Cliente:</b> @f.ClienteId &nbsp;•&nbsp; <b>Estado:</b> @f.Estado
+                    <b>Cliente:</b> @NombreCliente(f.ClienteId) &nbsp;•&nbsp; <b>Estado:</b> @f.Estado
                 </p>
                 <p class="descripcion" style="margin-bottom:12px;">
                     <b>Total:</b> $@f.Total.ToString("0.00") &nbsp;•&nbsp;
-                    <b>Saldo:</b> $@f.Saldo.ToString("0.00") &nbsp;•&nbsp;
-                    <b>Fecha:</b> @f.FechaCreacion.ToString("yyyy-MM-dd HH:mm")
+                    <b>Saldo:</b> $@f.Saldo.ToString("0.00")
+                    @if (f.FechaCreacion != default)
+                    {
+                        <text>&nbsp;•&nbsp;<b>Fecha:</b> @f.FechaCreacion.ToString("yyyy-MM-dd HH:mm")</text>
+                    }
                 </p>
 
                 <div style="display:flex;gap:8px;">
                     <button class="boton-verde" style="flex:1;"
-                            @onclick="@(() => Nav.NavigateTo($"/facturas/{f.Id}/detalles/agregar"))">
-                        Agregar detalle
-                    </button>
-                    <button class="boton-verde" style="flex:1;"
-                            @onclick="@(() => Nav.NavigateTo($"/facturas/pago/agregar/{f.Id}"))">
+                            @onclick="@(() => Nav.NavigateTo($"/facturas/{f.Id}/pago/agregar"))">
                         Agregar pago
                     </button>
+
                     <button class="boton-verde" style="flex:1;"
                             @onclick="@(() => Nav.NavigateTo($"/facturas/editar/{f.Id}"))">
                         Ver/Editar
@@ -79,9 +90,22 @@
 </div>
 
 @code {
-    // estado UI
+    // ----- estado UI -----
     bool cargando = true;
     string? error;
+
+    // filtro de estado (default: PENDIENTE) con setter reactivo
+    private string _filtro = "PENDIENTE";
+    private string filtro
+    {
+        get => _filtro;
+        set
+        {
+            if (_filtro == value) return;
+            _filtro = value;
+            _ = CargarPorFiltro(); // fire-and-forget para no bloquear UI
+        }
+    }
 
     // buscador (al asignar, aplica filtro)
     private string _q = "";
@@ -95,19 +119,71 @@
     List<FacturaDTO>? facturas;           // crudas desde API
     List<FacturaDTO>? facturasFiltradas;  // aplicando búsqueda
 
+    // --- NUEVO: cache de nombres de clientes (usuarios rol=2) ---
+    Dictionary<long, string> _nombresClientes = new();
+
     protected override async Task OnInitializedAsync()
     {
-        await CargarPendientes();
+        // Cargamos primero los nombres de clientes y luego las facturas
+        await CargarClientes();
+        await CargarPorFiltro();
     }
 
-    private async Task CargarPendientes()
+    // --- NUEVO: nombre mostrado en UI (si no está aún en cache, muestra el ID) ---
+    private string NombreCliente(long id)
+        => _nombresClientes.TryGetValue(id, out var n) ? n : id.ToString();
+
+    // --- NUEVO: carga de clientes (rol=2) usando métodos del servicio ---
+    private async Task CargarClientes()
+    {
+        try
+        {
+            // Intenta endpoint dedicado (si lo implementaste en el backend)
+            var lista = await FacturaService.ObtenerClientes();
+            _nombresClientes = lista?.ToDictionary(
+                x => (long)x.UsuarioId,
+                x => string.IsNullOrWhiteSpace(x.NombreCompleto) ? $"Usuario {x.UsuarioId}" : x.NombreCompleto
+            ) ?? new();
+        }
+        catch
+        {
+            try
+            {
+                // Fallback: /usuarios?rolId=2
+                var lista = await FacturaService.ObtenerClientesPorRol();
+                _nombresClientes = lista?.ToDictionary(
+                    x => (long)x.UsuarioId,
+                    x => string.IsNullOrWhiteSpace(x.NombreCompleto) ? $"Usuario {x.UsuarioId}" : x.NombreCompleto
+                ) ?? new();
+            }
+            catch
+            {
+                // Si nada funciona, dejamos el diccionario vacío; se mostrará el ID.
+                _nombresClientes = new();
+            }
+        }
+    }
+
+    private async Task CargarPorFiltro()
     {
         cargando = true;
         error = null;
+
         try
         {
-            // Usamos el endpoint que sí devuelve datos en tu backend
-            facturas = await FacturaService.ObtenerFacturasPorEstado("PENDIENTE");
+            switch (filtro)
+            {
+                case "NO_PAGADAS":
+                    // PENDIENTE + PARCIAL desde el cliente (sin tocar backend)
+                    facturas = await FacturaService.ObtenerNoPagadas(incluirAnuladas: false);
+                    break;
+
+                default:
+                    // Un solo estado (PENDIENTE / PARCIAL / ANULADA / PAGADA)
+                    facturas = await FacturaService.ObtenerFacturasPorEstado(filtro);
+                    break;
+            }
+
             AplicarFiltro();
         }
         catch (Exception ex)
@@ -123,7 +199,7 @@
         }
     }
 
-    private Task Refrescar() => CargarPendientes();
+    private Task Refrescar() => CargarPorFiltro();
 
     private void AplicarFiltro()
     {
@@ -133,10 +209,20 @@
             .Where(f =>
                 string.IsNullOrEmpty(term) ||
                 f.Id.ToString().Contains(term) ||
-                f.ClienteId.ToString().Contains(term) ||
+                NombreCliente(f.ClienteId).ToLowerInvariant().Contains(term) ||
                 (f.Estado ?? "").ToLowerInvariant().Contains(term)
             )
-            .OrderByDescending(f => f.Id)
+            .OrderByDescending(f => f.Id) // ajusta si prefieres por fecha
             .ToList();
     }
+
+    private string LabelFiltroActual => filtro switch
+    {
+        "PENDIENTE" => "pendientes",
+        "PARCIAL" => "parciales",
+        "ANULADA" => "anuladas",
+        "PAGADA" => "pagadas",
+        "NO_PAGADAS" => "no pagadas",
+        _ => filtro
+    };
 }
