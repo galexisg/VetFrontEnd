@@ -1,7 +1,133 @@
 ﻿@page "/tratamientos/index"
+@using Microsoft.AspNetCore.Components
+@using Veterinaria.MAUIApp.Models
+@inject Veterinaria.MAUIApp.Services.TratamientoService TratamientoService
+@inject NavigationManager Nav
 
-<h3>Index</h3>
+<div class="contenedor">
+
+    <!-- Encabezado -->
+    <div class="mb-4">
+        <h2 class="titulo">Tratamientos</h2>
+        <p class="descripcion">Gestiona el registro y control</p>
+    </div>
+
+    <!-- Tarjeta "Nuevo tratamiento" -->
+    <div class="mb-4" style="background:var(--blanco); border:1px solid var(--borde); border-radius:12px; padding:16px;">
+        <div class="card-list" style="width:100%; display:flex; align-items:center; gap:12px; justify-content:flex-start"
+                @onclick="Nuevo">
+            <div class="icon-chip">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6v12M6 12h12" /></svg>
+            </div>
+            <div class="">
+                <div class="titulo" style="margin:0;">Nuevo tratamiento</div>
+                <div class="descripcion" style="margin:0;">Agrega un nuevo tratamiento</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Buscador con icono -->
+    <div class="input-container" style="position:relative;">
+        <span class="material-icons" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#666;"></span>
+        <input class="input" style="padding-left:44px"
+               placeholder="Buscar tratamientos..."
+               @bind-value="TextoBusqueda"
+               @bind-value:event="oninput" />
+    </div>
+
+    @if (cargando)
+    {
+        <p class="descripcion">Cargando…</p>
+    }
+    else if (!string.IsNullOrEmpty(error))
+    {
+        <p style="color:#e50000">@error</p>
+    }
+    else if (filtrados.Count == 0)
+    {
+        <p class="descripcion">No hay tratamientos.</p>
+    }
+    else
+    {
+        @foreach (var t in filtrados)
+        {
+            <div class="mb-3" style="background:var(--blanco); border:1px solid var(--borde); border-radius:12px; padding:16px;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                    <span class="chip chip-success" style="">
+                        @(t.Activo ? "Activo" : "Inactivo")
+                    </span>
+                </div>
+
+                <div style="display:flex; gap:12px; justify-content:space-between; align-items:flex-start;">
+                    <div style="flex:1; cursor:pointer" @onclick="@(() => IrEditar(t.Id))">
+                        <div class="titulo" style="font-weight:600; margin:0 0 4px 0;">@t.Nombre</div>
+                        <div class="descripcion" style="margin:0">@t.Descripcion</div>
+                    </div>
+
+                    <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
+                        <div class="descripcion" style="white-space:nowrap; font-weight:600;">@t.PrecioSugerido.ToString("C")</div>
+
+                        <button class="boton-card"
+                                style="padding:8px 12px; font-size:12px;"
+                                disabled="@cambiandoEstado"
+                                @onclick="@(() => CambiarEstado(t.Id, !t.Activo))">
+                            @(t.Activo ? "Desactivar" : "Activar")
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
 
 @code {
+    private List<Tratamiento> lista = new();
+    private List<Tratamiento> filtrados = new();
+    private string _textoBusqueda = string.Empty;
+    private bool cargando = true;
+    private string? error;
+    private bool cambiandoEstado = false;
 
+    private string TextoBusqueda
+    {
+        get => _textoBusqueda;
+        set { _textoBusqueda = value ?? string.Empty; AplicarFiltro(); }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try { lista = await TratamientoService.ObtenerTodosAsync() ?? new(); AplicarFiltro(); }
+        catch (Exception ex) { error = ex.Message; }
+        finally { cargando = false; }
+    }
+
+    private void AplicarFiltro()
+    {
+        if (string.IsNullOrWhiteSpace(_textoBusqueda)) { filtrados = lista.ToList(); return; }
+        var q = _textoBusqueda.Trim().ToLowerInvariant();
+        filtrados = lista.Where(t =>
+            (t.Nombre ?? "").ToLower().Contains(q) ||
+            (t.Descripcion ?? "").ToLower().Contains(q)
+        ).ToList();
+    }
+
+    private void Nuevo() => Nav.NavigateTo("/tratamientos/agregar");
+    private void IrEditar(long id) => Nav.NavigateTo($"/tratamientos/editar/{id}");
+
+    private async Task CambiarEstado(long id, bool nuevoEstado)
+    {
+        if (cambiandoEstado) return;
+        cambiandoEstado = true;
+        try
+        {
+            var ok = await TratamientoService.CambiarEstadoAsync(id, nuevoEstado);
+            if (ok)
+            {
+                var item = lista.FirstOrDefault(x => x.Id == id);
+                if (item != null) item.Activo = nuevoEstado;
+                AplicarFiltro();
+            }
+        }
+        finally { cambiandoEstado = false; }
+    }
 }
