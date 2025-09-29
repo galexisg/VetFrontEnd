@@ -1,7 +1,136 @@
 ﻿@page "/vacunas/index"
 
-<h3>Index</h3>
+@using Veterinaria.MAUIApp.Models
+@inject Veterinaria.MAUIApp.Services.VacunaService VacunaService
+@inject NavigationManager Nav
+
+<div class="container py-3">
+
+    <!-- Header -->
+    <div class="mb-3 d-flex gap-2 text-md-start">
+        <button type="button" class="back-chip" @onclick="IrInicio" title="Volver">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+        </button>
+
+        <div>
+        <h5 class="fw-bold">Vacunas</h5>
+        <p class="text-muted mb-0">Gestiona el registro y control</p>
+        </div>
+    </div>
+
+    <!-- Buscador -->
+    <div class="mb-3">
+        <input type="text" class="input"
+               placeholder="Buscar vacunas..."
+               @bind="filtro" @bind:event="oninput" @bind:after="Buscar" />
+    </div>
+
+    <!-- Contenedor de la tarjeta -->
+    <div class="border-0">
+        <div class="p-md-3">
+
+            @if (cargando)
+            {
+                <div class="text-center my-4">Cargando...</div>
+            }
+            else if (vacunas.Count == 0)
+            {
+                <div class="alert alert-info mb-0">No hay registros.</div>
+            }
+            @if (cargando)
+            {
+                <div class="text-center my-4">Cargando...</div>
+            }
+            else if (vacunas.Count == 0)
+            {
+                <div class="alert alert-info mb-0">No hay registros.</div>
+            }
+            else
+            {
+                <!-- Contenedor de las cards -->
+                <div class="row g-3">
+                    @foreach (var v in vacunas)
+                    {
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <div class="card-list d-flex flex-column justify-content-end align-content-end">
+
+                                <!-- Estado -->
+                                <div class="mb-2">
+                                    @if (v.Estado)
+                                    {
+                                        <span class="chip chip-success">Habilitada</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="chip chip-success">Deshabilitada</span>
+                                    }
+                                </div>
+
+                                <!-- Nombre -->
+                                <div class="titulo mb-2">@v.Nombre</div>
+
+                                <!-- Acciones -->
+                                <div class="d-flex flex-wrap gap-2 mt-4">
+                                    <button class="boton-card"
+                                            @onclick="@(() => IrEditar(v.Id))">
+                                        Editar
+                                    </button>
+                                    <button class="boton-card"
+                                            @onclick="() => CambiarEstado(v)">
+                                        @(v.Estado ? "Deshabilitar" : "Habilitar")
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+
+        </div>
+    </div>
+
+    <!-- Botón agregar -->
+    <div class="d-flex justify-content-center mt-4">
+        <button class="btn btn-dark rounded-circle p-3 shadow"
+                style="width:55px; height:55px;"
+                @onclick="IrAgregar">
+            <i class="bi bi-plus-lg text-white fs-4"></i>
+        </button>
+    </div>
+</div>
 
 @code {
+    private List<Vacuna> vacunas = new();
+    private string? filtro;
+    private bool cargando;
 
+    protected override async Task OnInitializedAsync()
+    {
+        await Cargar();
+    }
+
+    private void IrInicio() => Nav.NavigateTo("/login/menu");
+
+    private async Task Cargar()
+    {
+        cargando = true;
+        vacunas = await VacunaService.ListarAsync(filtro);
+        cargando = false;
+        StateHasChanged();
+    }
+
+    private async Task Buscar() => await Cargar();
+
+    private async Task CambiarEstado(Vacuna v)
+    {
+        var ok = await VacunaService.ToggleEstadoAsync(v);
+        if (ok)
+        {
+            v.Estado = !v.Estado;
+            StateHasChanged();
+        }
+    }
+
+    private void IrAgregar() => Nav.NavigateTo("/vacunas/agregar");
+    private void IrEditar(int id) => Nav.NavigateTo($"/vacunas/editar/{id}");
 }
