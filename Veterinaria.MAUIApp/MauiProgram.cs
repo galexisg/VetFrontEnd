@@ -84,6 +84,8 @@ namespace Veterinaria.MAUIApp
             builder.Services.AddScoped<MotivoCitaService>();
             builder.Services.AddScoped<RazaService>();
             builder.Services.AddScoped<EspecieService>();
+            builder.Services.AddScoped<EspecialidadService>();
+            builder.Services.AddSingleton<BloqueHorarioService>();
 
 
             return builder.Build();
