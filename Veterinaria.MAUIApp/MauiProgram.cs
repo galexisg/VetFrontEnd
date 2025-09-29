@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using System.Globalization; // <- necesario para la cultura
 using Veterinaria.MAUIApp.Models;
 
 namespace Veterinaria.MAUIApp
@@ -32,8 +31,6 @@ namespace Veterinaria.MAUIApp
 
             builder.Services.AddScoped<Veterinaria.MAUIApp.Services.MotivoCitaService>();
 
-            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("es-ES");
-            CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("es-ES");
 
             return builder.Build();
         }
