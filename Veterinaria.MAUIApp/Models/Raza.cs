@@ -1,12 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Veterinaria.MAUIApp.Models
+﻿namespace Veterinaria.MAUIApp.Models
 {
-    internal class Raza
+    public class RazaGuardarReq
     {
+        public string Nombre { get; set; } = string.Empty;
+        public byte EspecieId { get; set; }
+        public string EspecieNombre { get; set; } = string.Empty;
+    }
+
+    public class RazaModificarReq
+    {
+        public byte Id { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public byte EspecieId { get; set; }
+        public string EspecieNombre { get; set; } = string.Empty;
+    }
+
+    public class RazaSalidaRes
+    {
+        public byte Id { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public byte EspecieId { get; set; }
+        public string EspecieNombre { get; set; } = string.Empty;
     }
 }
