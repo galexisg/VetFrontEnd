@@ -1,7 +1,85 @@
-﻿@page "/citas/agregar"
+﻿@page "/Citas/Agregar"
+@using Veterinaria.MAUIApp.Models
+@inject Veterinaria.MAUIApp.Services.CitaService CitaService
+@inject Veterinaria.MAUIApp.Services.MotivoCitaService MotivoCitaService
+@inject NavigationManager Navigation
 
-<h3>Agregar</h3>
+<h3 class="fw-bold mb-3">Nueva Cita</h3>
+
+<EditForm Model="cita" OnValidSubmit="CrearCita">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <!-- Mascota -->
+    <div class="mb-3">
+        <label class="form-label fw-semibold">Mascota Id</label>
+        <InputNumber class="form-control form-control-lg rounded-4 shadow-sm"
+                     @bind-Value="cita.MascotaId" />
+    </div>
+
+    <!-- Usuario -->
+    <div class="mb-3">
+        <label class="form-label fw-semibold">Usuario Id</label>
+        <InputNumber class="form-control form-control-lg rounded-4 shadow-sm"
+                     @bind-Value="cita.UsuarioId" />
+    </div>
+
+    <!-- Motivo -->
+    <div class="mb-3">
+        <label class="form-label fw-semibold">Motivo</label>
+        <select class="form-select form-select-lg rounded-4 shadow-sm"
+                @bind="cita.MotivoId">
+            <option value="">-- Selecciona un motivo --</option>
+            @if (motivos != null)
+            {
+                @foreach (var m in motivos)
+                {
+                    <option value="@m.Id">@m.Nombre</option>
+                }
+            }
+        </select>
+    </div>
+
+    <!-- Fecha y Hora -->
+    <div class="mb-3">
+        <label class="form-label fw-semibold">Fecha y Hora</label>
+        <InputDate class="form-control form-control-lg rounded-4 shadow-sm"
+                   @bind-Value="cita.FechaHora" />
+    </div>
+
+    <!-- Observaciones -->
+    <div class="mb-3">
+        <label class="form-label fw-semibold">Observaciones</label>
+        <InputTextArea class="form-control form-control-lg rounded-4 shadow-sm"
+                       @bind-Value="cita.Observaciones" />
+    </div>
+
+    <!-- Botones -->
+    <button type="submit"
+            class="btn btn-success btn-lg w-100 rounded-pill shadow-sm">
+        Guardar
+    </button>
+    <a href="/Citas/Index"
+       class="btn btn-outline-secondary btn-lg w-100 mt-2 rounded-pill shadow-sm">
+        Cancelar
+    </a>
+</EditForm>
 
 @code {
+    private List<Veterinaria.MAUIApp.Models.MotivoCita>? motivos;
+    private CitaRequest cita = new();
 
+    protected override async Task OnInitializedAsync()
+    {
+        motivos = await MotivoCitaService.GetActivosAsync();
+    }
+
+    private async Task CrearCita()
+    {
+        var creada = await CitaService.CreateCitaAsync(cita);
+        if (creada != null)
+        {
+            Navigation.NavigateTo("/Citas/Index");
+        }
+    }
 }

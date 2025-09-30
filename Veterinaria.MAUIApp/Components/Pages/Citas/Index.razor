@@ -1,7 +1,163 @@
-﻿@page "/citas/index"
+﻿@page "/Citas/Index"
+@using Veterinaria.MAUIApp.Models
+@inject Veterinaria.MAUIApp.Services.CitaService CitaService
+@inject NavigationManager Navigation
 
-<h3>Index</h3>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h3 class="fw-bold mb-0">Citas</h3>
+        <small class="text-muted">Gestiona el registro y control</small>
+    </div>
+    <!--Volver al menu-->
+    <a href="/login/menu" class="btn btn-success shadow-sm rounded-pill">
+        <i class="bi bg-info"></i> Volver al menu
+    </a>
+    <a href="/citas/agregar" class="btn btn-success shadow-sm rounded-pill">
+        <i class="bi bi-plus-circle"></i> Agregar nueva cita
+    </a>
+</div>
+
+<!-- Buscador -->
+<div class="input-group mb-4 shadow-sm rounded-pill">
+    <span class="input-group-text bg-white border-0 rounded-start-pill">
+        <i class="bi bi-search text-muted"></i>
+    </span>
+    <input type="text" class="form-control border-0 rounded-end-pill"
+           placeholder="Buscar cita..."
+           @bind="searchTerm" @bind:event="oninput" />
+    <button class="btn btn-outline-secondary rounded-pill" type="button" @onclick="ApplyFilter">
+        <i class="bi bi-funnel btn btn-sm rounded-pill">Buscar</i>
+    </button>
+</div>
+
+
+
+@if (filteredCitas == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else if (!filteredCitas.Any())
+{
+    <p class="text-muted">No se encontraron citas.</p>
+}
+else
+{
+    @foreach (var cita in filteredCitas)
+    {
+        <div class="card mb-3 shadow-sm rounded-4"
+             role="button" tabindex="0"
+             style="cursor:pointer"
+             @onclick='@(() => Navigation.NavigateTo($"/citas/{cita.CitaId}"))'>
+
+            <div class="card-body">
+                <!-- Estado -->
+                <span class="badge rounded-pill @GetEstadoBadge(cita.CitaEstadoId) px-3 py-2">
+                    @GetEstadoTexto(cita.CitaEstadoId)
+                </span>
+
+                <!-- Título -->
+                <h5 class="fw-semibold mt-2">@cita.Tipo</h5>
+                <p class="text-muted mb-1">@cita.Observaciones</p>
+
+                <!-- Fecha -->
+                <p class="mb-2">
+                    <small class="text-muted">
+                        <i class="bi bi-calendar-event me-1"></i>
+                        @cita.FechaHora.ToString("dddd dd MMMM - hh:mm tt")
+                    </small>
+                </p>
+
+                <!-- Acciones -->
+                <div class="d-flex gap-2">
+                    <a href="/citas/editar/@cita.CitaId"
+                       class="btn btn-sm btn-primary shadow-sm rounded-pill"
+                       @onclick:stopPropagation="true">
+                        <i class="bi bg-info"></i> Editar
+                    </a>
+
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle rounded-pill"
+                                type="button" data-bs-toggle="dropdown"
+                                @onclick:stopPropagation="true">
+                            Estado
+                        </button>
+                        <ul class="dropdown-menu" @onclick:stopPropagation="true">
+                            <li><a class="dropdown-item" @onclick="() => CambiarEstado(cita, EstadoCitaEnum.Pendiente)">Pendiente</a></li>
+                            <li><a class="dropdown-item" @onclick="() => CambiarEstado(cita, EstadoCitaEnum.Confirmada)">Confirmada</a></li>
+                            <li><a class="dropdown-item" @onclick="() => CambiarEstado(cita, EstadoCitaEnum.Completada)">Completada</a></li>
+                        </ul>
+                    </div>
+
+                    <button class="btn btn-sm btn-danger rounded-pill"
+                            @onclick:stopPropagation="true"
+                            @onclick="() => CambiarEstado(cita, EstadoCitaEnum.Cancelada)">
+                        <i class="bi bi-x-circle"></i> Cancelar una cita
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+}
 
 @code {
+    private List<CitaResponse>? citas;
+    private IEnumerable<CitaResponse> filteredCitas = Enumerable.Empty<CitaResponse>();
+    private string searchTerm = "";
 
+    protected override async Task OnInitializedAsync()
+    {
+        citas = await CitaService.GetCitasAsync();
+        filteredCitas = citas;
+    }
+
+    private void ApplyFilter()
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+            filteredCitas = citas!;
+        else
+            filteredCitas = citas!.Where(c =>
+                (c.Observaciones ?? "").Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+                || c.Tipo.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private string GetEstadoBadge(int estadoId) => (EstadoCitaEnum)estadoId switch
+    {
+        EstadoCitaEnum.Pendiente => "bg-warning",
+        EstadoCitaEnum.Confirmada => "bg-primary",
+        EstadoCitaEnum.Cancelada => "bg-danger",
+        EstadoCitaEnum.Completada => "bg-success",
+        _ => "bg-secondary"
+    };
+
+    private string GetEstadoTexto(int estadoId) => (EstadoCitaEnum)estadoId switch
+    {
+        EstadoCitaEnum.Pendiente => "Pendiente",
+        EstadoCitaEnum.Confirmada => "Confirmada",
+        EstadoCitaEnum.Cancelada => "Cancelada",
+        EstadoCitaEnum.Completada => "Completada",
+        _ => "Desconocido"
+    };
+
+    private async Task CambiarEstado(CitaResponse cita, EstadoCitaEnum nuevoEstado)
+    {
+        var request = new CitaRequest
+        {
+            MascotaId = cita.MascotaId,
+            UsuarioId = cita.UsuarioId,
+            VeterinarioId = cita.VeterinarioId,
+            MotivoId = cita.MotivoId,
+            CitaEstadoId = (int)nuevoEstado,
+            FacturaId = cita.FacturaId,
+            Tipo = cita.Tipo,
+            FechaHora = cita.FechaHora,
+            Observaciones = cita.Observaciones
+        };
+
+        var updated = await CitaService.UpdateCitaAsync(cita.CitaId, request);
+        if (updated != null)
+        {
+            cita.CitaEstadoId = (int)nuevoEstado;
+            StateHasChanged();
+        }
+    }
 }
