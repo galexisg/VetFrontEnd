@@ -81,10 +81,12 @@ namespace Veterinaria.MAUIApp
             builder.Services.AddScoped<AuthService>();
             builder.Services.AddScoped<DiagnosticoService>();
             builder.Services.AddScoped<TratamientosAplicadosService>();
-            /*Servicio de cita*/
             builder.Services.AddScoped<CitaService>();
+            builder.Services.AddScoped<VacunaService>();
             builder.Services.AddScoped<TratamientoService>();
             builder.Services.AddScoped<MotivoCitaService>();
+            builder.Services.AddScoped<EstadoDiaService>();
+            builder.Services.AddScoped<DiaService>();
 
             builder.Services.AddScoped<RazaService>();
             builder.Services.AddScoped<EspecieService>();

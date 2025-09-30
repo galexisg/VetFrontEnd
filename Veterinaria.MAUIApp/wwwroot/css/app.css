@@ -67,7 +67,72 @@ a,
     --verde: #0AB372;
     --verde-100: #E6FAF1;
     --verde-200: #CFF4E5;
-    --rojo: #b32121;
+    --rojo: #b32121;@page "/vacunas/editar/{Id:int}"
+
+@using Veterinaria.MAUIApp.Models
+@inject Veterinaria.MAUIApp.Services.VacunaService VacunaService
+@inject NavigationManager Nav
+
+<div class="container mt-4">
+    <div class="mb-3">
+        <h4 class="mb-0">Editar vacuna</h4>
+        <small class="text-muted">Modifica el nombre y guarda</small>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            @if (cargando)
+            {
+                <div>Cargando...</div>
+            }
+            else if (modelo is null)
+            {
+                <div class="alert alert-danger">No se encontró la vacuna.</div>
+            }
+            else
+            {
+                <EditForm Model="@modelo" OnValidSubmit="Guardar">
+                    <DataAnnotationsValidator />
+                    <div class="mb-3">
+                        <label class="form-label">Nombre</label>
+                        <InputText class="form-control" @bind-Value="modelo.Nombre" />
+                        <ValidationMessage For="@(() => modelo.Nombre)" />
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                        <button type="button" class="btn btn-outline-secondary" @onclick="Volver">Cancelar</button>
+                    </div>
+                </EditForm>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int id { get; set; }
+    private bool cargando = true;
+    private VacunaReq? modelo;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        cargando = true;
+        var v = await VacunaService.ObtenerAsync(id);
+        if (v is not null)
+            modelo = new VacunaReq { Nombre = v.Nombre };
+        cargando = false;
+    }
+
+    private async Task Guardar()
+    {
+        if (modelo is null) return;
+        var actualizado = await VacunaService.ActualizarAsync(id, modelo);
+        if (actualizado is not null)
+            Nav.NavigateTo("/vacunas/index");
+    }
+
+    private void Volver() => Nav.NavigateTo("/vacunas/index");
+}
+
     --rojo-100: #FFECEC;
     /* Sombras */
     --shadow-xs: 0 1px 2px rgba(16,24,40,.06), 0 1px 1px rgba(16,24,40,.03);

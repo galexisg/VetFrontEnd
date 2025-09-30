@@ -15,7 +15,7 @@ namespace Veterinaria.MAUIApp.Services
         // Listar motivos activos
         public async Task<List<MotivoCita>> GetActivosAsync()
         {
-            return await _http.GetFromJsonAsync<List<MotivoCita>>("motivos")
+            return await _http.GetFromJsonAsync<List<MotivoCita>>("motivocitas")
                    ?? new List<MotivoCita>();
         }
 
@@ -27,28 +27,18 @@ namespace Veterinaria.MAUIApp.Services
         }
 
         // Crear nuevo motivo
-        //public async Task<MotivoCita?> CrearAsync(MotivoCita motivo)
-        //{
-        //    var response = await _http.PostAsJsonAsync("motivos", motivo);
-        //    if (response.IsSuccessStatusCode)
-        //    {
-        //        return await response.Content.ReadFromJsonAsync<MotivoCita>();
-        //    }
-        //    return null;
-        //}
-        // Crear nuevo motivo
         public async Task<(MotivoCita? motivo, string? error)> CrearAsync(MotivoCita motivo)
         {
-            var response = await _http.PostAsJsonAsync("motivos", motivo);
+            var response = await _http.PostAsJsonAsync("motivocitas", motivo);
+
 
             if (response.IsSuccessStatusCode)
             {
                 var data = await response.Content.ReadFromJsonAsync<MotivoCita>();
-                return (data, null); // No hay error
+                return (data, null);
             }
             else
             {
-                // Intentar leer mensaje de error del backend
                 try
                 {
                     var errorResp = await response.Content.ReadFromJsonAsync<ErrorResponse>();
@@ -61,25 +51,24 @@ namespace Veterinaria.MAUIApp.Services
             }
         }
 
-
         // Editar motivo existente
         public async Task<bool> EditarAsync(int id, MotivoCita motivo)
         {
-            var response = await _http.PutAsJsonAsync($"motivos/{id}", motivo);
+            var response = await _http.PutAsJsonAsync($"motivocitas/{id}", motivo);
             return response.IsSuccessStatusCode;
         }
 
         // Desactivar motivo
         public async Task<bool> DesactivarAsync(int id)
         {
-            var response = await _http.PutAsync($"motivos/{id}/desactivar", null);
+            var response = await _http.PutAsync($"motivocitas/{id}/desactivar", null);
             return response.IsSuccessStatusCode;
         }
 
         // Activar motivo
         public async Task<bool> ActivarAsync(int id)
         {
-            var response = await _http.PutAsync($"motivos/{id}/activar", null);
+            var response = await _http.PutAsync($"motivocitas/{id}/activar", null);
             return response.IsSuccessStatusCode;
         }
 
@@ -102,7 +91,7 @@ namespace Veterinaria.MAUIApp.Services
         }
     }
 
-    // Clase para manejar respuestas de error de la API
+
     public class ErrorResponse
     {
         public string? Message { get; set; }
