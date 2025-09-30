@@ -1,7 +1,120 @@
-﻿@page "/horarios/agregar"
+﻿@page "/horarios/detalle/crear"
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Services
+@using static Veterinaria.MAUIApp.Models.BloqueHorario
+@inject NavigationManager Navigation
+@inject AgendaService AgendaService
+@inject VeterinarioService VeterinarioService
+@inject DiaService DiaService
+@inject BloqueHorarioService bloqueHorarioService
 
-<h3>Agregar</h3>
+<PageTitle>Agregar Horario</PageTitle>
+
+<div class="page-container">
+    <div class="header">
+
+        <button class="icon-button" @onclick="GoBack">
+            <span class="material-icons">arrow_back</span>
+        </button>
+
+        <div class="header-title">
+            <h2>Agregar Nuevo Horario</h2>
+            <p>Define los horarios de trabajo de un veterinario.</p>
+        </div>
+
+    </div>
+
+    <div class="content">
+        <EditForm Model="@nuevoDetalle" OnValidSubmit="GuardarNuevoRegistro">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="field-group">
+                <label>Veterinario</label>
+                <InputSelect @bind-Value="nuevoDetalle.VeterinarioId" class="custom-select">
+                    <option value="">Seleccionar Veterinario</option>
+                    @foreach (var vet in Veterinarios)
+                    {
+                        <option value="@vet.Id.ToString()">@vet.Usuario.NombreCompleto</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => nuevoDetalle.VeterinarioId)" />
+            </div>
+
+            <div class="field-group">
+                <label>Día</label>
+                <InputSelect @bind-Value="nuevoDetalle.DiaId" class="custom-select">
+                    <option value="">Seleccionar Día</option>
+                    @foreach (var dia in Dias)
+                    {
+                        <option value="@dia.DiaId.ToString()">@dia.Nombre</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => nuevoDetalle.DiaId)" />
+            </div>
+
+            <div class="field-group">
+                <label>Bloque Horario</label>
+
+                <InputSelect @bind-Value="nuevoDetalle.BloqueHorarioId" class="custom-select">
+                    <option value="">Seleccionar Bloque</option>
+                    @foreach (var bloque in BloquesHorario)
+                    {
+                        <option value="@bloque.Id.ToString()">
+                            @bloque.Inicio.ToString(@"hh\:mm") - @bloque.Fin.ToString(@"hh\:mm")
+                        </option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => nuevoDetalle.BloqueHorarioId)" />
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" @onclick="GoBack">Cancelar</button>
+                <button type="submit" class="btn-primary" @onclick="GuardarNuevoRegistro">
+                    Guardar Horario
+                </button>
+            </div>
+        </EditForm>
+    </div>
+</div>
 
 @code {
+    // Modelo para enviar datos a la API. Es un DTO de Request.
+    public class DetalleHorarioVeterinarioRequest
+    {
+        public int VeterinarioId { get; set; }
+        public int DiaId { get; set; }
+        public int BloqueHorarioId { get; set; }
+    }
 
+    // Modelos de salida (Asumiendo que existen)
+    private List<VeterinarioSalidaRes> Veterinarios = new();
+    private List<Dia> Dias = new();
+    // 👈 Tipo de la lista de Bloques Horario corregido
+    private List<BloqueHorarioSalidaRes> BloquesHorario = new();
+
+    private DetalleHorarioVeterinario nuevoDetalle = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Llama a tus servicios para cargar los datos de los dropdowns
+        Veterinarios = await VeterinarioService.ListarAsync();
+        Dias = await DiaService.GetDiasAsync();
+        // 👈 Método de servicio corregido para usar el ListarTodosAsync del nuevo Service
+        BloquesHorario = await bloqueHorarioService.ListarTodosAsync();
+    }
+
+    private async Task GuardarNuevoRegistro()
+    {
+        // Lógica para guardar el nuevo detalle en la API
+        // Si tu servicio devuelve éxito (bool) o un objeto, puedes manejar la respuesta.
+        await AgendaService.CreateDetalleHorarioAsync(nuevoDetalle);
+        Navigation.NavigateTo("/agenda");
+    }
+
+    private void GoBack()
+    {
+        // Navega a la vista principal de la agenda.
+        Navigation.NavigateTo("/agenda");
+    }
 }
