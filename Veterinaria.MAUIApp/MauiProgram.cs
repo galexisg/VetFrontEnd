@@ -98,7 +98,6 @@ namespace Veterinaria.MAUIApp
             builder.Services.AddScoped<ProveedorService>();
             builder.Services.AddScoped<MedicamentoService>();
 
-
             builder.Services.AddScoped<CompraService>();
 
 
