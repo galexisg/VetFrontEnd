@@ -237,6 +237,9 @@ h1:focus {
     background: var(--blanco);
     box-shadow: none; /* limpio; puedes activar sombra si quieres */
 }
+.card {
+    border-radius: 1rem; /* bordes suaves */
+}
 
 /* ==========================================================================
    Chips, Badges y Estados
@@ -391,6 +394,9 @@ h1:focus {
     font-size: 14px;
 }
 
+.btn {
+    border-radius: 50rem; /* pill */
+}
 /* Feedback táctil sutil */
 .card-tappable {
     cursor: pointer;
@@ -709,6 +715,7 @@ h1:focus {
     margin: auto;
 }
 
+
 /* Botón primario heredado (si lo usa algún componente Bootstrap) */
 .btn-primary {
     color: #fff;
@@ -765,3 +772,7 @@ h1:focus {
         min-width: 100px;
         padding: 0.5rem 1rem;
     }
+
+.form-control, .form-select {
+    border-radius: 1rem;
+}
