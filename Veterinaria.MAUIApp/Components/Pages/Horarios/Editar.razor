@@ -1,10 +1,14 @@
 ﻿@page "/agenda/{id:int}"
+
 @using Veterinaria.MAUIApp.Models
 @using Veterinaria.MAUIApp.Services
 @inject AgendaService AgendaService
 @inject NavigationManager NavManager
 @inject BloqueHorarioService bloqueHorarioService
+@inject DiaService ServicioDia
 
+
+<PageTitle>Editar Horario</PageTitle>
 
 <div class="page-container">
     <div class="header">
@@ -55,15 +59,18 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="dia">Día (Nombre):</label>
-                            <InputText id="dia" @bind-Value="detalleParaEdicion.Dia" class="form-control" />
-                            <ValidationMessage For="@(() => detalleParaEdicion.Dia)" />
-                        </div>
+                            <label for="dia">Día:</label>
 
-                        <div class="form-group">
-                            <label for="estado">Estado:</label>
-                            <InputText id="estado" @bind-Value="detalleParaEdicion.Estado" class="form-control" />
-                            <ValidationMessage For="@(() => detalleParaEdicion.Estado)" />
+                            <InputSelect @bind-Value="detalleParaEdicion.DiaId" class="form-control">
+                                <option value="">Seleccionar Día</option>
+                                @foreach (var dia in ListaDeDias)
+                                {
+                                    <option value="@dia.DiaId.ToString()">
+                                        @dia.Nombre
+                                    </option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="@(() => detalleParaEdicion.DiaId)" />
                         </div>
 
                         <div class="form-group">
@@ -146,12 +153,28 @@
     // Corrección de clase anidada con namespace completo
     private List<Veterinaria.MAUIApp.Models.BloqueHorario.BloqueHorarioSalidaRes> BloquesHorario = new();
 
+    // Lista para almacenar los días
+    private List<Dia> ListaDeDias = new();
+
     protected override async Task OnInitializedAsync()
     {
         BloquesHorario = await bloqueHorarioService.ListarTodosAsync();
+
+        // Cargar la lista de días
+        try
+        {
+            ListaDeDias = await ServicioDia.GetDiasAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar días: {ex.Message}");
+        }
+
         await LoadData();
     }
-
+    
+    // NOTA: El método CambiarEstadoLocal() fue eliminado ya que el estado se gestiona externamente.
+    
     private async Task LoadData()
     {
         detalle = await AgendaService.GetDetalleHorarioByIdAsync(Id);
@@ -165,7 +188,7 @@
                     NombreVeterinario = detalle.NombreVeterinario,
                     DiaId = detalle.DiaId,
                     Dia = detalle.Dia,
-                    Estado = detalle.Estado,
+                    Estado = detalle.Estado, // Se mantiene el estado solo para lectura
                     BloqueHorarioId = detalle.BloqueHorarioId,
                     HoraInicio = detalle.HoraInicio,
                     HoraFin = detalle.HoraFin
@@ -178,12 +201,19 @@
 
     private void HabilitarEdicion()
     {
-        // Esto cambia el estado y renderiza la sección if (modoEdicion)
         modoEdicion = true;
     }
 
     private async Task HandleValidSubmit()
     {
+        // 1. Actualizar el nombre del día (Dia) basado en el ID seleccionado (DiaId)
+        var diaSeleccionado = ListaDeDias.FirstOrDefault(d => d.DiaId == detalleParaEdicion.DiaId);
+        if (diaSeleccionado != null)
+        {
+            detalleParaEdicion.Dia = diaSeleccionado.Nombre;
+        }
+
+        // 2. Parseo de Horas
         TimeSpan hInicio;
         if (TimeSpan.TryParseExact(HoraInicioString, @"hh\:mm", null, out hInicio))
         {
@@ -196,6 +226,7 @@
             detalleParaEdicion.HoraFin = hFin;
         }
 
+        // 3. Llamada al Servicio
         var updatedDetalle = await AgendaService.UpdateDetalleHorarioAsync(
             detalleParaEdicion.DetalleHorarioVeterinarioId,
             detalleParaEdicion

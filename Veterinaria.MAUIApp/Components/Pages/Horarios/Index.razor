@@ -134,8 +134,8 @@
     }
 
     private void ShowAddHorario() => NavManager.NavigateTo("/horarios/detalle/crear");
-    private void ShowBloquesHorario() => NavManager.NavigateTo("/bloques-horario");
+    private void ShowBloquesHorario() => NavManager.NavigateTo("/bloques-horario/index");
     private void ShowHorarioDetail(DetalleHorarioVeterinario horario) => NavManager.NavigateTo($"/agenda/{horario.DetalleHorarioVeterinarioId}");
-    private void GoBack() => NavManager.NavigateTo("/");
-    private void IrDia() => NavManager.NavigateTo("/test-dia");
+    private void GoBack() => NavManager.NavigateTo("/login/menu");
+    private void IrDia() => NavManager.NavigateTo("/test-dia/index");
 }

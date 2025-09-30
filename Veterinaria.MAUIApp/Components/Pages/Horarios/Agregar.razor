@@ -1,4 +1,4 @@
-﻿@* @page "/horarios/detalle/crear"
+﻿@page "/horarios/detalle/crear"
 @using Veterinaria.MAUIApp.Models
 @using Veterinaria.MAUIApp.Services
 @using static Veterinaria.MAUIApp.Models.BloqueHorario
@@ -98,7 +98,7 @@
     protected override async Task OnInitializedAsync()
     {
         // Llama a tus servicios para cargar los datos de los dropdowns
-        Veterinarios = await VeterinarioService.GetAllAsync();
+        Veterinarios = await VeterinarioService.ListarAsync();
         Dias = await DiaService.GetDiasAsync();
         // 👈 Método de servicio corregido para usar el ListarTodosAsync del nuevo Service
         BloquesHorario = await bloqueHorarioService.ListarTodosAsync();
@@ -117,4 +117,4 @@
         // Navega a la vista principal de la agenda.
         Navigation.NavigateTo("/agenda");
     }
-} *@
+}
