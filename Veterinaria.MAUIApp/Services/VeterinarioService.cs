@@ -54,17 +54,28 @@ namespace Veterinaria.MAUIApp.Services
         }
 
         // 📌 Activar
+        // Activar
         public async Task<bool> ActivarAsync(int id)
         {
-            var response = await _http.PutAsync($"veterinarios/{id}/activar", null);
+            var dto = new VeterinarioModificarReq { Id = id, Estado = "Activo" };
+            var response = await _http.PutAsJsonAsync($"veterinarios/{id}", dto);
             return response.IsSuccessStatusCode;
         }
 
-        // 📌 Inactivar
+        // Inactivar
         public async Task<bool> InactivarAsync(int id)
         {
-            var response = await _http.PutAsync($"veterinarios/{id}/inactivar", null);
+            var dto = new VeterinarioModificarReq { Id = id, Estado = "Inactivo" };
+            var response = await _http.PutAsJsonAsync($"veterinarios/{id}", dto);
             return response.IsSuccessStatusCode;
+        }
+
+
+        // 📌 Listar usuarios con rol Veterinario
+        public async Task<List<UsuarioSalidaRes>> ListarUsuariosVeterinariosAsync()
+        {
+            return await _http.GetFromJsonAsync<List<UsuarioSalidaRes>>("veterinarios/usuarios")
+                   ?? new List<UsuarioSalidaRes>();
         }
     }
 }

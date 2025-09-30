@@ -1,0 +1,133 @@
+﻿/* Estilos para móviles */
+@media (max-width: 768px) {
+    .vet-container {
+        padding: 0 15px;
+    }
+
+    .vet-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+        padding: 20px 0;
+    }
+
+        .vet-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+    .vet-filtros {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+        .vet-filtros label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .vet-filtros .form-select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+    .vet-lista {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .vet-card {
+        flex-direction: column;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        background: white;
+    }
+
+    .vet-info {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+        .vet-info h5 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .vet-info p {
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+    .vet-actions {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        padding-top: 15px;
+        border-top: 1px solid #f0f0f0;
+    }
+
+        .vet-actions .btn {
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+        }
+
+    .estado {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .alert {
+        padding: 15px;
+        border-radius: 8px;
+        margin: 20px 0;
+        text-align: center;
+    }
+
+    .btn-primary {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+}
+
+@media (max-width: 480px) {
+    .vet-container {
+        padding: 0 10px;
+    }
+
+    .vet-card {
+        padding: 15px;
+    }
+
+    .vet-info h5 {
+        font-size: 1rem;
+    }
+
+    .vet-info p {
+        font-size: 0.85rem;
+    }
+
+    .vet-actions {
+        gap: 8px;
+    }
+
+        .vet-actions .btn {
+            padding: 6px 10px;
+            font-size: 0.8rem;
+        }
+}
