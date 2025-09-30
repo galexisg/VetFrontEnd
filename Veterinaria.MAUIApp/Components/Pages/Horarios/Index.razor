@@ -1,7 +1,141 @@
-﻿@page "/horarios/index"
+﻿@page "/agenda"
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Services
+@inject AgendaService AgendaService
+@inject NavigationManager navManager
 
-<h3>Index</h3>
+<div class="schedule-page">
+
+    <header class="app-header">
+        <div class="header-left">
+            <button class="icon-button" @onclick="GoBack">
+                <span class="material-icons">arrow_back</span>
+            </button>
+            <div class="header-title">
+                <h2>Horarios</h2>
+                <p>Gestiona el registro y control</p>
+            </div>
+            <button class="btn btn-info text-white btn-sm d-flex align-items-center gap-1" @onclick="IrDia">
+                <i class="bi bi-calendar-date"></i> Días
+            </button>
+        </div>
+    </header>
+
+    <div class="page-content-wrapper">
+
+        <div class="main-actions-grid">
+
+            <div class="action-card" @onclick="ShowAddHorario">
+                <span class="material-icons action-icon" style="color: #00d4aa;">add_circle_outline</span>
+                <div class="action-text">
+                    <strong>Nuevo horario</strong>
+                    <small>Agregar un nuevo horario</small>
+                </div>
+            </div>
+
+            <div class="action-card" @onclick="ShowBloquesHorario">
+                <span class="material-icons action-icon" style="color: #00d4aa;">schedule</span>
+                <div class="action-text">
+                    <strong>Bloques de horario</strong>
+                    <small>Gestiona los bloques disponibles</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="schedule-section">
+            <h3>Gestiona tus horarios</h3>
+
+            <div class="search-input-container">
+                <span class="material-icons search-icon">search</span>
+                <input type="text" placeholder="Buscar horarios..." @bind="searchText" @oninput="FilterHorarios" />
+            </div>
+
+            @if (horarios == null)
+            {
+                <div class="loading-container">
+                    <p><em>Cargando horarios...</em></p>
+                </div>
+            }
+            else if (filteredHorarios?.Any() == true)
+            {
+                <div class="schedule-list">
+                    @foreach (var horario in filteredHorarios)
+                    {
+                        <div class="schedule-item" @onclick="() => ShowHorarioDetail(horario)">
+                            <div class="item-status @(horario.Estado?.ToLower())"></div>
+
+                            <div class="item-details">
+                                <p class="item-day">@horario.Dia</p>
+                                <p class="item-vet-time">
+                                    @horario.NombreVeterinario <span class="time-range">| @horario.HoraInicio.ToString(@"hh\:mm") - @horario.HoraFin.ToString(@"hh\:mm")</span>
+                                </p>
+                            </div>
+                            <span class="material-icons item-arrow">chevron_right</span>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <span class="material-icons empty-icon">schedule</span>
+                    <p>No se encontraron horarios</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@* (Modal placeholders - puedes eliminarlos si solo usas navegación) *@
+@* @if (showBloquesModal)
+{
+    <BloquesHorario OnClose="CloseBloquesModal" />
+} *@
 
 @code {
+    private List<DetalleHorarioVeterinario> horarios;
+    private List<DetalleHorarioVeterinario> filteredHorarios;
+    private string searchText = "";
 
+    [Inject]
+    private NavigationManager NavManager { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Nota: Mantenemos la llamada a la API, sabiendo que puede fallar.
+            horarios = await AgendaService.GetDetallesHorarioAsync();
+        }
+        catch (Exception)
+        {
+            // Muestra un estado vacío si falla la carga
+            horarios = new List<DetalleHorarioVeterinario>();
+        }
+        filteredHorarios = horarios;
+    }
+
+    private void FilterHorarios(ChangeEventArgs e)
+    {
+        searchText = e.Value?.ToString() ?? "";
+
+        if (string.IsNullOrWhiteSpace(searchText))
+        {
+            filteredHorarios = horarios;
+        }
+        else
+        {
+            filteredHorarios = horarios?.Where(h =>
+                h.NombreVeterinario.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                h.Dia.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                h.Estado.Contains(searchText, StringComparison.OrdinalIgnoreCase)
+            ).ToList();
+        }
+    }
+
+    private void ShowAddHorario() => NavManager.NavigateTo("/horarios/detalle/crear");
+    private void ShowBloquesHorario() => NavManager.NavigateTo("/bloques-horario");
+    private void ShowHorarioDetail(DetalleHorarioVeterinario horario) => NavManager.NavigateTo($"/agenda/{horario.DetalleHorarioVeterinarioId}");
+    private void GoBack() => NavManager.NavigateTo("/");
+    private void IrDia() => NavManager.NavigateTo("/test-dia");
 }
