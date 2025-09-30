@@ -27,7 +27,7 @@ html {
 
 body {
     margin: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
     background: #F7F7F7;
     color: #0A0A0A;
     line-height: 1.4;
@@ -67,72 +67,7 @@ a,
     --verde: #0AB372;
     --verde-100: #E6FAF1;
     --verde-200: #CFF4E5;
-    --rojo: #b32121;@page "/vacunas/editar/{Id:int}"
-
-@using Veterinaria.MAUIApp.Models
-@inject Veterinaria.MAUIApp.Services.VacunaService VacunaService
-@inject NavigationManager Nav
-
-<div class="container mt-4">
-    <div class="mb-3">
-        <h4 class="mb-0">Editar vacuna</h4>
-        <small class="text-muted">Modifica el nombre y guarda</small>
-    </div>
-
-    <div class="card shadow-sm">
-        <div class="card-body">
-            @if (cargando)
-            {
-                <div>Cargando...</div>
-            }
-            else if (modelo is null)
-            {
-                <div class="alert alert-danger">No se encontró la vacuna.</div>
-            }
-            else
-            {
-                <EditForm Model="@modelo" OnValidSubmit="Guardar">
-                    <DataAnnotationsValidator />
-                    <div class="mb-3">
-                        <label class="form-label">Nombre</label>
-                        <InputText class="form-control" @bind-Value="modelo.Nombre" />
-                        <ValidationMessage For="@(() => modelo.Nombre)" />
-                    </div>
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary">Guardar</button>
-                        <button type="button" class="btn btn-outline-secondary" @onclick="Volver">Cancelar</button>
-                    </div>
-                </EditForm>
-            }
-        </div>
-    </div>
-</div>
-
-@code {
-    [Parameter] public int id { get; set; }
-    private bool cargando = true;
-    private VacunaReq? modelo;
-
-    protected override async Task OnParametersSetAsync()
-    {
-        cargando = true;
-        var v = await VacunaService.ObtenerAsync(id);
-        if (v is not null)
-            modelo = new VacunaReq { Nombre = v.Nombre };
-        cargando = false;
-    }
-
-    private async Task Guardar()
-    {
-        if (modelo is null) return;
-        var actualizado = await VacunaService.ActualizarAsync(id, modelo);
-        if (actualizado is not null)
-            Nav.NavigateTo("/vacunas/index");
-    }
-
-    private void Volver() => Nav.NavigateTo("/vacunas/index");
-}
-
+    --rojo: #b32121;
     --rojo-100: #FFECEC;
     /* Sombras */
     --shadow-xs: 0 1px 2px rgba(16,24,40,.06), 0 1px 1px rgba(16,24,40,.03);
@@ -242,7 +177,7 @@ h1:focus {
 .titulo {
     font-size: 16px;
     color: var(--negro);
-    font-weight: 500;
+    font-weight: 600;
     margin: 0;
 }
 
@@ -302,9 +237,6 @@ h1:focus {
     background: var(--blanco);
     box-shadow: none; /* limpio; puedes activar sombra si quieres */
 }
-.card {
-    border-radius: 1rem; /* bordes suaves */
-}
 
 /* ==========================================================================
    Chips, Badges y Estados
@@ -324,20 +256,21 @@ h1:focus {
     padding: 4px 10px;
     font-size: 12px;
     line-height: 1;
-    border-radius: 6px;
+    border-radius: 999px;
     border: 1px solid transparent;
     user-select: none;
-    font-size: 14px;
 }
 
 .chip-success {
-    background: var(--verde);
-    color: var(--blanco);
+    background: var(--verde-100);
+    color: var(--verde);
+    border-color: var(--verde-200);
 }
 
 .chip-muted {
-    background: var(--verde);
-    color: var(--blanco);
+    background: var(--gris-300);
+    color: var(--gris);
+    border-color: var(--borde);
 }
 
 /* Tags de motivos (con confirmación inline) */
@@ -459,9 +392,6 @@ h1:focus {
     font-size: 14px;
 }
 
-.btn {
-    border-radius: 50rem; /* pill */
-}
 /* Feedback táctil sutil */
 .card-tappable {
     cursor: pointer;
@@ -780,7 +710,6 @@ h1:focus {
     margin: auto;
 }
 
-
 /* Botón primario heredado (si lo usa algún componente Bootstrap) */
 .btn-primary {
     color: #fff;
@@ -805,39 +734,4 @@ h1:focus {
     font-size: 16px;
     font-weight: 400;
     color: var(--negro);
-}
-
-/* Fondo semi-transparente del modal */
-.modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-/* Contenido del modal */
-.modal-content {
-    background-color: white;
-    padding: 2rem;
-    border-radius: 10px;
-    max-width: 500px; /* Máximo ancho */
-    width: 90%; /* Ancho flexible según pantalla */
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    text-align: center;
-}
-
-    /* Botones dentro del modal */
-    .modal-content .boton-card {
-        min-width: 100px;
-        padding: 0.5rem 1rem;
-    }
-
-.form-control, .form-select {
-    border-radius: 1rem;
 }
