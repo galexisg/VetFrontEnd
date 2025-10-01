@@ -1,7 +1,118 @@
-﻿@page "/proveedores/compras/index"
+﻿@* @page "/proveedores/compras/index"
+@inject NavigationManager Nav
 
-<h3>Index</h3>
+<div class="contenedor">
+    <div class="status-bar-safe-area"></div>
+    <header class="mb-4">
+        <p class="titulo">Compras</p>
+        <p class="descripcion">Gestiona el registro de adquisiciones a proveedores</p>
+    </header>
+
+    <div class="input-container" style="display:flex;align-items:center;gap:12px;">
+        <div style="flex:1;">
+            <p class="titulo" style="margin-bottom:4px;">Nueva Compra</p>
+            <p class="descripcion">Registra una nueva compra</p>
+        </div>
+        <button class="boton-verde" @onclick="@(() => Nav.NavigateTo("/proveedores/compras/agregar"))">
+            Agregar
+        </button>
+    </div>
+
+    <div class="input-container" style="display:flex;gap:12px;align-items:center;">
+        <div style="position:relative;flex:1;">
+            <input class="input" placeholder="Buscar compras por proveedor o fecha..." />
+            <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#5D5D5D;">🔍</span>
+        </div>
+    </div>
+
+    @foreach (var c in MockCompras)
+    {
+        <div style="background:var(--blanco);border:1px solid var(--borde);border-radius:12px;padding:12px;margin-bottom:12px;">
+            <p class="titulo" style="margin-bottom:4px;">@c.ProveedorNombre</p>
+            <p class="descripcion" style="margin-bottom:12px;">Fecha: @c.Fecha.ToShortDateString() | Usuario: @c.UsuarioId</p>
+
+            <div style="display:flex;gap:8px;">
+                <button class="boton-verde" style="flex:1;"
+                        @onclick="@(() => Nav.NavigateTo($"/proveedores/compras/editar/{c.Id}"))">
+                    Ver/Editar
+                </button>
+                <button class="boton-verde" style="flex:1;"
+                        @onclick="@(() => Nav.NavigateTo($"/proveedores/compras/{c.Id}/detalles/agregar"))">
+                    Agregar Productos
+                </button>
+            </div>
+        </div>
+    }
+
+</div>
 
 @code {
+    // Solo para mostrar UI en el listado
+    private record Card(int Id, string ProveedorNombre, DateTime Fecha, int UsuarioId);
 
+    private List<Card> MockCompras = new()
+    {
+        new(1, "Distribuidora ABC", DateTime.Now.AddDays(-10), 101),
+        new(2, "Mayorista de Insumos", DateTime.Now.AddDays(-5), 102),
+        new(3, "Tecnología Global", DateTime.Now, 101),
+    };
+}
+ *@
+
+@page "/proveedores/compras/index"
+@inject NavigationManager Nav
+
+<div class="contenedor">
+    <div class="status-bar-safe-area"></div>
+    <header class="mb-4">
+        <p class="titulo">Compras</p>
+        <p class="descripcion">Gestiona el registro de adquisiciones a proveedores</p>
+    </header>
+
+    <div class="input-container" style="display:flex;align-items:center;gap:12px;">
+        <div style="flex:1;">
+            <p class="titulo" style="margin-bottom:4px;">Nueva Compra</p>
+            <p class="descripcion">Registra una nueva compra</p>
+        </div>
+        <button class="boton-verde" @onclick="@(() => Nav.NavigateTo("/proveedores/compras/agregar"))">
+            Agregar
+        </button>
+    </div>
+
+    <div class="input-container" style="display:flex;gap:12px;align-items:center;">
+        <div style="position:relative;flex:1;">
+            <input class="input" placeholder="Buscar compras por proveedor o fecha..." />
+            <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#5D5D5D;">🔍</span>
+        </div>
+    </div>
+
+    @foreach (var c in MockCompras)
+    {
+        <div style="background:var(--blanco);border:1px solid var(--borde);border-radius:12px;padding:12px;margin-bottom:12px;">
+            <p class="titulo" style="margin-bottom:4px;">@c.ProveedorNombre</p>
+            <p class="descripcion" style="margin-bottom:12px;">Fecha: @c.Fecha.ToShortDateString() | Usuario: @c.UsuarioId</p>
+
+            <div style="display:flex;gap:8px;">
+                <button class="boton-verde" style="flex:1;"
+                        @onclick="@(() => Nav.NavigateTo($"/proveedores/compras/editar/{c.Id}"))">
+                    Ver/Editar
+                </button>
+                <button class="boton-verde" style="flex:1;"
+                        @onclick="@(() => Nav.NavigateTo($"/proveedores/compras/{c.Id}/detalles/agregar"))">
+                    Agregar Productos
+                </button>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private record Card(int Id, string ProveedorNombre, DateTime Fecha, int UsuarioId);
+
+    private List<Card> MockCompras = new()
+    {
+        new(1, "Distribuidora ABC", DateTime.Now.AddDays(-10), 101),
+        new(2, "Mayorista de Insumos", DateTime.Now.AddDays(-5), 102),
+        new(3, "Tecnología Global", DateTime.Now, 101),
+    };
 }

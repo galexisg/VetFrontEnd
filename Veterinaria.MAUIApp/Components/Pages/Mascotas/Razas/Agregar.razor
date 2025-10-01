@@ -1,7 +1,110 @@
-﻿@page "/mascotas/razas/agregar"
+﻿@page "/razas/agregar"
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Services
+@inject RazaService razaService
+@inject EspecieService especieService
+@inject NavigationManager nav
 
-<h3>Agregar</h3>
+<link rel="stylesheet" href="css/razas.css" />
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">
+                <i class="bi bi-plus-circle me-2"></i> Nueva Raza
+            </h5>
+        </div>
+        <div class="card-body">
+            @if (especies is null)
+            {
+                <div class="alert alert-info text-center">
+                    <span class="spinner-border spinner-border-sm me-2"></span> Cargando especies...
+                </div>
+            }
+            else
+            {
+                <EditForm Model="nuevoRaza" OnValidSubmit="GuardarRaza">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Nombre</label>
+                            <InputText class="form-control" @bind-Value="nuevoRaza.Nombre" />
+                            <ValidationMessage For="@(() => nuevoRaza.Nombre)" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Especie</label>
+                            <InputSelect class="form-select"
+                                         @bind-Value="nuevoRaza.EspecieId"
+                                         @onchange="OnEspecieChanged">
+                                <option value="">-- Selecciona especie --</option>
+                                @foreach (var e in especies)
+                                {
+                                    <option value="@e.EspecieId">@e.Nombre</option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="@(() => nuevoRaza.EspecieId)" />
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle me-1"></i> Guardar
+                        </button>
+                        <button type="button" class="btn btn-secondary" @onclick="Cancelar">
+                            <i class="bi bi-x-circle me-1"></i> Cancelar
+                        </button>
+                    </div>
+                </EditForm>
+
+                @if (guardadoExitoso)
+                {
+                    <div class="alert alert-success mt-3 text-center">
+                        <i class="bi bi-check-circle me-1"></i> Raza guardada con éxito.
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
 
 @code {
+    private RazaGuardarReq nuevoRaza = new();
+    private List<EspecieRes>? especies;
+    private bool guardadoExitoso;
 
+    protected override async Task OnInitializedAsync()
+    {
+        especies = await especieService.ListarAsync();
+    }
+
+    private void OnEspecieChanged(ChangeEventArgs args)
+    {
+        if (byte.TryParse(args.Value?.ToString(), out var id)
+            && especies?.Any(e => e.EspecieId == id) == true)
+        {
+            nuevoRaza.EspecieNombre = especies.First(e => e.EspecieId == id).Nombre;
+        }
+    }
+
+    private async Task GuardarRaza()
+    {
+        var sel = especies?.FirstOrDefault(e => e.EspecieId == nuevoRaza.EspecieId);
+        if (sel is not null)
+        {
+            nuevoRaza.EspecieNombre = sel.Nombre;
+        }
+
+        var respuesta = await razaService.CrearAsync(nuevoRaza);
+        if (respuesta is not null)
+        {
+            guardadoExitoso = true;
+            await Task.Delay(1500);
+            nav.NavigateTo("/razas/indexmascotas");
+        }
+    }
+
+    private void Cancelar() => nav.NavigateTo("/razas/indexmascotas");
 }

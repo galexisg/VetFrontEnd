@@ -1,7 +1,255 @@
-﻿@page "/horarios/editar"
+﻿@page "/agenda/{id:int}"
 
-<h3>Editar</h3>
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Services
+@inject AgendaService AgendaService
+@inject NavigationManager NavManager
+@inject BloqueHorarioService bloqueHorarioService
+@inject DiaService ServicioDia
+
+
+<PageTitle>Editar Horario</PageTitle>
+
+<div class="page-container">
+    <div class="header">
+        <button class="icon-button" @onclick="GoBack">
+            <span class="material-icons">arrow_back</span>
+        </button>
+        <div class="header-title">
+            <h2>Detalle de Horario</h2>
+            <p>Información detallada del horario seleccionado.</p>
+        </div>
+    </div>
+
+    @if (detalle == null)
+    {
+        <div class="loading-container">
+            <p><em>Cargando detalles del horario...</em></p>
+        </div>
+    }
+    else
+    {
+        <div class="content">
+            <EditForm Model="@detalleParaEdicion" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+
+                @if (modoEdicion)
+                {
+                    <div class="form-container">
+                        <h3>Editar Horario</h3>
+
+                        <div class="form-group">
+                            <label>Veterinario:</label>
+                            <div class="form-control-readonly">@detalleParaEdicion.NombreVeterinario</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Bloque Horario</label>
+
+                            <InputSelect @bind-Value="detalleParaEdicion.BloqueHorarioId" class="form-control">
+                                <option value="">Seleccionar Bloque</option>
+                                @foreach (var bloque in BloquesHorario)
+                                {
+                                    <option value="@bloque.Id.ToString()">
+                                        @bloque.Inicio.ToString(@"hh\:mm") - @bloque.Fin.ToString(@"hh\:mm")
+                                    </option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="@(() => detalleParaEdicion.BloqueHorarioId)" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dia">Día:</label>
+
+                            <InputSelect @bind-Value="detalleParaEdicion.DiaId" class="form-control">
+                                <option value="">Seleccionar Día</option>
+                                @foreach (var dia in ListaDeDias)
+                                {
+                                    <option value="@dia.DiaId.ToString()">
+                                        @dia.Nombre
+                                    </option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="@(() => detalleParaEdicion.DiaId)" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="horaInicio">Hora Inicio (HH:mm):</label>
+                            <InputText id="horaInicio" @bind-Value="HoraInicioString" class="form-control" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="horaFin">Hora Fin (HH:mm):</label>
+                            <InputText id="horaFin" @bind-Value="HoraFinString" class="form-control" />
+                        </div>
+
+                        <div class="action-buttons">
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                            <button type="button" class="btn btn-secondary" @onclick="CancelarEdicion">Cancelar</button>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="detail-card-container">
+                        <h2 class="section-title-detail">Información del Horario</h2>
+
+                        <div class="detail-item-group">
+                            <div class="detail-item-row">
+                                <span class="detail-label">Veterinario:</span>
+                                <span class="detail-value">@detalle.NombreVeterinario</span>
+                            </div>
+
+                            <div class="detail-item-row">
+                                <span class="detail-label">Día:</span>
+                                <span class="detail-value">@detalle.Dia</span>
+                            </div>
+                        </div>
+
+                        <h2 class="section-title-detail mt-3">Detalle del Bloque</h2>
+
+                        <div class="detail-item-group">
+                            <div class="detail-item-row">
+                                <span class="detail-label">Hora Inicio:</span>
+                                <span class="detail-value time-value">@detalle.HoraInicio.ToString(@"hh\:mm")</span>
+                            </div>
+
+                            <div class="detail-item-row">
+                                <span class="detail-label">Hora Fin:</span>
+                                <span class="detail-value time-value">@detalle.HoraFin.ToString(@"hh\:mm")</span>
+                            </div>
+
+                            <div class="detail-item-row">
+                                <span class="detail-label">Estado:</span>
+                                <span class="detail-value">
+                                    <span class="status-badge @detalle.Estado.ToLower()">@detalle.Estado</span>
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="action-buttons mt-5">
+                        <button type="button" class="btn btn-primary btn-edit" @onclick="HabilitarEdicion">
+                            Editar Horario
+                        </button>
+                    </div>
+                }
+            </EditForm>
+        </div>
+    }
+</div>
 
 @code {
+    [Parameter]
+    public int Id { get; set; }
 
+    private DetalleHorarioVeterinario detalle;
+    private DetalleHorarioVeterinario detalleParaEdicion;
+    private bool modoEdicion = false;
+    private string HoraInicioString { get; set; }
+    private string HoraFinString { get; set; }
+
+    // Corrección de clase anidada con namespace completo
+    private List<Veterinaria.MAUIApp.Models.BloqueHorario.BloqueHorarioSalidaRes> BloquesHorario = new();
+
+    // Lista para almacenar los días
+    private List<Dia> ListaDeDias = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        BloquesHorario = await bloqueHorarioService.ListarTodosAsync();
+
+        // Cargar la lista de días
+        try
+        {
+            ListaDeDias = await ServicioDia.GetDiasAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar días: {ex.Message}");
+        }
+
+        await LoadData();
+    }
+    
+    // NOTA: El método CambiarEstadoLocal() fue eliminado ya que el estado se gestiona externamente.
+    
+    private async Task LoadData()
+    {
+        detalle = await AgendaService.GetDetalleHorarioByIdAsync(Id);
+
+        if (detalle != null)
+        {
+            detalleParaEdicion = new DetalleHorarioVeterinario
+                {
+                    DetalleHorarioVeterinarioId = detalle.DetalleHorarioVeterinarioId,
+                    VeterinarioId = detalle.VeterinarioId,
+                    NombreVeterinario = detalle.NombreVeterinario,
+                    DiaId = detalle.DiaId,
+                    Dia = detalle.Dia,
+                    Estado = detalle.Estado, // Se mantiene el estado solo para lectura
+                    BloqueHorarioId = detalle.BloqueHorarioId,
+                    HoraInicio = detalle.HoraInicio,
+                    HoraFin = detalle.HoraFin
+                };
+
+            HoraInicioString = detalle.HoraInicio.ToString(@"hh\:mm");
+            HoraFinString = detalle.HoraFin.ToString(@"hh\:mm");
+        }
+    }
+
+    private void HabilitarEdicion()
+    {
+        modoEdicion = true;
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        // 1. Actualizar el nombre del día (Dia) basado en el ID seleccionado (DiaId)
+        var diaSeleccionado = ListaDeDias.FirstOrDefault(d => d.DiaId == detalleParaEdicion.DiaId);
+        if (diaSeleccionado != null)
+        {
+            detalleParaEdicion.Dia = diaSeleccionado.Nombre;
+        }
+
+        // 2. Parseo de Horas
+        TimeSpan hInicio;
+        if (TimeSpan.TryParseExact(HoraInicioString, @"hh\:mm", null, out hInicio))
+        {
+            detalleParaEdicion.HoraInicio = hInicio;
+        }
+
+        TimeSpan hFin;
+        if (TimeSpan.TryParseExact(HoraFinString, @"hh\:mm", null, out hFin))
+        {
+            detalleParaEdicion.HoraFin = hFin;
+        }
+
+        // 3. Llamada al Servicio
+        var updatedDetalle = await AgendaService.UpdateDetalleHorarioAsync(
+            detalleParaEdicion.DetalleHorarioVeterinarioId,
+            detalleParaEdicion
+        );
+
+        if (updatedDetalle != null)
+        {
+            detalle = updatedDetalle;
+            modoEdicion = false;
+            StateHasChanged();
+        }
+    }
+
+    private void CancelarEdicion()
+    {
+        // Recarga los datos originales y sale del modo edición
+        LoadData();
+        modoEdicion = false;
+        StateHasChanged();
+    }
+
+    private void GoBack()
+    {
+        NavManager.NavigateTo("/agenda");
+    }
 }

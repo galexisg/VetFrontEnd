@@ -1,7 +1,155 @@
-﻿@page "/tratamientos/editar"
+﻿@page "/tratamientos/editar/{id:long}"
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Forms
+@using System.ComponentModel.DataAnnotations
+@using Veterinaria.MAUIApp.Models
+@inject Veterinaria.MAUIApp.Services.TratamientoService TratamientoService
+@inject NavigationManager Nav
 
-<h3>Editar</h3>
+<div class="contenedor">
+
+    <div class="mb-4">
+        <h2 class="titulo">Tratamientos</h2>
+        <p class="descripcion">Gestiona el registro y control</p>
+    </div>
+
+    @if (loading)
+    {
+        <p class="descripcion">Cargando…</p>
+    }
+    else if (form is null)
+    {
+        <p class="descripcion">No se encontró el tratamiento.</p>
+    }
+    else
+    {
+        <EditForm Model="@form" OnValidSubmit="Guardar">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="input-container">
+                <label class="label">Nombre</label>
+                <InputText @bind-Value="form.Nombre" class="input" placeholder="Ingresa un nombre completo" />
+                <ValidationMessage For="@(() => form.Nombre)" />
+            </div>
+
+            <div class="input-container">
+                <label class="label">Descripción</label>
+                <InputText @bind-Value="form.Descripcion" class="input" placeholder="Ingresa una descripción" />
+                <ValidationMessage For="@(() => form.Descripcion)" />
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="label">Precio</label>
+                    <InputNumber @bind-Value="form.PrecioSugerido" class="input" />
+                    <div class="validation-message"><ValidationMessage For="@(() => form.PrecioSugerido)" /></div>
+                </div>
+                <div class="form-group">
+                    <label class="label">Duración</label>
+                    <InputNumber @bind-Value="form.DuracionDias" class="input" />
+                    <div class="validation-message"><ValidationMessage For="@(() => form.DuracionDias)" /></div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="label">Frecuencia</label>
+                    <InputText @bind-Value="form.Frecuencia" class="input" />
+                    <div class="validation-message"><ValidationMessage For="@(() => form.Frecuencia)" /></div>
+                </div>
+                <div class="form-group">
+                    <label class="label">Vía</label>
+                    <InputText @bind-Value="form.Via" class="input" />
+                    <div class="validation-message"><ValidationMessage For="@(() => form.Via)" /></div>
+                </div>
+            </div>
+
+            <div class="input-container">
+                <label class="label">Estado</label>
+                <InputSelect @bind-Value="form.Activo" class="input">
+                    <option value="true">Activo</option>
+                    <option value="false">Inactivo</option>
+                </InputSelect>
+            </div>
+
+            <div class="acciones-footer">
+                <button type="button" class="boton-negro" @onclick="Cancelar">Cancelar</button>
+                <button type="submit" class="boton-verde" disabled="@guardando">Guardar cambios</button>
+            </div>
+        </EditForm>
+    }
+</div>
 
 @code {
+    [Parameter] public long id { get; set; }
+
+    public class TratamientoForm
+    {
+        [Required, StringLength(80)] public string Nombre { get; set; } = string.Empty;
+        [StringLength(250)] public string? Descripcion { get; set; }
+        [Range(0, 1000000)] public decimal? PrecioSugerido { get; set; }
+        [Range(0, 3650)] public int? DuracionDias { get; set; }
+        [StringLength(60)] public string? Frecuencia { get; set; }
+        [StringLength(60)] public string? Via { get; set; }
+        public bool Activo { get; set; } = true;
+    }
+
+    private TratamientoForm? form;
+    private bool guardando = false;
+    private bool loading = true;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            var t = await TratamientoService.ObtenerPorIdAsync(id);
+            if (t != null)
+            {
+                form = new TratamientoForm
+                    {
+                        Nombre = t.Nombre,
+                        Descripcion = t.Descripcion,
+                        PrecioSugerido = t.PrecioSugerido,
+                        DuracionDias = t.DuracionDias,
+                        Frecuencia = t.Frecuencia,
+                        Via = t.Via,
+                        Activo = t.Activo
+                    };
+            }
+        }
+        finally { loading = false; }
+    }
+
+    private void Cancelar() => Nav.NavigateTo("/tratamientos/index");
+
+    private async Task Guardar()
+    {
+        guardando = true;
+        try
+        {
+            var actualizado = new Tratamiento
+                {
+                    Id = id,
+                    Nombre = form!.Nombre,
+                    Descripcion = form!.Descripcion ?? string.Empty,
+                    PrecioSugerido = form!.PrecioSugerido ?? 0,
+                    DuracionDias = form!.DuracionDias ?? 0,
+                    Frecuencia = form!.Frecuencia ?? string.Empty,
+                    Via = form!.Via ?? string.Empty,
+                    Activo = form!.Activo
+                };
+
+            var ok = await TratamientoService.EditarAsync(id, actualizado);
+
+            // Actualizar estado por separado si cambió
+            if (ok)
+            {
+                await TratamientoService.CambiarEstadoAsync(id, form!.Activo);
+                Nav.NavigateTo("/tratamientos/index", forceLoad: true);
+            }
+        }
+        finally { guardando = false; }
+    }
 
 }

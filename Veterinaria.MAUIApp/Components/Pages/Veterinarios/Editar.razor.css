@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 ﻿ Estilos para móviles 
 @media (max-width: 768px) {
+=======
+﻿/* Estilos para móviles */
+/*@media (max-width: 768px) {
+>>>>>>> 1d28b3690c7a16d722318421a4dc835dc249beb6
     .container {
         padding: 0 15px;
     }
@@ -106,10 +111,17 @@
         padding: 12px;
         font-size: 0.9rem;
     }
+<<<<<<< HEAD
 }
 
  Estilos específicos para el formulario de edición 
 .validation-summary-valid {
+=======
+}*/
+
+/* Estilos específicos para el formulario de edición */
+/*.validation-summary-valid {
+>>>>>>> 1d28b3690c7a16d722318421a4dc835dc249beb6
     display: none;
 }
 
@@ -125,4 +137,8 @@
     .validation-summary-errors ul {
         margin: 0;
         padding-left: 20px;
+<<<<<<< HEAD
     }
+=======
+    }*/
+>>>>>>> 1d28b3690c7a16d722318421a4dc835dc249beb6

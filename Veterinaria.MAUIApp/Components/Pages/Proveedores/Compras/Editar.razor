@@ -1,7 +1,239 @@
-﻿@page "/proveedores/compras/editar"
-
-<h3>Editar</h3>
+﻿@* @page "/proveedores/compras/editar/{id:int}"
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
+@inject NavigationManager Nav
+@inject HttpClient Http // Asumimos que inyectas HttpClient para cargar y guardar datos
 
 @code {
+    // Parámetro de ruta para capturar el ID de la compra a editar
+    [Parameter]
+    public int id { get; set; }
 
+    // Modelo de datos para el formulario de Editar Compra (reutilizamos la clase de Agregar)
+    public class CompraForm
+    {
+        [Required(ErrorMessage = "El proveedor es requerido")]
+        public int? ProveedorId { get; set; }
+
+        [Required(ErrorMessage = "La fecha de compra es requerida")]
+        public DateTime? FechaCompra { get; set; }
+
+        [Required(ErrorMessage = "El usuario es requerido")]
+        public int? UsuarioId { get; set; }
+
+        // Indicador para borrado lógico, necesario en la vista de Edición
+        public bool Activo { get; set; } = true;
+    }
+
+    private CompraForm form = new();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // En una aplicación real:
+        // 1. Llamarías a un servicio para obtener los datos de la compra con este 'id'.
+        // var data = await Http.GetFromJsonAsync<CompraForm>($"api/compras/{id}");
+        // if (data != null) form = data;
+
+        // Datos de ejemplo para demostración:
+        await Task.Delay(500); // Simular carga asíncrona
+        form = new CompraForm
+        {
+            ProveedorId = 2,
+            FechaCompra = DateTime.Now.Date.AddDays(-5),
+            UsuarioId = 101,
+            Activo = true
+        };
+        isLoading = false;
+    }
+
+    private void GuardarCambios()
+    {
+        // *Lógica real:* Aquí se debe llamar a un servicio (API) para actualizar la compra
+        Console.WriteLine($"Actualizando Compra ID: {id}. Proveedor ID: {form.ProveedorId}");
+
+        // Navegación tras guardar
+        Nav.NavigateTo("/compras");
+    }
+
+    private void Cancelar()
+    {
+        Nav.NavigateTo("/compras");
+    }
+}
+
+<div class="contenedor">
+    <div class="status-bar-safe-area"></div>
+
+    <header class="mb-4">
+        <p class="titulo">Editar Compra</p>
+        <p class="descripcion">ID: @id</p>
+    </header>
+
+    @if (isLoading)
+    {
+        <p>Cargando datos de la compra...</p>
+    }
+    else
+    {
+        <EditForm Model="@form" OnValidSubmit="@GuardarCambios">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="mb-3" />
+
+            <div class="input-container">
+                <label class="label">Proveedor</label>
+                <InputSelect class="input" @bind-Value="form.ProveedorId">
+                    <option value="">Seleccionar proveedor</option>
+                    <option value="1">Distribuidora ABC</option>
+                    <option value="2">Mayorista de Insumos</option>
+                    <option value="3">Tecnología Global</option>
+                </InputSelect>
+                <ValidationMessage For="@(() => form.ProveedorId)" class="validation-message" />
+            </div>
+
+            <div class="input-container">
+                <label class="label">Fecha de Compra</label>
+                <InputDate class="input"
+                           @bind-Value="form.FechaCompra" />
+                <ValidationMessage For="@(() => form.FechaCompra)" class="validation-message" />
+            </div>
+
+            <div class="input-container">
+                <label class="label">Usuario Responsable</label>
+                <InputSelect class="input" @bind-Value="form.UsuarioId">
+                    <option value="">Seleccionar usuario</option>
+                    <option value="101">Admin</option>
+                    <option value="102">Gerente</option>
+                </InputSelect>
+                <ValidationMessage For="@(() => form.UsuarioId)" class="validation-message" />
+            </div>
+
+            <div class="input-container check-container">
+                <label class="label">Activa</label>
+                <InputCheckbox id="activo-check" @bind-Value="form.Activo" />
+            </div>
+
+            <div class="acciones-footer">
+                <button type="button" class="boton-negro" @onclick="Cancelar">
+                    Cancelar
+                </button>
+                <button type="submit" class="boton-verde">
+                    Guardar Cambios
+                </button>
+            </div>
+        </EditForm>
+    }
+</div> *@
+
+@page "/proveedores/compras/editar/{id:int}"
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
+@inject NavigationManager Nav
+@inject HttpClient Http
+
+<div class="contenedor">
+    <div class="status-bar-safe-area"></div>
+
+    <header class="mb-4">
+        <p class="titulo">Editar Compra</p>
+        <p class="descripcion">ID: @id</p>
+    </header>
+
+    @if (isLoading)
+    {
+        <p>Cargando datos de la compra...</p>
+    }
+    else
+    {
+        <EditForm Model="@form" OnValidSubmit="@GuardarCambios">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="mb-3" />
+
+            <div class="input-container">
+                <label class="label">Proveedor</label>
+                <InputSelect class="input" @bind-Value="form.ProveedorId">
+                    <option value="">Seleccionar proveedor</option>
+                    <option value="1">Distribuidora ABC</option>
+                    <option value="2">Mayorista de Insumos</option>
+                    <option value="3">Tecnología Global</option>
+                </InputSelect>
+                <ValidationMessage For="@(() => form.ProveedorId)" class="validation-message" />
+            </div>
+
+            <div class="input-container">
+                <label class="label">Fecha de Compra</label>
+                <InputDate class="input" @bind-Value="form.FechaCompra" />
+                <ValidationMessage For="@(() => form.FechaCompra)" class="validation-message" />
+            </div>
+
+            <div class="input-container">
+                <label class="label">Usuario Responsable</label>
+                <InputSelect class="input" @bind-Value="form.UsuarioId">
+                    <option value="">Seleccionar usuario</option>
+                    <option value="101">Admin</option>
+                    <option value="102">Gerente</option>
+                </InputSelect>
+                <ValidationMessage For="@(() => form.UsuarioId)" class="validation-message" />
+            </div>
+
+            <div class="input-container check-container">
+                <label class="label">Activa</label>
+                <InputCheckbox id="activo-check" @bind-Value="form.Activo" />
+            </div>
+
+            <div class="acciones-footer">
+                <button type="button" class="boton-negro" @onclick="Cancelar">
+                    Cancelar
+                </button>
+                <button type="submit" class="boton-verde">
+                    Guardar Cambios
+                </button>
+            </div>
+        </EditForm>
+    }
+</div>
+
+@code {
+    [Parameter] public int id { get; set; }
+
+    public class CompraForm
+    {
+        [Required(ErrorMessage = "El proveedor es requerido")]
+        public int? ProveedorId { get; set; }
+
+        [Required(ErrorMessage = "La fecha de compra es requerida")]
+        public DateTime? FechaCompra { get; set; }
+
+        [Required(ErrorMessage = "El usuario es requerido")]
+        public int? UsuarioId { get; set; }
+
+        public bool Activo { get; set; } = true;
+    }
+
+    private CompraForm form = new();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(500); // Simulación de carga
+        form = new CompraForm
+        {
+            ProveedorId = 2,
+            FechaCompra = DateTime.Now.Date.AddDays(-5),
+            UsuarioId = 101,
+            Activo = true
+        };
+        isLoading = false;
+    }
+
+    private void GuardarCambios()
+    {
+        Console.WriteLine($"Actualizando Compra ID: {id}");
+        Nav.NavigateTo("/proveedores/compras/index");
+    }
+
+    private void Cancelar()
+    {
+        Nav.NavigateTo("/proveedores/compras/index");
+    }
 }

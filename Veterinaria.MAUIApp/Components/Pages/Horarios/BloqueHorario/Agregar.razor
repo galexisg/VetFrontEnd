@@ -1,7 +1,153 @@
-﻿@page "/horarios/bloquehorario/agregar"
+﻿@page "/bloques-horario/crear"
+@inject Veterinaria.MAUIApp.Services.BloqueHorarioService BloqueHorarioService
+@inject NavigationManager Navigation
+@using Veterinaria.MAUIApp.Models
+@using static Veterinaria.MAUIApp.Models.BloqueHorario
 
-<h3>Agregar</h3>
+<div class="container py-3">
+    <h5 class="fw-bold mb-3">Nuevo Bloque</h5>
+
+    @if (!string.IsNullOrEmpty(Mensaje))
+    {
+        <div class="alert @AlertClass mb-3">@Mensaje</div>
+    }
+
+    <EditForm Model="@nuevoBloque" OnValidSubmit="Guardar">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <!-- Hora de inicio -->
+        <div class="mb-3">
+            <label class="form-label">Hora de inicio</label>
+            <InputSelect @bind-Value="horaInicio" class="form-select">
+                <option value="">Selecciona hora</option>
+                @foreach (var hora in horasDisponibles)
+                {
+                    <option value="@hora.Value">@hora.Text</option>
+                }
+            </InputSelect>
+            @if (mostrarErrorInicio)
+            {
+                <div class="text-danger small">La hora de inicio es obligatoria</div>
+            }
+        </div>
+
+        <!-- Hora de fin -->
+        <div class="mb-3">
+            <label class="form-label">Hora de fin</label>
+            <InputSelect @bind-Value="horaFin" class="form-select">
+                <option value="">Selecciona hora</option>
+                @foreach (var hora in horasDisponibles)
+                {
+                    <option value="@hora.Value">@hora.Text</option>
+                }
+            </InputSelect>
+            @if (mostrarErrorFin)
+            {
+                <div class="text-danger small">La hora de fin es obligatoria</div>
+            }
+        </div>
+
+        <!-- Botones -->
+        <div class="d-flex justify-content-between">
+            <button class="btn btn-secondary" type="button" @onclick="Volver">
+                Cancelar
+            </button>
+
+            <button class="btn btn-success" type="submit">
+                Guardar
+            </button>
+        </div>
+    </EditForm>
+</div>
 
 @code {
+    private BloqueHorarioGuardarReq nuevoBloque = new();
+    private string? horaInicio;
+    private string? horaFin;
 
+    private List<(string Value, string Text)> horasDisponibles = new();
+
+    // ✅ Mensajes
+    private string Mensaje = "";
+    private string AlertClass = "alert-success";
+    private bool mostrarErrorInicio = false;
+    private bool mostrarErrorFin = false;
+
+    protected override void OnInitialized()
+    {
+        // Generar lista de horas en bloques de 30 minutos
+        for (int h = 6; h <= 22; h++)
+        {
+            horasDisponibles.Add((
+                new TimeSpan(h, 0, 0).ToString(@"hh\:mm"),
+                DateTime.Today.AddHours(h).ToString("h:mm tt")
+            ));
+            horasDisponibles.Add((
+                new TimeSpan(h, 30, 0).ToString(@"hh\:mm"),
+                DateTime.Today.AddHours(h).AddMinutes(30).ToString("h:mm tt")
+            ));
+        }
+    }
+
+    private void Volver()
+    {
+        Navigation.NavigateTo("/bloques-horario/index");
+    }
+
+    private async Task Guardar()
+    {
+        // 🔹 Validaciones simples antes de enviar
+        mostrarErrorInicio = string.IsNullOrEmpty(horaInicio);
+        mostrarErrorFin = string.IsNullOrEmpty(horaFin);
+        Mensaje = "";
+
+        if (mostrarErrorInicio || mostrarErrorFin)
+        {
+            AlertClass = "alert-danger";
+            Mensaje = "Por favor completa todos los campos.";
+            return;
+        }
+
+        var inicio = TimeSpan.Parse(horaInicio!);
+        var fin = TimeSpan.Parse(horaFin!);
+
+        if (fin <= inicio)
+        {
+            AlertClass = "alert-danger";
+            Mensaje = "⚠️ La hora de fin debe ser mayor que la de inicio.";
+            return;
+        }
+
+        // ✅ Validar si YA EXISTE un bloque con el mismo rango (activos o inactivos)
+        var existentes = await BloqueHorarioService.ListarTodosAsync();
+        bool duplicado = existentes.Any(b =>
+            b.Inicio == inicio && b.Fin == fin); // 🔹 Se eliminó el filtro b.Activo
+
+        if (duplicado)
+        {
+            AlertClass = "alert-danger";
+            Mensaje = "❌ Ya existe un bloque con el mismo horario (activo o inactivo).";
+            return;
+        }
+
+
+        // Si pasa todas las validaciones, guardar
+        nuevoBloque.Inicio = inicio;
+        nuevoBloque.Fin = fin;
+
+        var creado = await BloqueHorarioService.CrearAsync(nuevoBloque);
+        if (creado != null)
+        {
+            AlertClass = "alert-success";
+            Mensaje = "✅ Bloque creado con éxito.";
+            await Task.Delay(1000); // pequeña pausa para mostrar mensaje
+            Navigation.NavigateTo("/bloques-horario/index");
+        }
+        else
+        {
+            AlertClass = "alert-danger";
+            Mensaje = "❌ Ocurrió un error al guardar el bloque.";
+        }
+    }
 }

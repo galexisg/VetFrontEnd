@@ -1,0 +1,53 @@
+﻿@page "/citas/motivocita/eliminar/{id:int}"
+@inject Veterinaria.MAUIApp.Services.MotivoCitaService MotivoCitaService
+@inject NavigationManager Navigation
+@using Veterinaria.MAUIApp.Models
+
+@if (mostrarModal && motivo != null)
+{
+    <div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+        <div class="shadow-lg rounded-4 text-center p-4" style="max-width: 320px; width: 90%; background-color: white;">
+            <h6 class="fw-semibold mb-3 mt-2">¿Deseas desactivar este motivo?</h6>
+            <p class="fw-bold mb-4 text-success text-uppercase">@motivo.Nombre</p>
+
+            <div class="d-flex flex-column gap-2">
+                <button class="btn btn-dark rounded-pill py-2" @onclick="Cancelar">Cancelar</button>
+                <button class="btn btn-success rounded-pill py-2 fw-bold" @onclick="ConfirmarEliminar">Desactivar</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+
+    private MotivoCita? motivo;
+    private bool mostrarModal = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        motivo = await MotivoCitaService.GetByIdAsync(id);
+        if (motivo == null)
+        {
+            Navigation.NavigateTo("/citas/motivocita/indexmotivocita");
+        }
+    }
+
+    private async Task ConfirmarEliminar()
+    {
+        if (motivo != null)
+        {
+            motivo.Activo = false;
+            await MotivoCitaService.EditarAsync(motivo.Id, motivo);
+        }
+
+        mostrarModal = false;
+        Navigation.NavigateTo("/citas/motivocita/indexmotivocita");
+    }
+
+    private void Cancelar()
+    {
+        mostrarModal = false;
+        Navigation.NavigateTo("/citas/motivocita/indexmotivocita");
+    }
+}
