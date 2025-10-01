@@ -1,0 +1,81 @@
+﻿@page "/historial-vacunas"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Services
+@inject HistorialVacunaService HistorialService
+@inject NavigationManager NavManager
+@inject AuthenticationStateProvider AuthProvider
+
+<h3>🐾 Mis Vacunas</h3>
+
+@if (vacunas == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else if (!vacunas.Any())
+{
+    <p>No hay registros de vacunas.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Mascota</th>
+                <th>Vacuna</th>
+                <th>Fecha Aplicada</th>
+                <th>Próxima Dosis</th>
+                <th>Observaciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in vacunas)
+            {
+                <tr>
+                    <td>@item.NombreMascota</td>
+                    <td>@item.NombreVacuna</td>
+                    <td>@item.FechaAplicacion.ToString("dd/MM/yyyy")</td>
+                    <td>@(item.ProximaDosis?.ToString("dd/MM/yyyy") ?? "—")</td>
+                    <td>@item.Observaciones</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<HistorialVacunaRes>? vacunas;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var authState = await AuthProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            if (user.Identity?.IsAuthenticated == true)
+            {
+                var usuarioIdClaim = user.FindFirst("sub")?.Value ?? user.FindFirst("nameidentifier")?.Value;
+
+                if (int.TryParse(usuarioIdClaim, out int usuarioId))
+                {
+                    vacunas = await HistorialService.GetVacunasPorUsuarioAsync(usuarioId);
+                }
+                else
+                {
+                    Console.WriteLine("❌ No se pudo obtener el ID del usuario.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("❌ Usuario no autenticado.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Error al cargar historial del usuario: {ex.Message}");
+        }
+    }
+}
+
+

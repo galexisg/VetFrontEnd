@@ -1,0 +1,82 @@
+﻿@page "/historial-vacunas"
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Services
+@inject HistorialVacunaService HistorialService
+@inject NavigationManager NavManager
+@inject IJSRuntime JS
+
+<h3>📋 Historial de Vacunas</h3>
+
+<div class="mb-3">
+    <button class="btn btn-primary" @onclick="AgregarNuevo">➕ Nuevo Registro</button>
+    <button class="btn btn-secondary" @onclick="VerReporte">📊 Reporte</button>
+</div>
+
+@if (historiales == null)
+{
+    <p><em>Cargando historiales...</em></p>
+}
+else if (!historiales.Any())
+{
+    <p>No hay registros disponibles.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Mascota</th>
+                <th>Vacuna</th>
+                <th>Fecha Aplicación</th>
+                <th>Próxima Dosis</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var h in historiales)
+            {
+                <tr>
+                    <td>@h.HistorialVacunaId</td>
+                    <td>@h.NombreMascota</td>
+                    <td>@h.NombreVacuna</td>
+                    <td>@h.FechaAplicacion.ToString("dd/MM/yyyy")</td>
+                    <td>@(h.ProximaDosis?.ToString("dd/MM/yyyy") ?? "—")</td>
+                    <td>@h.Estado</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning" @onclick="() => Editar(h.HistorialVacunaId)">✏️ Editar</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => Eliminar(h.HistorialVacunaId)">🗑️ Eliminar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<HistorialVacunaRes>? historiales;
+
+    protected override async Task OnInitializedAsync()
+    {
+        historiales = await HistorialService.GetHistorialesAsync();
+    }
+
+    private void AgregarNuevo() => NavManager.NavigateTo("/historial-vacunas/agregar");
+    private void VerReporte() => NavManager.NavigateTo("/historial-vacunas/reporte");
+    private void Editar(int id) => NavManager.NavigateTo($"/historial-vacunas/editar/{id}");
+
+    private async Task Eliminar(int id)
+    {
+        bool confirmado = await JS.InvokeAsync<bool>("confirm", $"¿Desea eliminar el historial {id}?");
+        if (confirmado)
+        {
+            bool exito = await HistorialService.DeleteHistorialAsync(id);
+            if (exito)
+            {
+                historiales = await HistorialService.GetHistorialesAsync();
+                StateHasChanged();
+            }
+        }
+    }
+}
