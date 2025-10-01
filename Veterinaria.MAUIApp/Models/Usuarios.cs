@@ -36,4 +36,5 @@ namespace Veterinaria.MAUIApp.Models
         public byte RolId { get; set; }
         public byte EstadoId { get; set; }
     }
+ 
 }

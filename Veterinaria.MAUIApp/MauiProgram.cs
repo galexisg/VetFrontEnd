@@ -80,6 +80,9 @@ namespace Veterinaria.MAUIApp
             builder.Services.AddScoped<AuthService>();
             builder.Services.AddScoped<DiagnosticoService>();
             builder.Services.AddScoped<TratamientosAplicadosService>();
+            builder.Services.AddScoped<EspecialidadService>();
+            builder.Services.AddScoped<VeterinarioService>();
+
 
             return builder.Build();
         }

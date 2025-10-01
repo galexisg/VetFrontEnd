@@ -1,7 +1,141 @@
 ﻿@page "/veterinarios/agregar"
+@using Veterinaria.MAUIApp.Models
+@inject VeterinarioService veterinarioService
+@inject EspecialidadService especialidadService
+@inject ServicioService servicioService
+@inject NavigationManager nav
 
-<h3>Agregar</h3>
+<link rel="stylesheet" href="css/veterinarios.css" />
+
+<div class="vet-form-container">
+    <div class="vet-form-header">
+        <h2>Registrar Nuevo Veterinario</h2>
+    </div>
+
+    <div class="vet-form-card">
+        @if (usuarios.Count == 0 || especialidades.Count == 0 || servicios.Count == 0)
+        {
+            <div class="vet-alert vet-alert-info">
+                <span class="vet-spinner"></span> Cargando datos...
+            </div>
+        }
+        else
+        {
+            <EditForm EditContext="editContext" OnValidSubmit="GuardarVeterinario">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="vet-validation-summary" />
+
+                <!-- Número de licencia -->
+                <div class="vet-form-group">
+                    <label class="vet-form-label">Número de Licencia</label>
+                    <InputText class="vet-form-input" @bind-Value="nuevoVeterinario.NumeroLicencia" />
+                </div>
+
+                <!-- Usuario -->
+                <div class="vet-form-group">
+                    <label class="vet-form-label">Usuario</label>
+                    <InputSelect class="vet-form-select" @bind-Value="nuevoVeterinario.UsuarioId">
+                        <option value="">-- Selecciona un usuario --</option>
+                        @foreach (var user in usuarios)
+                        {
+                            <option value="@user.Id">@user.NombreCompleto</option>
+                        }
+                    </InputSelect>
+                </div>
+
+                <!-- Especialidad -->
+                <div class="vet-form-group">
+                    <label class="vet-form-label">Especialidad</label>
+                    <InputSelect class="vet-form-select" @bind-Value="nuevoVeterinario.EspecialidadId">
+                        <option value="">-- Selecciona una especialidad --</option>
+                        @foreach (var esp in especialidades)
+                        {
+                            <option value="@esp.EspecialidadId">@esp.Nombre</option>
+                        }
+                    </InputSelect>
+                </div>
+
+                <!-- Servicio -->
+                <div class="vet-form-group">
+                    <label class="vet-form-label">Servicio</label>
+                    <InputSelect class="vet-form-select" @bind-Value="nuevoVeterinario.ServicioId">
+                        <option value="">-- Selecciona un servicio --</option>
+                        @foreach (var serv in servicios)
+                        {
+                            <option value="@serv.Id">@serv.Nombre</option>
+                        }
+                    </InputSelect>
+                </div>
+
+                <!-- Botones -->
+                <div class="vet-form-actions">
+                    <button type="submit" class="vet-btn vet-btn-success">
+                        <i class="bi bi-check-circle"></i> Guardar
+                    </button>
+                    <button type="button" class="vet-btn vet-btn-secondary" @onclick="Cancelar">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </button>
+                </div>
+            </EditForm>
+        }
+
+        <!-- Validaciones de carga -->
+        @if (usuarios.Count == 0)
+        {
+            <div class="vet-alert vet-alert-danger">⚠️ No se cargaron usuarios con rol Veterinario.</div>
+        }
+        @if (especialidades.Count == 0)
+        {
+            <div class="vet-alert vet-alert-danger">⚠️ No se cargaron especialidades.</div>
+        }
+        @if (servicios.Count == 0)
+        {
+            <div class="vet-alert vet-alert-danger">⚠️ No se cargaron servicios.</div>
+        }
+    </div>
+</div>
 
 @code {
+    private VeterinarioGuardarReq nuevoVeterinario = new();
+    private EditContext editContext;
 
+    private List<UsuarioSalidaRes> usuarios = new();
+    private List<EspecialidadSalidaRes> especialidades = new();
+    private List<Servicio> servicios = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        editContext = new EditContext(nuevoVeterinario);
+
+        try
+        {
+            // 🔹 Solo usuarios con rol Veterinario
+            usuarios = await veterinarioService.ListarUsuariosVeterinariosAsync();
+
+            especialidades = await especialidadService.GetActivasAsync();
+            servicios = await servicioService.ListarAsync(activo: true);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar datos: {ex.Message}");
+        }
+    }
+
+    private async Task GuardarVeterinario()
+    {
+        if (!editContext.Validate())
+            return;
+
+        var ok = await veterinarioService.CrearAsync(nuevoVeterinario);
+        if (ok)
+        {
+            nav.NavigateTo("/veterinarios/index", forceLoad: true);
+        }
+        else
+        {
+            Console.WriteLine("Error al guardar veterinario.");
+        }
+    }
+
+    private void Cancelar() => nav.NavigateTo("/veterinarios/index");
 }
