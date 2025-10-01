@@ -1,7 +1,73 @@
-﻿@page "/medicamentos/lotes/agregar"
+﻿@page "/lotes-medicamento/agregar"
+@inject LoteMedicamentoService loteService
+@inject NavigationManager nav
 
-<h3>Agregar</h3>
+@using Veterinaria.MAUIApp.Models.Dtos
+@using Veterinaria.MAUIApp.Services
+
+<h3 class="text-center mt-3">Registrar nuevo lote de medicamento</h3>
+<link rel="stylesheet" href="css/lotes.css" />
+
+<div class="container mt-4">
+    <EditForm Model="@modelo" OnValidSubmit="Guardar">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label class="form-label">Código del lote</label>
+            <InputText class="form-control" @bind-Value="modelo.CodigoLote" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Fecha de vencimiento</label>
+            <InputDate class="form-control" @bind-Value="modelo.FechaVencimiento" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Observaciones</label>
+            <InputTextArea class="form-control" @bind-Value="modelo.Observaciones" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Medicamento ID (prueba)</label>
+            <InputNumber class="form-control" @bind-Value="modelo.MedicamentoId" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Proveedor ID (prueba)</label>
+            <InputNumber class="form-control" @bind-Value="modelo.ProveedorId" />
+        </div>
+
+
+        <div class="d-flex justify-content-between mt-4">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-check-circle me-1"></i> Guardar lote
+            </button>
+            <button type="button" class="btn btn-secondary" @onclick="Cancelar">
+                <i class="bi bi-x-circle me-1"></i> Cancelar
+            </button>
+        </div>
+    </EditForm>
+</div>
 
 @code {
+    private LoteMedicamentoGuardar modelo = new()
+    {
+        MedicamentoId = 1, //  ID de prueba
+        ProveedorId = 1    //  ID de prueba
+    };
 
+    private async Task Guardar()
+    {
+        var resultado = await loteService.AddAsync(modelo);
+        if (resultado is not null)
+        {
+            nav.NavigateTo("/lotes-medicamento/index");
+        }
+    }
+
+    private void Cancelar()
+    {
+        nav.NavigateTo("/lotes-medicamento/index");
+    }
 }

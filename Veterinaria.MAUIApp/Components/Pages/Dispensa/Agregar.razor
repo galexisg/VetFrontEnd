@@ -10,11 +10,12 @@
 
 <EditForm Model="modelo" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
-    <ValidationSummary />
 
     <div class="mb-2">
         <label>Prescripción:</label>
         <InputNumber @bind-Value="modelo.PrescripcionDetalleId" class="form-control" />
+        <ValidationMessage For="@(() => modelo.PrescripcionDetalleId)" />
+
     </div>
 
     <div class="mb-2">
@@ -26,21 +27,25 @@
                 <option value="@almacen.Id">@almacen.Nombre</option>
             }
         </InputSelect>
+        <ValidationMessage For="@(() => modelo.AlmacenId)" />
     </div>
 
     <div class="mb-2">
         <label>Lote:</label>
         <InputNumber @bind-Value="modelo.LoteId" class="form-control" />
+        <ValidationMessage For="@(() => modelo.LoteId)" />
     </div>
 
     <div class="mb-2">
         <label>Cantidad:</label>
         <InputNumber @bind-Value="modelo.Cantidad" class="form-control" />
+        <ValidationMessage For="@(() => modelo.Cantidad)" />
     </div>
 
     <div class="mb-2">
         <label>Fecha:</label>
         <InputDate @bind-Value="modelo.Fecha" class="form-control" />
+        <ValidationMessage For="@(() => modelo.Fecha)" />
     </div>
 
     <div class="mb-2">
@@ -52,6 +57,7 @@
                 <option value="@usuario.Id">@usuario.NombreCompleto</option>
             }
         </InputSelect>
+        <ValidationMessage For="@(() => modelo.UsuarioId)" />
     </div>
 
     <button type="submit" class="btn btn-success">Guardar</button>
@@ -65,12 +71,17 @@
 
     protected override async Task OnInitializedAsync()
     {
-        usuarios = await UsuarioService.GetUsuariosAsync();
+        usuarios = await UsuarioService.GetClientesAsync();
         almacenes = await AlmacenService.ObtenerTodosAsync();
     }
 
     private async Task Guardar()
     {
+
+        modelo.Fecha = modelo.Fecha.Date.AddHours(12);
+        modelo.Fecha = DateTime.SpecifyKind(modelo.Fecha, DateTimeKind.Unspecified);
+
+
         var resultado = await DispensaService.CrearAsync(modelo);
         if (resultado is not null)
         {

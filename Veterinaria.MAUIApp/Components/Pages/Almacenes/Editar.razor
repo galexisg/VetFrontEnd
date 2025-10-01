@@ -1,6 +1,7 @@
 ﻿@page "/almacenes/editar/{Id:int}"
 @inject AlmacenService AlmacenService
 @inject NavigationManager Navigation
+@inject IJSRuntime JS
 @using Veterinaria.MAUIApp.Models
 @using Veterinaria.MAUIApp.Services
 
@@ -32,7 +33,10 @@ else
             <InputCheckbox @bind-Value="modelo.Activo" class="form-check-input" />
         </div>
 
-        <button type="submit" class="btn btn-primary">Actualizar</button>
+        <button class="btn btn-success" @onclick="ConfirmarActualizacion">
+    Actualizar
+</button>
+
         <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
     </EditForm>
 }
@@ -47,11 +51,20 @@ else
         if (original is not null)
         {
             modelo = new AlmacenActualizar
-                {
-                    Nombre = original.Nombre,
-                    Ubicacion = original.Ubicacion,
-                    Activo = original.Activo
-                };
+            {
+                Nombre = original.Nombre,
+                Ubicacion = original.Ubicacion,
+                Activo = original.Activo
+            };
+        }
+    }
+
+    private async Task ConfirmarActualizacion()
+    {
+        var confirmado = await JS.InvokeAsync<bool>("confirm", "¿Está seguro que desea actualizar este almacén?");
+        if (confirmado)
+        {
+            await Actualizar();
         }
     }
 
@@ -66,7 +79,7 @@ else
             }
             else
             {
-                Console.WriteLine("❌ Error al actualizar almacén");
+                await JS.InvokeVoidAsync("alert", "❌ Error al actualizar almacén.");
             }
         }
     }

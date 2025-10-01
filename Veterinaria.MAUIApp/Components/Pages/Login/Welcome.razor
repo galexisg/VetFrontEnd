@@ -31,6 +31,9 @@
     <div class="mt-4">
         <button @onclick="GoTodAlmacen" class="boton-verde">Gestionar Almacenes</button>
     </div>
+    <div class="mt-4">
+        <button @onclick="GoToLoteMedicamento" class="boton-verde">Gestionar Almacenes</button>
+    </div>
 </div>
 
 
@@ -65,5 +68,9 @@
     private void GoTodAlmacen()
     {
         navManager.NavigateTo("/almacenes/index");
+    }
+    private void GoToLoteMedicamento()
+    {
+        navManager.NavigateTo("/lotes-medicamento/index");
     }
 }

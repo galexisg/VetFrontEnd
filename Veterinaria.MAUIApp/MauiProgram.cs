@@ -42,12 +42,13 @@ namespace Veterinaria.MAUIApp
             builder.Services.AddSingleton<BloqueHorarioService>();
 
             builder.Services.AddScoped<AlmacenService>();
+            builder.Services.AddScoped<DispensaService>();
+            builder.Services.AddScoped<LoteMedicamentoService>();
 
 
 
             // También puedes registrar otros servicios si los necesitas
             builder.Services.AddScoped<UsuarioService>();
-            builder.Services.AddScoped<DispensaService>();
 
             //builder.Services.AddScoped<AlmacenService>();
             //builder.Services.AddScoped<LoteService>();

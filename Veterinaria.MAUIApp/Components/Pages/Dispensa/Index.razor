@@ -7,23 +7,27 @@
 
 <link rel="stylesheet" href="css/dispensas.css" />
 
-<div class="disp-container">
-    <div class="disp-header d-flex justify-content-between align-items-center mb-3">
-        <h2>Gestión de Dispensas</h2>
-        <button class="btn btn-outline-primary" @onclick="Nuevo">
-            <i class="bi bi-plus-circle me-2"></i> Nueva Dispensa
-        </button>
+<div class="container mt-3">
+    <h3 class="text-center text-primary fw-bold mb-3">📦 Gestión de Dispensas</h3>
+
+    <div class="input-group mb-3">
+        <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+        <InputText @bind-Value="searchTerm" class="form-control" placeholder="Buscar por ID, almacén, lote, usuario..." />
     </div>
 
-    <div class="mb-3 d-flex gap-3 align-items-center">
-        <InputText @bind-Value="searchTerm" placeholder="Buscar por ID, prescripción, almacén, lote o usuario..." class="form-control w-50" />
-        <button class="btn btn-secondary" @onclick="Refrescar">Refrescar</button>
+    <div class="d-flex justify-content-between mb-3">
+        <button class="btn btn-success w-100 me-2" @onclick="Nuevo">
+            <i class="bi bi-plus-circle me-1"></i> Nueva Dispensa
+        </button>
+        <button class="btn btn-secondary w-100" @onclick="Regresar">
+            <i class="bi bi-arrow-left-circle me-1"></i> Volver al inicio
+        </button>
     </div>
 
     @if (dispensas is null)
     {
         <div class="alert alert-info text-center">
-            <span class="spinner-border spinner-border-sm me-2"></span> Cargando datos...
+            <span class="spinner-border spinner-border-sm me-2"></span> Cargando dispensas...
         </div>
     }
     else if (!dispensas.Any())
@@ -34,52 +38,32 @@
     }
     else
     {
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover disp-table">
-                <thead class="table-light">
-                    <tr>
-                        <th>ID</th>
-                        <th>Prescripción</th>
-                        <th>Almacén</th>
-                        <th>Lote</th>
-                        <th>Cantidad</th>
-                        <th>Fecha</th>
-                        <th>Usuario</th>
-                        <th>Estado</th>
-                        <th class="text-center">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var d in dispensasFiltradas)
-                    {
-                        <tr>
-                            <td>@d.Id</td>
-                            <td>@d.PrescripcionDetalleId</td>
-                            <td>@d.AlmacenNombre</td>   @* ✅ Solo nombre *@
-                            <td>@d.LoteId</td>
-                            <td>@d.Cantidad</td>
-                            <td>@d.Fecha.ToShortDateString()</td>
-                            <td>@d.UsuarioNombre</td>   @* ✅ Solo nombre *@
-                            <td>
-                                <span class="badge @(d.Cantidad > 0 ? "bg-success" : "bg-secondary")">
-                                    @(d.Cantidad > 0 ? "Activo" : "Inactivo")
-                                </span>
-                            </td>
-                            <td class="text-center">
-                                <div class="d-flex justify-content-center gap-2 flex-wrap">
-                                    <button class="btn btn-sm btn-outline-primary" @onclick="() => Editar(d.Id)">
-                                        <i class="bi bi-pencil-square"></i> Editar
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger" @onclick="() => Eliminar(d.Id)">
-                                        <i class="bi bi-trash"></i> Eliminar
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+        @foreach (var d in dispensasFiltradas)
+        {
+            <div class="disp-card mb-3 shadow-sm p-3 rounded">
+                <p><strong>ID:</strong> @d.Id</p>
+                <p><strong>Prescripción:</strong> @d.PrescripcionDetalleId</p>
+                <p><strong>Almacén:</strong> @d.AlmacenNombre</p>
+                <p><strong>Lote:</strong> @d.LoteId</p>
+                <p><strong>Cantidad:</strong> @d.Cantidad</p>
+                <p><strong>Fecha:</strong> @d.Fecha.ToShortDateString()</p>
+                <p><strong>Usuario:</strong> @d.UsuarioNombre</p>
+                <p>
+                    <strong>Estado:</strong>
+                    <span class="badge @(d.Cantidad > 0 ? "bg-success" : "bg-secondary")">
+                        @(d.Cantidad > 0 ? "Activo" : "Inactivo")
+                    </span>
+                </p>
+                <div class="d-flex justify-content-end gap-2 mt-2">
+                    <button class="btn btn-sm btn-outline-primary" @onclick="() => Editar(d.Id)">
+                        <i class="bi bi-pencil-square"></i> Editar
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" @onclick="() => Eliminar(d.Id)">
+                        <i class="bi bi-trash"></i> Eliminar
+                    </button>
+                </div>
+            </div>
+        }
     }
 </div>
 
@@ -93,9 +77,9 @@
                 string.IsNullOrWhiteSpace(searchTerm)
                 || d.Id.ToString().Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
                 || d.PrescripcionDetalleId.ToString().Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
-                || d.AlmacenNombre.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) // ✅ búsqueda por nombre
+                || d.AlmacenNombre.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
                 || d.LoteId.ToString().Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
-                || d.UsuarioNombre.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) // ✅ búsqueda por nombre
+                || d.UsuarioNombre.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
             );
 
     protected override async Task OnInitializedAsync()
@@ -128,4 +112,6 @@
             await JSRuntime.InvokeVoidAsync("alert", "No se pudo eliminar la dispensa.");
         }
     }
+
+    private void Regresar() => Nav.NavigateTo("/");
 }

@@ -1,29 +1,44 @@
 ﻿@page "/almacenes/index"
 @inject AlmacenService AlmacenService
 @inject IJSRuntime JS
-
 @inject NavigationManager Navigation
 @using Veterinaria.MAUIApp.Models
 @using Veterinaria.MAUIApp.Services
 
-<h3>Listado de almacenes</h3>
+<h3 class="text-center text-primary fw-bold mb-4">🏬 Listado de Almacenes</h3>
 
-<div class="mb-3">
-    <label>Filtrar por estado:</label>
-    <InputSelect @bind-Value="filtroEstado" class="form-select">
-        <option value="todos">Todos</option>
-        <option value="activos">Activos</option>
-        <option value="inactivos">Inactivos</option>
-    </InputSelect>
+<div class="row mb-3">
+    <div class="col-md-6 mb-2">
+        <label class="form-label">Filtrar por estado:</label>
+        <InputSelect @bind-Value="filtroEstado" class="form-select">
+            <option value="todos">Todos</option>
+            <option value="activos">Activos</option>
+            <option value="inactivos">Inactivos</option>
+        </InputSelect>
+    </div>
+    <div class="col-md-6 mb-2">
+        <label class="form-label">Buscar por nombre o ubicación:</label>
+        <InputText @bind-Value="terminoBusqueda" class="form-control" placeholder="Ej. Santa Tecla, Doggy..." />
+    </div>
+    <div class="col-12 mt-2 text-end">
+        <button class="btn btn-outline-primary" @onclick="AplicarFiltro">
+            <i class="bi bi-funnel-fill me-1"></i> Aceptar
+        </button>
+    </div>
 </div>
+
+<p class="text-muted mb-2">
+    Total: @almacenes.Count | Mostrando: @almacenesFiltrados.Count | Filtro: @filtroEstado
+</p>
 
 @if (almacenesFiltrados.Count == 0)
 {
-    <p>No hay almacenes disponibles.</p>
+    <div class="alert alert-warning text-center">No hay almacenes disponibles.</div>
 }
 else
 {
-    <table class="table table-bordered">
+    <!-- Vista de tabla para escritorio -->
+    <table class="table table-bordered d-none d-md-table">
         <thead>
             <tr>
                 <th>Nombre</th>
@@ -44,26 +59,62 @@ else
                         </span>
                     </td>
                     <td>
-                        <button class="btn btn-sm btn-primary me-1" @onclick="@(() => Navigation.NavigateTo($"/almacenes/editar/{a.Id}"))">Editar</button>
-                        <button class="btn btn-sm @(a.Activo ? "btn-inactivar" : "btn-activar")"
+                        <button class="btn btn-sm btn-outline-primary me-1" @onclick="@(() => Navigation.NavigateTo($"/almacenes/editar/{a.Id}"))">
+                            <i class="bi bi-pencil-square me-1"></i> Editar
+                        </button>
+                        <button class="btn btn-sm @(a.Activo ? "btn-outline-danger" : "btn-outline-success")"
                                 @onclick="@(() => ConfirmarCambioEstado(a.Id, !a.Activo))">
-                            <i class="bi @(a.Activo ? "bi-x-circle" : "bi-check-circle")"></i>
+                            <i class="bi @(a.Activo ? "bi-x-circle" : "bi-check-circle") me-1"></i>
                             @(a.Activo ? "Desactivar" : "Activar")
                         </button>
-
                     </td>
                 </tr>
             }
         </tbody>
     </table>
+
+    <!-- Vista de tarjetas para móviles -->
+    <div class="d-md-none">
+        @foreach (var a in almacenesFiltrados)
+        {
+            <div class="almacen-card mb-3 shadow-sm p-3 rounded">
+                <p><strong>Nombre:</strong> @a.Nombre</p>
+                <p><strong>Ubicación:</strong> @a.Ubicacion</p>
+                <p>
+                    <strong>Estado:</strong>
+                    <span class="badge @(a.Activo ? "bg-success" : "bg-danger")">
+                        @(a.Activo ? "Activo" : "Inactivo")
+                    </span>
+                </p>
+                <div class="d-flex justify-content-end gap-2 mt-2">
+                    <button class="btn btn-sm btn-outline-primary" @onclick="@(() => Navigation.NavigateTo($"/almacenes/editar/{a.Id}"))">
+                        <i class="bi bi-pencil-square me-1"></i> Editar
+                    </button>
+                    <button class="btn btn-sm @(a.Activo ? "btn-outline-danger" : "btn-outline-success")"
+                            @onclick="@(() => ConfirmarCambioEstado(a.Id, !a.Activo))">
+                        <i class="bi @(a.Activo ? "bi-x-circle" : "bi-check-circle") me-1"></i>
+                        @(a.Activo ? "Desactivar" : "Activar")
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
 }
 
-<button class="btn btn-success" @onclick="@(() => Navigation.NavigateTo("/almacenes/agregar"))">Agregar nuevo almacén</button>
+<div class="d-flex justify-content-between mt-4 flex-wrap gap-2">
+    <button class="btn btn-success" @onclick="@(() => Navigation.NavigateTo("/almacenes/agregar"))">
+        <i class="bi bi-plus-circle me-1"></i> Agregar nuevo almacén
+    </button>
+    <button class="btn btn-secondary" @onclick="Volver">
+        <i class="bi bi-arrow-left-circle me-1"></i> Volver al inicio
+    </button>
+</div>
 
 @code {
     private List<AlmacenSalida> almacenes = new();
     private List<AlmacenSalida> almacenesFiltrados = new();
     private string filtroEstado = "todos";
+    private string terminoBusqueda = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -75,6 +126,7 @@ else
         almacenes = await AlmacenService.ObtenerTodosAsync();
         AplicarFiltro();
     }
+
     private async Task ConfirmarCambioEstado(int id, bool nuevoEstado)
     {
         var mensaje = nuevoEstado
@@ -92,34 +144,24 @@ else
         }
     }
 
-
     private void AplicarFiltro()
     {
-        almacenesFiltrados = filtroEstado switch
+        var baseFiltrada = filtroEstado switch
         {
-            "activos" => almacenes.Where(a => a.Activo).ToList(),
-            "inactivos" => almacenes.Where(a => !a.Activo).ToList(),
+            "activos" => almacenes.Where(a => a.Activo == true),
+            "inactivos" => almacenes.Where(a => a.Activo == false),
             _ => almacenes
         };
+
+        almacenesFiltrados = baseFiltrada
+            .Where(a =>
+                string.IsNullOrWhiteSpace(terminoBusqueda) ||
+                a.Nombre.Contains(terminoBusqueda, StringComparison.OrdinalIgnoreCase) ||
+                a.Ubicacion.Contains(terminoBusqueda, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        Console.WriteLine($"Filtro: {filtroEstado} | Búsqueda: {terminoBusqueda} | Resultados: {almacenesFiltrados.Count}");
     }
 
-    private async Task CambiarEstado(int id, bool nuevoEstado)
-    {
-        var actualizado = await AlmacenService.CambiarEstadoAsync(id, nuevoEstado);
-        if (actualizado is not null)
-        {
-            await CargarAlmacenes();
-        }
-    }
-
-    private async Task OnParametersSetAsync()
-    {
-        AplicarFiltro();
-    }
-
-    private void OnFiltroEstadoChanged(ChangeEventArgs e)
-    {
-        filtroEstado = e.Value?.ToString() ?? "todos";
-        AplicarFiltro();
-    }
+    private void Volver() => Navigation.NavigateTo("/");
 }

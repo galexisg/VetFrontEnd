@@ -12,7 +12,7 @@ namespace Veterinaria.MAUIApp.Services
             _http = httpClient;
         }
 
-        // ✅ Obtener todas las dispensas
+        // Obtener todas las dispensas
         public async Task<List<DispensaSalida>> ObtenerTodasAsync()
         {
             try
@@ -40,29 +40,39 @@ namespace Veterinaria.MAUIApp.Services
             }
         }
 
-        // ✅ Obtener una dispensa por ID
+        //  Obtener una dispensa por ID
         public async Task<DispensaSalida?> ObtenerPorIdAsync(int id)
         {
             try
             {
+                Console.WriteLine("Llamando a: " + _http.BaseAddress + $"api/dispensas/{id}");
                 return await _http.GetFromJsonAsync<DispensaSalida>($"api/dispensas/{id}");
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine("ERROR EN GET: " + ex.Message);
                 return null;
             }
         }
 
-        // ✅ Crear nueva dispensa (usa DTO de guardar)
+
         public async Task<DispensaSalida?> CrearAsync(DispensaGuardar dto)
         {
             var response = await _http.PostAsJsonAsync("api/dispensas", dto);
-            return response.IsSuccessStatusCode
-                ? await response.Content.ReadFromJsonAsync<DispensaSalida>()
-                : null;
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<DispensaSalida>();
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"❌ Error al crear dispensa: {error}");
+                return null;
+            }
         }
 
-        // ✅ Editar dispensa existente (usa DTO de actualizar)
+
+        // Editar dispensa existente (usa DTO de actualizar)
         public async Task<DispensaSalida?> EditarAsync(int id, DispensaActualizar dto)
         {
             var response = await _http.PutAsJsonAsync($"api/dispensas/{id}", dto);
@@ -71,14 +81,14 @@ namespace Veterinaria.MAUIApp.Services
                 : null;
         }
 
-        // ✅ Eliminar una dispensa
+        //  Eliminar una dispensa
         public async Task<bool> EliminarAsync(int id)
         {
             var response = await _http.DeleteAsync($"api/dispensas/{id}");
             return response.IsSuccessStatusCode;
         }
 
-        // ✅ Filtrar por prescripción
+        //  Filtrar por prescripción
         public async Task<List<DispensaSalida>> ObtenerPorPrescripcionAsync(int prescripcionDetalleId)
         {
             try
@@ -91,7 +101,7 @@ namespace Veterinaria.MAUIApp.Services
             catch { return new List<DispensaSalida>(); }
         }
 
-        // ✅ Filtrar por almacén
+        //  Filtrar por almacén
         public async Task<List<DispensaSalida>> ObtenerPorAlmacenAsync(int almacenId)
         {
             try
@@ -104,7 +114,7 @@ namespace Veterinaria.MAUIApp.Services
             catch { return new List<DispensaSalida>(); }
         }
 
-        // ✅ Filtrar por fecha
+        //  Filtrar por fecha
         public async Task<List<DispensaSalida>> ObtenerPorFechaAsync(DateTime fecha)
         {
             try
@@ -118,7 +128,7 @@ namespace Veterinaria.MAUIApp.Services
         }
     }
 
-    // 🔹 Clase de soporte por si tu backend devuelve paginación
+    //  Clase de soporte por si tu backend devuelve paginación
     public class ApiPageResponse<T>
     {
         public List<T> Content { get; set; } = new();

@@ -4,29 +4,36 @@
 @using Veterinaria.MAUIApp.Models
 @using Veterinaria.MAUIApp.Services
 
-<h3>Agregar nuevo almacén</h3>
+<h3 class="text-center text-primary fw-bold mb-4">🏬 Agregar nuevo almacén</h3>
 
 <EditForm Model="modelo" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
-    <ValidationSummary />
 
     <div class="mb-3">
-        <label>Nombre:</label>
+        <label class="form-label">Nombre:</label>
         <InputText @bind-Value="modelo.Nombre" class="form-control" />
+        <ValidationMessage For="@(() => modelo.Nombre)" />
     </div>
 
     <div class="mb-3">
-        <label>Ubicación:</label>
+        <label class="form-label">Ubicación:</label>
         <InputText @bind-Value="modelo.Ubicacion" class="form-control" />
+        <ValidationMessage For="@(() => modelo.Ubicacion)" />
     </div>
 
-    <div class="mb-3">
-        <label>Activo:</label>
+    <div class="mb-3 form-check">
         <InputCheckbox @bind-Value="modelo.Activo" class="form-check-input" />
+        <label class="form-check-label">Activo</label>
     </div>
 
-    <button type="submit" class="btn btn-success">Guardar</button>
-    <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+    <div class="d-flex justify-content-between mt-4">
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-check-circle me-1"></i> Guardar
+        </button>
+        <button type="button" class="btn btn-secondary" @onclick="Cancelar">
+            <i class="bi bi-x-circle me-1"></i> Cancelar
+        </button>
+    </div>
 </EditForm>
 
 @code {

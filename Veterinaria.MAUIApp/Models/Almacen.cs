@@ -1,9 +1,15 @@
-﻿namespace Veterinaria.MAUIApp.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Veterinaria.MAUIApp.Models
 {
     public class AlmacenGuardar
     {
+        [Required(ErrorMessage = "El nombre del almacén es obligatorio.")]
         public string Nombre { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "La ubicación es obligatoria.")]
         public string Ubicacion { get; set; } = string.Empty;
+
         public bool Activo { get; set; } = true;
     }
 

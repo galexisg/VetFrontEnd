@@ -1,7 +1,135 @@
-﻿@page "/medicamentos/lotes/editar"
+﻿@page "/lotes-medicamento/editar/{id:int}"
+@inject LoteMedicamentoService loteService
+@* @inject MedicamentoService medicamentoService
+@inject ProveedorService proveedorService *@
+@inject NavigationManager nav
+@inject IJSRuntime JS
 
-<h3>Editar</h3>
+@using Veterinaria.MAUIApp.Models.Dtos
+@using Veterinaria.MAUIApp.Services
+
+<h3 class="text-center mt-3">Editar lote de medicamento</h3>
+<link rel="stylesheet" href="css/lotes.css" />
+
+@if (modelo is null)
+{
+    <div class="alert alert-danger text-center">No se pudo cargar el lote.</div>
+}
+else
+{
+    <div class="container mt-4">
+        <EditForm Model="@modelo">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <label class="form-label">Código del lote</label>
+                <InputText class="form-control" @bind-Value="modelo.CodigoLote" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Fecha de vencimiento</label>
+                <InputDate class="form-control" @bind-Value="modelo.FechaVencimiento" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Observaciones</label>
+                <InputTextArea class="form-control" @bind-Value="modelo.Observaciones" />
+            </div>
+
+            @* <div class="mb-3">
+                <label class="form-label">Medicamento</label>
+                <select class="form-select" @bind="modelo.MedicamentoId">
+                    <option value="">-- Selecciona medicamento --</option>
+                    @foreach (var m in medicamentos)
+                    {
+                        <option value="@m.Id">@m.Nombre</option>
+                    }
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Proveedor</label>
+                <select class="form-select" @bind="modelo.ProveedorId">
+                    <option value="">-- Selecciona proveedor --</option>
+                    @foreach (var p in proveedores)
+                    {
+                        <option value="@p.Id">@p.Nombre</option>
+                    }
+                </select>
+            </div> *@
+
+            <div class="d-flex justify-content-between mt-4">
+                <button class="btn btn-success" @onclick="ConfirmarActualizacion">
+                    <i class="bi bi-check-circle me-1"></i> Actualizar lote
+                </button>
+
+                <button type="button" class="btn btn-secondary" @onclick="Cancelar">
+                    <i class="bi bi-x-circle me-1"></i> Cancelar
+                </button>
+            </div>
+        </EditForm>
+    </div>
+}
 
 @code {
+    [Parameter] public int id { get; set; }
 
+    private LoteMedicamentoActualizar? modelo;
+    // private List<MedicamentoDto> medicamentos = new();
+    // private List<ProveedorDto> proveedores = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var lote = await loteService.GetByIdAsync(id);
+        if (lote is not null)
+        {
+            modelo = new LoteMedicamentoActualizar
+            {
+                Id = lote.Id,
+                CodigoLote = lote.CodigoLote,
+                FechaVencimiento = lote.FechaVencimiento,
+                Observaciones = lote.Observaciones,
+                MedicamentoId = lote.MedicamentoId,
+                ProveedorId = lote.ProveedorId
+            };
+
+            // medicamentos = await medicamentoService.GetAllAsync();
+            // proveedores = await proveedorService.GetAllAsync();
+        }
+    }
+
+    private async Task ConfirmarActualizacion()
+    {
+        var confirmado = await JS.InvokeAsync<bool>(
+            "confirm",
+            $"¿Está seguro que desea actualizar el lote '{modelo?.CodigoLote}'?"
+        );
+
+        if (confirmado)
+        {
+            await Actualizar();
+        }
+    }
+
+    private async Task Actualizar()
+    {
+        if (modelo is not null)
+        {
+            var resultado = await loteService.UpdateAsync(id, modelo);
+            if (resultado is not null)
+            {
+                nav.NavigateTo("/lotes-medicamento/index");
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("alert", "❌ Error al actualizar el lote.");
+            }
+        }
+    }
+
+    private void Cancelar()
+    {
+        nav.NavigateTo("/lotes-medicamento/index");
+    }
 }
