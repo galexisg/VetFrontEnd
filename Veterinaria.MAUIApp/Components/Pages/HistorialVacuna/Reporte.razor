@@ -1,0 +1,63 @@
+﻿@page "/historial-vacunas/reporte"
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Services
+@using Microsoft.AspNetCore.Components
+@inject HistorialVacunaService HistorialService
+@inject NavigationManager NavManager
+
+<h3>📊 Reporte General de Vacunas</h3>
+
+@if (reporte == null)
+{
+    <p><em>Cargando reporte...</em></p>
+}
+else if (!reporte.Any())
+{
+    <p>No hay datos disponibles.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>Mascota</th>
+                <th>Vacuna</th>
+                <th>Fecha Aplicación</th>
+                <th>Próxima Dosis</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in reporte)
+            {
+                <tr>
+                    <td>@item.NombreMascota</td>
+                    <td>@item.NombreVacuna</td>
+                    <td>@item.FechaAplicacion.ToString("dd/MM/yyyy")</td>
+                    <td>@(item.ProximaDosis?.ToString("dd/MM/yyyy") ?? "—")</td>
+                    <td>@item.Estado</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="mt-3">
+        <ReporteExport />
+    </div>
+}
+
+<div class="mt-3">
+    <button class="btn btn-secondary" @onclick="Volver">🔙 Volver</button>
+</div>
+
+@code {
+    private List<HistorialVacunaReporteRes>? reporte;
+
+    protected override async Task OnInitializedAsync()
+    {
+        reporte = await HistorialService.GetReporteVacunasAsync();
+    }
+
+    private void Volver() => NavManager.NavigateTo("/historial-vacunas");
+}
+

@@ -1,0 +1,54 @@
+﻿@page "/historial-vacunas/agregar"
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Services
+@inject HistorialVacunaService HistorialService
+@inject NavigationManager NavManager
+
+<h3>➕ Nuevo Historial de Vacuna</h3>
+
+<EditForm Model="@nuevoHistorial" OnValidSubmit="GuardarNuevo">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label>Mascota (ID):</label>
+        <InputNumber @bind-Value="nuevoHistorial.MascotaId" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Vacuna (ID):</label>
+        <InputNumber @bind-Value="nuevoHistorial.VacunaId" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Fecha Aplicación:</label>
+        <InputDate @bind-Value="nuevoHistorial.FechaAplicacion" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Próxima Dosis:</label>
+        <InputDate @bind-Value="nuevoHistorial.ProximaDosis" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Observaciones:</label>
+        <InputTextArea @bind-Value="nuevoHistorial.Observaciones" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success">✅ Guardar</button>
+    <button type="button" class="btn btn-secondary" @onclick="Volver">🔙 Cancelar</button>
+</EditForm>
+
+@code {
+    private HistorialVacunaReq nuevoHistorial = new() { FechaAplicacion = DateTime.Today };
+
+    private async Task GuardarNuevo()
+    {
+        var creado = await HistorialService.CreateHistorialAsync(nuevoHistorial);
+        if (creado)
+            NavManager.NavigateTo("/historial-vacunas");
+    }
+
+    private void Volver() => NavManager.NavigateTo("/historial-vacunas");
+}
+

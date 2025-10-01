@@ -1,0 +1,64 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Microsoft.JSInterop
+
+@inject IJSRuntime JS
+
+<div class="card p-3 mt-4">
+    <h5>📤 Exportar Reporte</h5>
+    <p class="text-muted">Selecciona el rango de fechas y exporta en Excel o PDF.</p>
+
+    <div class="row g-3 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label">Fecha Inicio:</label>
+            <InputDate @bind-Value="fechaInicio" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Fecha Fin:</label>
+            <InputDate @bind-Value="fechaFin" class="form-control" />
+        </div>
+        <div class="col-md-4 d-flex justify-content-between">
+            <button class="btn btn-success" @onclick="ExportarExcel" disabled="@(!RangoValido)">
+                📘 Exportar Excel
+            </button>
+            <button class="btn btn-danger" @onclick="ExportarPdf" disabled="@(!RangoValido)">
+                📕 Exportar PDF
+            </button>
+        </div>
+    </div>
+
+    @if (!RangoValido)
+    {
+        <div class="text-warning mt-2">
+            ⚠️ La fecha de inicio debe ser menor o igual a la fecha fin.
+        </div>
+    }
+</div>
+
+@code {
+    private DateTime fechaInicio { get; set; } = DateTime.Today.AddDays(-30);
+    private DateTime fechaFin { get; set; } = DateTime.Today;
+
+    private bool RangoValido => fechaInicio <= fechaFin;
+
+    private string ExcelUrl =>
+        $"http://localhost:8080/api/v1/historialvacuna/reporte/excel?inicio={fechaInicio:yyyy-MM-dd}&fin={fechaFin:yyyy-MM-dd}";
+
+    private string PdfUrl =>
+        $"http://localhost:8080/api/v1/historialvacuna/reporte/pdf?inicio={fechaInicio:yyyy-MM-dd}&fin={fechaFin:yyyy-MM-dd}";
+
+    private async Task ExportarExcel()
+    {
+        if (RangoValido)
+        {
+            await JS.InvokeVoidAsync("open", ExcelUrl, "_blank");
+        }
+    }
+
+    private async Task ExportarPdf()
+    {
+        if (RangoValido)
+        {
+            await JS.InvokeVoidAsync("open", PdfUrl, "_blank");
+        }
+    }
+}

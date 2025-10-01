@@ -1,0 +1,71 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.JSInterop
+
+@inject IJSRuntime JS
+
+<div class="card p-3 mb-3">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h5 class="mb-1">Exportar reporte de vacunas</h5>
+            <small class="text-muted">Selecciona rango y descarga en Excel o PDF</small>
+        </div>
+    </div>
+
+    <div class="row mt-3 g-2">
+        <div class="col-12 col-md-4">
+            <label class="form-label">Fecha inicio</label>
+            <InputDate @bind-Value="start" class="form-control" />
+        </div>
+
+        <div class="col-12 col-md-4">
+            <label class="form-label">Fecha fin</label>
+            <InputDate @bind-Value="end" class="form-control" />
+        </div>
+
+        <div class="col-12 col-md-4 d-flex align-items-end">
+            <button class="btn btn-success me-2" @onclick="ExportarExcel" disabled="@(!RangoValido)">
+                📥 Exportar Excel
+            </button>
+            <button class="btn btn-danger" @onclick="ExportarPdf" disabled="@(!RangoValido)">
+                📥 Exportar PDF
+            </button>
+        </div>
+    </div>
+
+    @if (!RangoValido)
+    {
+        <div class="mt-2 text-warning small">La fecha de inicio debe ser anterior o igual a la fecha fin.</div>
+    }
+    <div class="mt-2 text-muted small">Si la API devuelve el archivo, se abrirá en nueva pestaña/descarga.</div>
+</div>
+
+@code {
+    // Valores por defecto (últimos 7 días)
+    private DateTime start { get; set; } = DateTime.Today.AddDays(-7);
+    private DateTime end { get; set; } = DateTime.Today;
+
+    private bool RangoValido => start <= end;
+
+    // Si tu backend usa rutas distintas, cámbialas aquí:
+    private string ExcelEndpoint(DateTime s, DateTime e) =>
+        $"api/reportes/vacunas/excel?start={s:yyyy-MM-dd}&end={e:yyyy-MM-dd}";
+
+    private string PdfEndpoint(DateTime s, DateTime e) =>
+        $"api/reportes/vacunas/pdf?start={s:yyyy-MM-dd}&end={e:yyyy-MM-dd}";
+
+    private async Task ExportarExcel()
+    {
+        if (!RangoValido) return;
+        var url = ExcelEndpoint(start, end);
+        // abre en nueva pestaña (si el navegador lo permite)
+        await JS.InvokeVoidAsync("open", url, "_blank");
+    }
+
+    private async Task ExportarPdf()
+    {
+        if (!RangoValido) return;
+        var url = PdfEndpoint(start, end);
+        await JS.InvokeVoidAsync("open", url, "_blank");
+    }
+}

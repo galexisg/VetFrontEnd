@@ -1,0 +1,73 @@
+﻿@page "/historial-vacunas/editar/{id:int}"
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Services
+@inject HistorialVacunaService HistorialService
+@inject NavigationManager NavManager
+
+<h3>✏️ Editar Historial de Vacuna</h3>
+
+@if (historial == null)
+{
+    <p><em>Cargando datos...</em></p>
+}
+else
+{
+    <EditForm Model="@historial" OnValidSubmit="@Actualizar">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label>Mascota (ID):</label>
+            <InputNumber @bind-Value="historial.MascotaId" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label>Vacuna (ID):</label>
+            <InputNumber @bind-Value="historial.VacunaId" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label>Fecha Aplicación:</label>
+            <InputDate @bind-Value="historial.FechaAplicacion" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label>Próxima Dosis:</label>
+            <InputDate @bind-Value="historial.ProximaDosis" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label>Observaciones:</label>
+            <InputTextArea @bind-Value="historial.Observaciones" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label>Estado:</label>
+            <InputText @bind-Value="historial.Estado" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-warning">💾 Actualizar</button>
+        <button type="button" class="btn btn-secondary" @onclick="Volver">🔙 Cancelar</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+
+    private HistorialVacunaRes? historial;
+
+    protected override async Task OnInitializedAsync()
+    {
+        historial = await HistorialService.GetHistorialByIdAsync(id);
+    }
+
+    private async Task Actualizar()
+    {
+        bool exito = await HistorialService.UpdateHistorialAsync(id, historial!);
+        if (exito)
+            NavManager.NavigateTo("/historial-vacunas");
+    }
+
+    private void Volver() => NavManager.NavigateTo("/historial-vacunas");
+}
+
