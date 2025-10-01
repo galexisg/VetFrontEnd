@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Veterinaria.MAUIApp.Models
+namespace Veterinaria.MAUIApp.Utils
 {
-    internal class Pago
+    public class ApiOptions
     {
+        public string BaseUrl { get; set; } = "";
     }
 }

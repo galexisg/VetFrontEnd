@@ -1,14 +1,21 @@
 ﻿@page "/veterinarios/editar/{Id:int}"
 @using Veterinaria.MAUIApp.Models
+<<<<<<< HEAD
 @using Veterinaria.MAUIApp.Models.Dtos
 @inject Veterinaria.MAUIApp.Services.VeterinarioService veterinarioService
 @inject Veterinaria.MAUIApp.Services.UsuarioService usuarioService
 @inject Veterinaria.MAUIApp.Services.EspecialidadService especialidadService
 @inject Veterinaria.MAUIApp.Services.ServicioService servicioService
+=======
+@inject VeterinarioService veterinarioService
+@inject EspecialidadService especialidadService
+@inject ServicioService servicioService
+>>>>>>> cce7d4c545429baff3534df3b6bc33f01fcbd981
 @inject NavigationManager nav
 
 <link rel="stylesheet" href="css/veterinarios.css" />
 
+<<<<<<< HEAD
 <div class="container mt-4">
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
@@ -81,11 +88,84 @@
                 </EditForm>
             }
         </div>
+=======
+<div class="vet-form-container">
+    <div class="vet-form-header">
+        <h2>Editar Veterinario @modelo?.Id</h2>
+    </div>
+
+    <div class="vet-form-card">
+        @if (modelo is null || usuarios.Count == 0 || especialidades.Count == 0 || servicios.Count == 0)
+        {
+            <div class="vet-alert vet-alert-info">
+                <span class="vet-spinner"></span> Cargando datos...
+            </div>
+        }
+        else
+        {
+            <EditForm Model="modelo" OnValidSubmit="Guardar">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="vet-validation-summary" />
+
+                <div class="vet-form-group">
+                    <label class="vet-form-label">Número de Licencia</label>
+                    <InputText @bind-Value="modelo.NumeroLicencia" class="vet-form-input" />
+                </div>
+
+                <div class="vet-form-group">
+                    <label class="vet-form-label">Usuario</label>
+                    <InputSelect @bind-Value="modelo.UsuarioId" class="vet-form-select">
+                        <option value="">-- Selecciona un usuario --</option>
+                        @foreach (var u in usuarios)
+                        {
+                            <option value="@u.Id">@u.NombreCompleto</option>
+                        }
+                    </InputSelect>
+                </div>
+
+                <div class="vet-form-group">
+                    <label class="vet-form-label">Especialidad</label>
+                    <InputSelect @bind-Value="modelo.EspecialidadId" class="vet-form-select">
+                        <option value="">-- Selecciona una especialidad --</option>
+                        @foreach (var esp in especialidades)
+                        {
+                            <option value="@esp.EspecialidadId">@esp.Nombre</option>
+                        }
+                    </InputSelect>
+                </div>
+
+                <div class="vet-form-group">
+                    <label class="vet-form-label">Servicio</label>
+                    <InputSelect @bind-Value="modelo.ServicioId" class="vet-form-select">
+                        <option value="">-- Selecciona un servicio --</option>
+                        @foreach (var srv in servicios)
+                        {
+                            <option value="@srv.Id">@srv.Nombre</option>
+                        }
+                    </InputSelect>
+                </div>
+
+                <div class="vet-form-group">
+                    <label class="vet-form-label">Estado</label>
+                    <InputSelect @bind-Value="modelo.Estado" class="vet-form-select">
+                        <option value="Activo">Activo</option>
+                        <option value="Inactivo">Inactivo</option>
+                    </InputSelect>
+                </div>
+
+                <div class="vet-form-actions">
+                    <button type="submit" class="vet-btn vet-btn-success">Guardar</button>
+                    <button type="button" class="vet-btn vet-btn-secondary" @onclick="Cancelar">Cancelar</button>
+                </div>
+            </EditForm>
+        }
+>>>>>>> cce7d4c545429baff3534df3b6bc33f01fcbd981
     </div>
 </div>
 
 @if (usuarios.Count == 0)
 {
+<<<<<<< HEAD
     <div class="alert alert-danger mt-3">⚠️ No se cargaron usuarios.</div>
 }
 @if (especialidades.Count == 0)
@@ -95,26 +175,53 @@
 @if (servicios.Count == 0)
 {
     <div class="alert alert-danger mt-3">⚠️ No se cargaron servicios.</div>
+=======
+    <div class="vet-alert vet-alert-danger">No se cargaron usuarios con rol Veterinario.</div>
+}
+@if (especialidades.Count == 0)
+{
+    <div class="vet-alert vet-alert-danger">No se cargaron especialidades.</div>
+}
+@if (servicios.Count == 0)
+{
+    <div class="vet-alert vet-alert-danger">No se cargaron servicios.</div>
+>>>>>>> cce7d4c545429baff3534df3b6bc33f01fcbd981
 }
 
 @code {
     [Parameter] public int Id { get; set; }
 
     private VeterinarioModificarReq? modelo;
+<<<<<<< HEAD
     private List<UsuarioRes> usuarios = new();
     private List<EspecialidadSalidaRes> especialidades = new();
     private List<ServicioRes> servicios = new();
+=======
+    private List<UsuarioSalidaRes> usuarios = new();
+    private List<EspecialidadSalidaRes> especialidades = new();
+    private List<Servicio> servicios = new();
+>>>>>>> cce7d4c545429baff3534df3b6bc33f01fcbd981
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
+<<<<<<< HEAD
             usuarios = await usuarioService.GetUsuariosAsync();
             especialidades = await especialidadService.GetActivasAsync();
             servicios = await servicioService.ObtenerActivosAsync();
 
             var lista = await veterinarioService.GetAllAsync();
             var actual = lista.FirstOrDefault(x => x.Id == Id);
+=======
+            // 🔹 Solo usuarios con rol Veterinario
+            usuarios = await veterinarioService.ListarUsuariosVeterinariosAsync();
+
+            especialidades = await especialidadService.GetActivasAsync();
+            servicios = await servicioService.ListarAsync(activo: true);
+
+            var actual = await veterinarioService.ObtenerAsync(Id);
+>>>>>>> cce7d4c545429baff3534df3b6bc33f01fcbd981
 
             if (actual is not null)
             {
@@ -123,8 +230,13 @@
                         Id = actual.Id,
                         NumeroLicencia = actual.NumeroLicencia,
                         UsuarioId = actual.Usuario.Id,
+<<<<<<< HEAD
                         EspecialidadId = especialidades.FirstOrDefault(e => e.Nombre == actual.Especialidad)?.EspecialidadId ?? 0,
                         ServicioId = servicios.FirstOrDefault(s => s.Nombre == actual.Servicio)?.Id ?? 0,
+=======
+                        EspecialidadId = (int)(especialidades.FirstOrDefault(e => e.Nombre == actual.Especialidad)?.EspecialidadId ?? 0),
+                        ServicioId = (long)(servicios.FirstOrDefault(s => s.Nombre == actual.Servicio)?.Id ?? 0),
+>>>>>>> cce7d4c545429baff3534df3b6bc33f01fcbd981
                         Estado = actual.Estado
                     };
             }
@@ -139,16 +251,26 @@
     {
         if (modelo is not null)
         {
+<<<<<<< HEAD
             var actualizado = await veterinarioService.UpdateAsync(Id, modelo);
             if (actualizado is not null)
+=======
+            var ok = await veterinarioService.EditarAsync(Id, modelo);
+            if (ok)
+>>>>>>> cce7d4c545429baff3534df3b6bc33f01fcbd981
                 nav.NavigateTo("/veterinarios/index", forceLoad: true);
             else
                 Console.WriteLine("Error al actualizar veterinario.");
         }
     }
 
+<<<<<<< HEAD
     private void Cancelar()
     {
         nav.NavigateTo("/");
     }
 }
+=======
+    private void Cancelar() => nav.NavigateTo("/veterinarios/index");
+}
+>>>>>>> cce7d4c545429baff3534df3b6bc33f01fcbd981

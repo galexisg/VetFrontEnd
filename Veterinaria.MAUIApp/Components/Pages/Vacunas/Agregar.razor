@@ -1,7 +1,42 @@
 ﻿@page "/vacunas/agregar"
 
-<h3>Agregar</h3>
+@using Veterinaria.MAUIApp.Models
+@inject Veterinaria.MAUIApp.Services.VacunaService VacunaService
+@inject NavigationManager Nav
+
+<div class="container mt-4">
+    <div class="mb-3">
+        <h4 class="mb-0">Nueva vacuna</h4>
+        <small class="text-muted">Completa el formulario</small>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <EditForm Model="@modelo" OnValidSubmit="Guardar">
+                <DataAnnotationsValidator />
+                <div class="mb-3">
+                    <label class="form-label">Nombre</label>
+                    <InputText class="form-control" @bind-Value="modelo.Nombre" />
+                    <ValidationMessage For="@(() => modelo.Nombre)" />
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                    <button type="button" class="btn btn-outline-secondary" @onclick="Volver">Cancelar</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
 
 @code {
+    private VacunaReq modelo = new();
 
+    private async Task Guardar()
+    {
+        var creado = await VacunaService.CrearAsync(modelo);
+        if (creado is not null)
+            Nav.NavigateTo("/vacunas/index");
+    }
+
+    private void Volver() => Nav.NavigateTo("/vacunas/index");
 }

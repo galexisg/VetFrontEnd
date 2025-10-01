@@ -1,0 +1,80 @@
+﻿@page "/diagnosticos/{citaId:long}/agregar"
+@inject Veterinaria.MAUIApp.Services.DiagnosticoService DiagnosticoService
+@inject NavigationManager Navigation
+@using Veterinaria.MAUIApp.Models
+
+<div class="d-flex flex-column min-vh-100">
+
+    <div class="container py-3">
+  <div class="row align-items-center mb-3 g-0">
+    <div class="col-auto">
+      <button type="button"
+              class="btn btn-light rounded-circle shadow-sm p-0 d-inline-flex align-items-center justify-content-center lh-1 flex-shrink-0"
+              style="width:36px; height:36px;"
+              @onclick='@(()=> Navigation.NavigateTo($"/diagnosticos/{citaId}"))'>
+        ←
+      </button>
+    </div>
+
+    <div class="col text-center">
+      <h5 class="fw-bold mb-0">Diagnóstico</h5>
+      <small class="text-muted">Agrega un nuevo diagnóstico</small>
+    </div>
+
+    <div class="col-auto">
+      <button class="btn btn-light rounded-circle p-0 d-inline-flex align-items-center justify-content-center lh-1 invisible"
+              style="width:36px; height:36px;" aria-hidden="true">←</button>
+    </div>
+  </div>
+</div>
+
+
+    <!-- Formulario -->
+    <EditForm class="d-flex flex-column flex-grow-1 px-3" Model="@nuevo" OnValidSubmit="Guardar">
+        <DataAnnotationsValidator />
+      
+
+        <div class="mb-3">
+            <label class="form-label">Nombre del diagnóstico</label>
+            <InputText class="form-control rounded-4 shadow-sm" @bind-Value="nuevo.Nombre" />
+            <ValidationMessage For="@(() => nuevo.Nombre)" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Descripción del diagnóstico</label>
+            <InputTextArea class="form-control rounded-4 shadow-sm" rows="3" @bind-Value="nuevo.Descripcion" />
+            <ValidationMessage For="@(() => nuevo.Descripcion)" />
+        </div>
+
+        <!-- Botones al fondo -->
+        <div class="mt-auto pt-3 border-top d-flex gap-2">
+            <button type="button" class="btn btn-dark flex-fill py-2 rounded-pill"
+                    @onclick="Cancelar">
+                Cancelar
+            </button>
+            <button type="submit" class="btn btn-success flex-fill py-2 rounded-pill fw-bold">
+                Guardar
+            </button>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    [Parameter] public long citaId { get; set; }
+
+    private Diagnostico nuevo = new();
+
+    private async Task Guardar()
+    {
+        var creado = await DiagnosticoService.CrearAsync(citaId, nuevo);
+        if (creado != null)
+        {
+            Navigation.NavigateTo($"/diagnosticos/{citaId}");
+        }
+    }
+
+    private void Cancelar()
+    {
+        Navigation.NavigateTo($"/diagnosticos/{citaId}");
+    }
+}

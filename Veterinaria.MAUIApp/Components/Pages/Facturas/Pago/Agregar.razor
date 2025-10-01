@@ -1,39 +1,80 @@
 ﻿@page "/facturas/{id:int}/pago/agregar"
+@using Veterinaria.MAUIApp.Models
+@using Microsoft.AspNetCore.Components.Forms
 @inject NavigationManager Nav
-@code { [Parameter] public int id { get; set; } }
+@inject Veterinaria.MAUIApp.Services.PagoService PagoSrv
 
-    <div class="contenedor">
-        <div class="status-bar-safe-area"></div>
-        <header class="mb-4">
-            <p class="titulo">Pago de factura</p>
-            <p class="descripcion">Gestiona el registro y control</p>
-        </header>
+@code {
+    [Parameter] public int id { get; set; }
 
-        <div class="input-container">
-            <label class="label">Factura</label>
-            <select class="input">
-                <option>Seleccionar</option>
-                <option>Factura #@id</option>
-            </select>
-        </div>
+    private PagoRequest Model = new()
+    {
+        FacturaId = 0,
+        Metodo = "",
+        Monto = 0m,
+        FechaPago = DateTime.Now   // LocalDateTime en backend
+    };
 
-        <div class="input-container">
-            <label class="label">Método</label>
-            <input class="input" placeholder="Escribe el método" />
-        </div>
+    private bool IsSaving;
+    private string? Error;
 
-        <div class="input-container">
-            <label class="label">Monto</label>
-            <input class="input" inputmode="decimal" placeholder="Ingresa el monto" />
-        </div>
+    protected override void OnParametersSet() => Model.FacturaId = id;
 
-        <div class="input-container">
-            <label class="label">Fecha de pago</label>
-            <input type="date" class="input" placeholder="Ingresa la fecha" />
-        </div>
+    private async Task GuardarAsync()
+    {
+        Error = null;
+        if (Model.Monto <= 0) { Error = "El monto debe ser mayor que 0."; return; }
+        if (string.IsNullOrWhiteSpace(Model.Metodo)) { Error = "Indica el método de pago."; return; }
 
-        <div class="acciones-footer">
-            <button type="button" class="boton-negro" @onclick="@(() => Nav.NavigateTo("/facturas"))">Cancelar</button>
-            <button type="button" class="boton-verde" @onclick="@(() => Nav.NavigateTo("/facturas"))">Guardar cambios</button>
-        </div>
+        try
+        {
+            IsSaving = true;
+            var resp = await PagoSrv.RegistrarPago(Model);
+            if (resp is null) { Error = "Respuesta vacía del servidor."; return; }
+            Nav.NavigateTo($"/facturas/{id}");
+        }
+        catch (Exception ex) { Error = ex.Message; }
+        finally { IsSaving = false; }
+    }
+}
+
+<div class="contenedor">
+    <header class="mb-4">
+        <p class="titulo">Pago de factura</p>
+        <p class="descripcion">Gestiona el registro y control</p>
+    </header>
+
+    @if (!string.IsNullOrEmpty(Error))
+    {
+        <div class="alert alert-danger">@Error</div>
+    }
+
+    <div class="input-container">
+        <label class="label">Factura</label>
+        <select class="input" disabled>
+            <option>Factura #@id</option>
+        </select>
     </div>
+
+    <div class="input-container">
+        <label class="label">Método</label>
+        <input class="input" placeholder="Efectivo, Tarjeta, etc." @bind="Model.Metodo" />
+    </div>
+
+    <div class="input-container">
+        <label class="label">Monto</label>
+        <input class="input" type="number" step="0.01" inputmode="decimal" @bind="Model.Monto" />
+    </div>
+
+    <div class="input-container">
+        <label class="label">Fecha de pago</label>
+        <InputDate @bind-Value="Model.FechaPago" class="input" />
+    </div>
+
+    <div class="acciones-footer">
+        <button class="boton-negro" @onclick="@(() => Nav.NavigateTo("/facturas"))">Cancelar</button>
+        <button class="boton-verde" disabled="@IsSaving" @onclick="GuardarAsync">
+            @(IsSaving ? "Guardando..." : "Guardar cambios")
+        </button>
+    </div>
+</div>

@@ -1,0 +1,66 @@
+﻿@page "/citas/{citaId:long}"
+@inject NavigationManager Navigation
+
+<div class="container py-3">
+
+    <!-- Encabezado con botón volver -->
+    <div class="row align-items-center mb-3 g-0">
+  <!-- Izquierda: botón real -->
+  <div class="col-auto">
+    <button type="button"
+            class="btn btn-light rounded-circle shadow-sm p-1 d-inline-flex align-items-center justify-content-center lh-1 flex-shrink-0"
+                    @onclick='@(() => Navigation.NavigateTo("/Citas/Index"))'
+            aria-label="Volver">
+      <i class="bi bi-arrow-left-short fs-5"></i>
+    </button>
+  </div>
+
+  <!-- Centro: título + subtítulo -->
+  <div class="col text-center">
+    <h5 class="fw-bold mb-0">Manchitas</h5>
+    <small class="text-muted">Observa el historial clínico</small>
+  </div>
+
+  <!-- Derecha: “espejo” invisible para equilibrar -->
+  <div class="col-auto">
+    <button type="button"
+            class="btn btn-light rounded-circle p-1 d-inline-flex align-items-center justify-content-center lh-1 invisible"
+            aria-hidden="true">
+      <i class="bi bi-arrow-left-short fs-5"></i>
+    </button>
+  </div>
+</div>
+
+    <!-- Tarjeta de Diagnósticos -->
+    <div class="card shadow-sm border-0 mb-3 p-3 rounded-4" 
+         style="cursor:pointer;"
+         @onclick='() => Navigation.NavigateTo($"/diagnosticos/{citaId}")'>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <span class="badge bg-success rounded-pill">Historial completo</span>
+                <h6 class="fw-bold mt-2 mb-1">Historial de Diagnósticos</h6>
+                <small class="text-muted">Consulta todos los diagnósticos</small>
+            </div>
+            <span class="fw-bold">›</span>
+        </div>
+    </div>
+
+    <!-- Tarjeta de Tratamientos -->
+    <div class="card shadow-sm border-0 mb-3 p-3 rounded-4" 
+         style="cursor:pointer;"
+         @onclick='() => Navigation.NavigateTo($"/tratamientos/{citaId}")'>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <span class="badge bg-success rounded-pill">Historial completo</span>
+                <h6 class="fw-bold mt-2 mb-1">Historial de Tratamientos</h6>
+                <small class="text-muted">Consulta todos los tratamientos</small>
+            </div>
+            <span class="fw-bold">›</span>
+        </div>
+    </div>
+
+</div>
+
+@code {
+    [Parameter] public long citaId { get; set; }
+}

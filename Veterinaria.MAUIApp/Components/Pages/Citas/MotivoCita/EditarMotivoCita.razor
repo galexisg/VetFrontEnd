@@ -1,0 +1,110 @@
+﻿@page "/citas/motivocita/editar/{id:int}"
+@inject Veterinaria.MAUIApp.Services.MotivoCitaService MotivoCitaService
+@inject NavigationManager Navigation
+@using Veterinaria.MAUIApp.Models
+@using System.ComponentModel.DataAnnotations
+
+<div class="d-flex flex-column min-vh-100">
+    <div class="container py-3 flex-grow-1 d-flex flex-column">
+        <!-- Encabezado -->
+        <div class="d-flex align-items-center mb-3">
+            <button class="btn btn-light rounded-circle shadow-sm me-2"
+                    style="width: 36px; height: 36px; line-height: 1;"
+                    @onclick='() => Navigation.NavigateTo("/citas/motivocita/indexmotivocita")'>
+                ←
+            </button>
+            <div>
+                <h5 class="fw-bold mb-0">Motivo de Cita</h5>
+                <small class="text-muted">Edita la información del motivo</small>
+            </div>
+        </div>
+
+        @if (motivo == null)
+        {
+            <p><em>Cargando datos del motivo...</em></p>
+        }
+        else
+        {
+            <EditForm Model="@motivoEdit" OnValidSubmit="Guardar" class="d-flex flex-column flex-grow-1">
+                <DataAnnotationsValidator />
+
+                <div class="mb-3">
+                    <label class="form-label">Nombre del motivo</label>
+                    <InputText class="form-control rounded-4 shadow-sm" @bind-Value="motivoEdit.Nombre" />
+                    <ValidationMessage For="@(() => motivoEdit.Nombre)" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Descripción del motivo</label>
+                    <InputTextArea class="form-control rounded-4 shadow-sm" rows="3" @bind-Value="motivoEdit.Descripcion" />
+                    <ValidationMessage For="@(() => motivoEdit.Descripcion)" />
+                </div>
+
+                <div class="mb-3 form-check">
+                    <InputCheckbox class="form-check-input" @bind-Value="motivoEdit.Activo" id="activo" />
+                    <label class="form-check-label" for="activo">Motivo activo</label>
+                </div>
+
+                <div class="mt-auto d-flex flex-column flex-sm-row gap-2 p-3 border-top">
+                    <button type="button" class="btn btn-dark w-100 py-2 rounded-pill"
+                            @onclick="Cancelar">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success w-100 py-2 rounded-pill fw-bold">
+                        Guardar cambios
+                    </button>
+                </div>
+            </EditForm>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public int id { get; set; }
+
+    private MotivoCita? motivo;
+    private MotivoCitaEdit motivoEdit = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        motivo = await MotivoCitaService.GetByIdAsync(id);
+        if (motivo == null)
+        {
+            Navigation.NavigateTo("/citas/motivocita/indexmotivocita");
+            return;
+        }
+
+        motivoEdit.Id = motivo.Id;
+        motivoEdit.Nombre = motivo.Nombre;
+        motivoEdit.Descripcion = motivo.Descripcion;
+        motivoEdit.Activo = motivo.Activo;
+    }
+
+    private async Task Guardar()
+    {
+        if (motivoEdit != null)
+        {
+            motivo!.Nombre = motivoEdit.Nombre;
+            motivo.Descripcion = motivoEdit.Descripcion;
+            motivo.Activo = motivoEdit.Activo;
+
+            await MotivoCitaService.EditarAsync(id, motivo);
+            Navigation.NavigateTo("/citas/motivocita/indexmotivocita");
+        }
+    }
+
+    private void Cancelar() =>
+        Navigation.NavigateTo("/citas/motivocita/indexmotivocita");
+
+    public class MotivoCitaEdit
+    {
+        public int Id { get; set; }
+
+        [Required(ErrorMessage = "El nombre es obligatorio.")]
+        [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "Solo se permiten letras.")]
+        public string Nombre { get; set; } = string.Empty;
+
+        public string? Descripcion { get; set; }
+        public bool Activo { get; set; } = true;
+    }
+}

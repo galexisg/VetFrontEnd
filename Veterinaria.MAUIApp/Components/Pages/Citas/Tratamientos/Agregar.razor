@@ -1,7 +1,98 @@
-﻿@page "/citas/tratamientos/agregar"
+﻿@page "/tratamientos/{citaId:long}/agregar"
+@using System.ComponentModel.DataAnnotations
+@using Veterinaria.MAUIApp.Models
+@inject Veterinaria.MAUIApp.Services.TratamientosAplicadosService TratamientosService
+@inject NavigationManager Navigation
 
-<h3>Agregar</h3>
+<div class="container py-3">
+
+  <!-- Header centrado con botón volver -->
+  <div class="row align-items-center mb-3 g-0">
+    <div class="col-auto">
+      <button type="button"
+              class="btn btn-light rounded-circle shadow-sm p-0 d-inline-flex align-items-center justify-content-center lh-1 flex-shrink-0"
+              style="width:36px; height:36px;"
+              @onclick='@(()=> Navigation.NavigateTo($"/tratamientos/{citaId}"))'
+              aria-label="Volver a tratamientos">
+        <i class="bi bi-arrow-left-short fs-5"></i>
+      </button>
+    </div>
+    <div class="col text-center">
+      <h5 class="fw-bold mb-0">Agregar tratamiento</h5>
+      <small class="text-muted">Cita #@citaId</small>
+    </div>
+    <div class="col-auto">
+      <button class="btn btn-light rounded-circle p-0 d-inline-flex align-items-center justify-content-center lh-1 invisible"
+              style="width:36px; height:36px;" aria-hidden="true">
+        <i class="bi bi-arrow-left-short fs-5"></i>
+      </button>
+    </div>
+  </div>
+
+  <EditForm Model="@vm" OnValidSubmit="Guardar" class="d-flex flex-column">
+    <DataAnnotationsValidator />
+
+    <div class="mb-3">
+      <label class="form-label">ID de tratamiento</label>
+      <InputNumber class="form-control rounded-4" @bind-Value="vm.TratamientoId" />
+      <ValidationMessage For="@(()=> vm.TratamientoId)" class="text-danger small" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">ID de veterinario</label>
+      <InputNumber class="form-control rounded-4" @bind-Value="vm.VeterinarioId" />
+      <ValidationMessage For="@(()=> vm.VeterinarioId)" class="text-danger small" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Observaciones (opcional)</label>
+      <InputTextArea class="form-control rounded-4" rows="3" @bind-Value="vm.Observaciones" />
+      <ValidationMessage For="@(()=> vm.Observaciones)" class="text-danger small" />
+    </div>
+
+    <div class="d-flex gap-2 mt-2">
+      <button type="button" class="btn btn-dark flex-fill py-2 rounded-pill" @onclick='@(()=> Navigation.NavigateTo($"/tratamientos/{citaId}"))'>Cancelar</button>
+      <button type="submit" class="btn btn-success flex-fill py-2 rounded-pill fw-bold">Guardar</button>
+    </div>
+  </EditForm>
+
+</div>
 
 @code {
+  [Parameter] public long citaId { get; set; }
 
+  // ViewModel con validación de campos
+  public class NuevoTratamientoVM
+  {
+    [Required(ErrorMessage = "El ID de tratamiento es requerido")]
+    public long? TratamientoId { get; set; }
+
+    [Required(ErrorMessage = "El ID de veterinario es requerido")]
+    public long? VeterinarioId { get; set; }
+
+    [MaxLength(500, ErrorMessage = "Máximo 500 caracteres")]
+    public string? Observaciones { get; set; }
+  }
+
+  private NuevoTratamientoVM vm = new();
+
+  protected override void OnInitialized()
+  {
+    // nada, se ingresan IDs manualmente (puedes cambiar a selects si ya tienes catálogos)
+  }
+
+  private async Task Guardar()
+  {
+    var nuevo = new TratamientoAplicado {
+      CitaId = citaId,
+      TratamientoId = vm.TratamientoId!.Value,
+      VeterinarioId = vm.VeterinarioId!.Value,
+      Observaciones = vm.Observaciones
+      // Estado lo setea el backend (p.ej. "Pendiente")
+    };
+
+    var res = await TratamientosService.CrearAsync(nuevo);
+    if (res is not null)
+      Navigation.NavigateTo($"/tratamientos/{citaId}");
+  }
 }

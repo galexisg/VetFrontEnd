@@ -1,7 +1,123 @@
-﻿@page "/especialidades/editar"
+﻿@page "/especialidades/editar/{Id:int}"
+@using Veterinaria.MAUIApp.Services
+@using Veterinaria.MAUIApp.Models
+@inject EspecialidadService EspecialidadService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
 
-<h3>Editar</h3>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous">
+
+@if (cargando)
+{
+    <div class="text-center mt-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
+    </div>
+}
+else if (especialidad is null)
+{
+    <div class="alert alert-danger mt-4">Especialidad no encontrada.</div>
+}
+else
+{
+    <div class="container mt-4">
+        <h2 class="mb-2">Especialidades</h2>
+        <p class="text-muted mb-4">Edita el nombre de la especialidad</p>
+
+        <!-- Campo Nombre -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Nombre</label>
+            <input class="form-control" @bind="especialidad.Nombre" placeholder="Ingresa el nombre de la especialidad" />
+        </div>
+
+        <!-- Mensajes -->
+        @if (!string.IsNullOrEmpty(mensajeError))
+        {
+            <div class="alert alert-danger mt-2">@mensajeError</div>
+        }
+        @if (!string.IsNullOrEmpty(mensajeExito))
+        {
+            <div class="alert alert-success mt-2">@mensajeExito</div>
+        }
+
+        <!-- Botones -->
+        <div class="d-flex justify-content-between mt-4">
+            <NavLink class="btn btn-dark" href="/especialidades/index">
+                <i class="bi bi-arrow-left"></i> Cancelar
+            </NavLink>
+
+            <button class="btn btn-success" @onclick="GuardarCambios">
+                <i class="bi bi-check-lg"></i> Guardar cambios
+            </button>
+        </div>
+    </div>
+}
 
 @code {
+    [Parameter] public int Id { get; set; }
 
+    private Especialidad? especialidad;
+    private bool cargando = true;
+    private string mensajeError = "";
+    private string mensajeExito = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            especialidad = await EspecialidadService.GetByIdAsync(Id);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al obtener especialidad: {ex.Message}");
+            especialidad = null;
+        }
+        cargando = false;
+    }
+
+    private async Task GuardarCambios()
+    {
+        mensajeError = "";
+        mensajeExito = "";
+
+        if (especialidad is null) return;
+
+        // ✅ Validar que el nombre no esté vacío
+        if (string.IsNullOrWhiteSpace(especialidad.Nombre))
+        {
+            mensajeError = "El nombre es obligatorio.";
+            return;
+        }
+
+        // ✅ Validar nombre duplicado (excepto la misma especialidad)
+        var activas = await EspecialidadService.GetActivosAsync();
+        var inactivas = await EspecialidadService.GetInactivosAsync();
+        var todas = activas.Concat(inactivas).ToList();
+
+        bool nombreExiste = todas.Any(e =>
+            e.EspecialidadId != Id &&
+            e.Nombre.Trim().Equals(especialidad.Nombre.Trim(), StringComparison.OrdinalIgnoreCase));
+
+        if (nombreExiste)
+        {
+            mensajeError = "Ya existe otra especialidad con este nombre.";
+            return;
+        }
+
+        // ✅ Guardar cambios
+        var resultado = await EspecialidadService.EditarAsync(Id, especialidad);
+        if (resultado is not null)
+        {
+            mensajeExito = "Cambios guardados correctamente.";
+            await Task.Delay(1500);
+            NavigationManager.NavigateTo("/especialidades/index");
+        }
+        else
+        {
+            mensajeError = "❌ Ocurrió un error al guardar los cambios.";
+        }
+    }
 }

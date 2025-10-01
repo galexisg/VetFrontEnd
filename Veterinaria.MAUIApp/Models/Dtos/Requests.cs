@@ -22,12 +22,16 @@ public class ServicioEstadoRequest
     [JsonPropertyName("estado")]
     public EstadoServicio Estado { get; set; }
 }
+<<<<<<< HEAD
 public class ServicioRes
 
 {
     public long Id { get; set; }
     public string Nombre { get; set; } = string.Empty;
 }
+=======
+
+>>>>>>> cce7d4c545429baff3534df3b6bc33f01fcbd981
 public class MotivoRequest
 {
     [JsonPropertyName("id")]

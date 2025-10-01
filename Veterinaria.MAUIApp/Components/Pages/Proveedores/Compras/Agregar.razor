@@ -1,7 +1,33 @@
 ﻿@page "/proveedores/compras/agregar"
+@inject NavigationManager Nav
+@inject VetApp.Services.CompraService CompraService
 
-<h3>Agregar</h3>
+<div class="contenedor">
+    <header class="mb-4">
+        <p class="titulo">Nueva Compra</p>
+        <p class="descripcion">Registra una nueva compra</p>
+    </header>
+
+    <div class="input-container" style="display:flex;flex-direction:column;gap:12px;">
+        <input class="input" placeholder="ID del proveedor" @bind="NuevaCompra.ProveedorId" type="number" />
+        <input class="input" placeholder="ID del usuario" @bind="NuevaCompra.UsuarioId" type="number" />
+        <input class="input" placeholder="Descripción" @bind="NuevaCompra.Descripcion" />
+        <input class="input" placeholder="Total" @bind="NuevaCompra.Total" type="number" step="0.01" />
+        <input class="input" placeholder="Fecha" @bind="NuevaCompra.Fecha" type="date" />
+    </div>
+
+    <div style="display:flex;gap:12px;margin-top:12px;">
+        <button class="boton-verde" @onclick="GuardarCompra">Guardar</button>
+        <button class="boton-rojo" @onclick="@(() => Nav.NavigateTo("/proveedores/compras/index"))">Cancelar</button>
+    </div>
+</div>
 
 @code {
+    private VetApp.Models.CompraCrear NuevaCompra = new();
 
+    private async Task GuardarCompra()
+    {
+        await CompraService.CrearAsync(NuevaCompra);
+        Nav.NavigateTo("/proveedores/compras/index");
+    }
 }

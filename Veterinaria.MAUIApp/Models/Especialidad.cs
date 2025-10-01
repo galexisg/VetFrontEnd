@@ -23,7 +23,11 @@ namespace Veterinaria.MAUIApp.Models
         // public List<Veterinario>? Veterinarios { get; set; }
     }
 
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> cce7d4c545429baff3534df3b6bc33f01fcbd981
     public class EspecialidadSalidaRes
     {
         public int EspecialidadId { get; set; }

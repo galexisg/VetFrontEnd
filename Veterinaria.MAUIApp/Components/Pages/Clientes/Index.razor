@@ -1,7 +1,143 @@
-﻿@page "/index/agregar"
+﻿@page "/clientes/index"
+@inject Services.UsuarioService UsuarioService
+@inject NavigationManager navManager
 
-<h3>Index</h3>
+<div class="header-section mt-4 mb-4 d-flex gap-2 align-items-center">
+    <button type="button" class="back-chip" @onclick="IrInicio" title="Volver">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+    </button>
+    <h2 style="font-size:20;">Clientes</h2>
+</div>
+
+@if (usuarios != null && usuarios.Any())
+{
+                <div class="usuarios-grid d-grid gap-3">
+
+                    <!-- Card para crear nuevo cliente -->
+                    <div class="card-list d-flex gap-3 align-items-center" @onclick="NuevoUsuario">
+                        <div class="icon-chip">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6v12M6 12h12" /></svg>
+                        </div>
+
+                        <div class="d-grid gap-1">
+                            <p class="titulo">Nuevo cliente</p>
+                            <div class="descripcion">Agrega un nuevo cliente a la veterinaria</div>
+                        </div>
+                    </div>
+
+                    <h3 class="titulo mt-4">Gestiona tus clientes</h3>
+
+                    <!-- Input de búsqueda -->
+                    <input placeholder="Buscar un cliente..." class="input" type="text" @bind="filtroNombre" @bind:event="oninput" />
+
+                    <!-- Filtro por estado -->
+                    <div class="d-flex gap-2 mb-3" style="width: 100%;">
+                        <select class="input" @bind="filtroEstado">
+                            <option value="">Buscar activos o inactivos</option>
+                            <option value="ACTIVO">Clientes activos</option>
+                            <option value="INACTIVO">Clientes Inactivos</option>
+                        </select>
+                    </div>
+
+                    <!-- Lista filtrada -->
+        @if (UsuariosFiltrados.Any())
+        {
+            @foreach (var usuario in UsuariosFiltrados)
+            {
+                                                    <div class="card-list" @onclick="() => EditarUsuario(usuario.Id)">
+                                                        <div class="d-grid gap-2">
+                                                            <h5 class="titulo">@usuario.NombreCompleto</h5>
+                                                            <p class="descripcion">@usuario.Direccion</p>
+                                                        </div>
+                                                        <div class="d-flex gap-2 mt-2">
+                                                            <p class="etiqueta">@usuario.Telefono</p>
+                                                            <p class="etiqueta">@usuario.Correo</p>
+                                                        </div>
+                                                        <div class="d-flex justify-content-end">
+                                                            <button class="boton-card" @onclick:stopPropagation="true" @onclick="() => MostrarConfirmacion(u: usuario)">
+                            @(usuario.Estado == "ACTIVO" ? "Desactivar" : "Activar")
+                                                            </button>
+                                                        </div>
+                                                    </div>
+            }
+        }
+        else
+        {
+                                    <div class="descripcion mt-3">No se encontraron clientes con los filtros seleccionados.</div>
+        }
+                </div>
+}
+else
+{
+                <div class="loading-message">
+                    Cargando usuarios...
+                </div>
+}
+
+<!-- Modal de confirmación -->
+@if (mostrarModal)
+{
+                <div class="modal-backdrop">
+                    <div class="modal-content">
+                        <h5>@(usuarioSeleccionado.Estado == "ACTIVO" ? "Desactivar cliente" : "Reactivar cliente")</h5>
+                        <p>
+                            ¿Estás seguro de @(usuarioSeleccionado.Estado == "ACTIVO" ? "desactivar" : "reactivar") al cliente 
+                            <strong>@usuarioSeleccionado.NombreCompleto</strong>?
+                        </p>
+                        <div class="d-flex gap-2 justify-content-center mt-3">
+                            <button class="boton-verde" @onclick="ConfirmarCambioEstado">
+                                Sí, @(usuarioSeleccionado.Estado == "ACTIVO" ? "desactivarlo" : "reactivarlo")
+                            </button>
+                            <button class="boton-card" @onclick="CerrarModal">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+}
+
 
 @code {
+    private List<Models.Usuario> usuarios = new List<Models.Usuario>();
+    private string filtroNombre = string.Empty;
+    private string filtroEstado = string.Empty;
 
+    private bool mostrarModal = false;
+    private Models.Usuario usuarioSeleccionado;
+
+    private IEnumerable<Models.Usuario> UsuariosFiltrados =>
+        usuarios
+            .Where(u => string.IsNullOrWhiteSpace(filtroNombre) || u.NombreCompleto.Contains(filtroNombre, StringComparison.OrdinalIgnoreCase))
+            .Where(u => string.IsNullOrWhiteSpace(filtroEstado) || u.Estado == filtroEstado);
+
+    protected override async Task OnInitializedAsync()
+    {
+        usuarios = await UsuarioService.GetAllAsync();
+    }
+
+    private void NuevoUsuario() => navManager.NavigateTo("/clientes/agregar");
+    private void EditarUsuario(int id) => navManager.NavigateTo($"/clientes/editar/{id}");
+
+    private void MostrarConfirmacion(Models.Usuario u)
+    {
+        usuarioSeleccionado = u;
+        mostrarModal = true;
+    }
+
+    private void CerrarModal()
+    {
+        mostrarModal = false;
+        usuarioSeleccionado = null;
+    }
+
+    private async Task ConfirmarCambioEstado()
+    {
+        if (usuarioSeleccionado.Estado == "ACTIVO")
+            await UsuarioService.DesactivarAsync(usuarioSeleccionado.Id);
+        else
+            await UsuarioService.ActivarAsync(usuarioSeleccionado.Id);
+
+        usuarios = await UsuarioService.GetAllAsync();
+        CerrarModal();
+    }
+
+    private void IrInicio() => navManager.NavigateTo("/login/menu");
 }

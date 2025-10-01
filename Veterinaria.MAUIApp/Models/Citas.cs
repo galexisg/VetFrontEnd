@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Veterinaria.MAUIApp.Models
+﻿namespace Veterinaria.MAUIApp.Models
 {
-    internal class Citas
+    public class Citas
     {
+        public long CitaId { get; set; }
+        public int MascotaId { get; set; }
+        public int UsuarioId { get; set; }
+        public int MotivoId { get; set; }
+        public int EstadoId { get; set; }
+        public DateTime FechaHora { get; set; }
     }
 }

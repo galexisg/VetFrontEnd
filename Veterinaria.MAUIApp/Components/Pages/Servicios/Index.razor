@@ -1,7 +1,383 @@
 ﻿@page "/servicios/index"
+@inject Veterinaria.MAUIApp.Services.ServicioService ServicioService
+@inject NavigationManager navManager
 
-<h3>Index</h3>
+<!-- Header minimal -->
+<div class="page-header">
+    <button type="button" class="back-chip" @onclick="IrInicio" title="Volver">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+    </button>
+
+    <div class="d-grid gap-1">
+        <div class="page-title">Servicio</div>
+        <div class="page-subtitle">Gestiona el registro y control</div>
+    </div>
+</div>
+
+<!-- ESTADO: error de carga inicial -->
+@if (!string.IsNullOrWhiteSpace(loadError))
+{
+        <!-- Tarjeta de error: usa el mismo patrón usado en otras vistas -->
+        <div class="card-list mt-3" style="border:1px solid #ffd5d5;background:#fff7f7;color:#b32121">
+            <div class="d-flex justify-content-between align-items-start" style="gap:12px;">
+                <div>
+                    <strong>@loadErrorTitle:</strong>
+                    <div class="mt-1">@loadError</div>
+                </div>
+                <button class="boton-card-sm" @onclick="ReintentarCarga">Reintentar</button>
+            </div>
+        </div>
+}
+else if (isLoading)
+{
+        <!-- ESTADO: cargando -->
+        <div class="loading-message">Cargando servicios...</div>
+}
+else if (servicios == null || servicios.Count == 0)
+{
+        <!-- ESTADO: sin datos (empty state) con CTA -->
+        <div class="card-list mt-3">
+            <p class="titulo mb-1">Aún no hay servicios</p>
+            <p class="descripcion mb-2">Crea tu primer servicio para comenzar.</p>
+            <button class="boton-verde" @onclick="NuevoServicio">Nuevo servicio</button>
+        </div>
+}
+else
+{
+        <div class="d-grid gap-3">
+
+            <!-- Acceso rápido a “Motivos” en la misma estética que Servicios -->
+            <div class="card-list d-flex gap-3 align-items-center card-tappable" @onclick="IrMotivos">
+                <div class="icon-chip">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M20.6 13.4L11 3H6a2 2 0 0 0-2 2v5l10.6 10.6a2 2 0 0 0 2.8 0l3.8-3.8a2 2 0 0 0 0-2.8z" />
+                        <circle cx="8" cy="7.5" r="1.6" />
+                        <path d="M13.2 11.2L10 8" />
+                    </svg>
+                </div>
+                <div class="d-grid gap-1">
+                    <p class="titulo mb-0">Motivos</p>
+                    <div class="descripcion">Gestionar los motivos agregados</div>
+                </div>
+                <svg class="ms-auto chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+            </div>
+
+            <!-- CTA: crear nuevo servicio, mismo patrón de tarjeta -->
+            <div class="card-list d-flex gap-3 align-items-center card-tappable" @onclick="NuevoServicio">
+                <div class="icon-chip">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6v12M6 12h12" /></svg>
+                </div>
+                <div class="d-grid gap-1">
+                    <p class="titulo mb-0">Nuevo servicio</p>
+                    <div class="descripcion">Agrega un nuevo servicio a la veterinaria</div>
+                </div>
+            </div>
+
+            <!-- Toolbar de filtros/orden (buscador + estado + orden) -->
+            <div class="filter-toolbar card-list">
+                <!-- Buscador: actualiza en tiempo real usando oninput -->
+                <div class="input-wrap">
+                    <svg class="input-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="11" cy="11" r="7"></circle>
+                        <path d="M20 20l-3.2-3.2"></path>
+                    </svg>
+                    <input class="input input-ghost" placeholder="Buscar servicios..."
+                           @bind="filtroNombre" @bind:event="oninput" />
+                </div>
+
+                <!-- Filtro por estado: segmented control compacto -->
+                <div class="segmented" style="flex-wrap:wrap">
+                    <button class="seg-btn @(string.IsNullOrEmpty(filtroEstado) ? "is-active" : "")" @onclick="SetEstadoTodos">Todos</button>
+                    <button class="seg-btn @(filtroEstado == "ACTIVO" ? "is-active" : "")" @onclick="SetEstadoActivos">Activos</button>
+                    <button class="seg-btn @(filtroEstado == "INACTIVO" ? "is-active" : "")" @onclick="SetEstadoInactivos">Inactivos</button>
+                </div>
+
+                <!-- Orden: por “recientes” (Id o FechaCreacion) y alfabético -->
+                <div class="d-flex gap-2" style="flex-wrap:wrap">
+                    <div class="segmented">
+                        <button class="seg-btn @(sortKey == "recent" ? "is-active" : "")" @onclick="SetSortRecent">
+                            Recientes
+                        </button>
+                        <button class="seg-btn @(sortKey == "alpha" ? "is-active" : "")" @onclick="SetSortAlpha">
+                            A-Z
+                        </button>
+                    </div>
+
+                    <!-- Dirección del orden: invierte asc/desc -->
+                    <button class="seg-btn" title="Invertir orden" @onclick="ToggleSortDir">
+                    @if (sortKey == "alpha")
+                    {
+                        @:(@(sortDesc ? "Z-A" : "A-Z"))
+                    }
+                    else
+                    {
+                                <svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:middle">
+                            @if (sortDesc)
+                            {
+                                            <path d="M12 5l4 4H8l4-4zm0 14l-4-4h8l-4 4z" />
+                            }
+                            else
+                            {
+                                            <path d="M12 19l-4-4h8l-4 4zm0-14l4 4H8l4-4z" />
+                            }
+                                </svg>
+                    }
+                    </button>
+                </div>
+            </div>
+
+            <!-- Error de acción (activar/desactivar): muestra feedback no bloqueante -->
+        @if (!string.IsNullOrWhiteSpace(actionError))
+        {
+                    <div class="card-list" style="border:1px solid #ffd5d5;background:#fff7f7;color:#b32121">
+                        <strong>@actionErrorTitle:</strong> @actionError
+                    </div>
+        }
+
+            <!-- Lista de servicios renderizada con filtros y orden ya aplicados -->
+        @if (ServiciosFiltradosOrdenados.Any())
+        {
+            @foreach (var s in ServiciosFiltradosOrdenados)
+            {
+                            <!-- Tarjeta de servicio “tappable”: hace navigate al editar al click -->
+                            <div class="card-list service-card card-tappable" @onclick="() => EditarServicio(s.Id)">
+                                <!-- Chip de estado: usa tus tokens de color -->
+                                <div class="mb-2">
+                                    <span class="chip @(s.Estado == Models.EstadoServicio.ACTIVO ? "chip-success" : "chip-muted")">
+                            @(s.Estado == Models.EstadoServicio.ACTIVO ? "Activo" : "Inactivo")
+                                    </span>
+                                </div>
+
+                                <!-- Título + descripción (opcional) -->
+                                <div class="d-grid gap-1">
+                                    <p class="titulo mb-0">@s.Nombre</p>
+                        @if (!string.IsNullOrWhiteSpace(s.Descripcion))
+                        {
+                                            <p class="descripcion mb-0">@s.Descripcion</p>
+                        }
+                                </div>
+
+                                <!-- Precio + toggle de estado. stopPropagation evita navegar al editar -->
+                                <div class="d-flex align-items-center justify-content-between mt-2">
+                                    <span class="etiqueta">@s.PrecioBase?.ToString("C")</span>
+                                    <button class="boton-card-sm" @onclick:stopPropagation="true" @onclick="() => OnToggleClick(s)">
+                            @(s.Estado == Models.EstadoServicio.ACTIVO ? "Desactivar" : "Activar")
+                                    </button>
+                                </div>
+                            </div>
+            }
+        }
+        else
+        {
+                    <div class="descripcion mt-2">No se encontraron servicios con los filtros seleccionados.</div>
+        }
+        </div>
+}
+
+<!-- Modal de confirmación (top) -->
+@if (showConfirm && pendingServicio is not null)
+{
+        <!-- Backdrop cierra modal al click: UX consistente con vistas previas -->
+        <div class="modal-backdrop" @onclick="CloseConfirm">
+            <div class="modal-card" @onclick:stopPropagation="true">
+                <div class="modal-header">
+                    <!-- Icono rojo suave para acciones destructivas -->
+                    <div class="modal-icon" style="background:#FFECEC;">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" style="stroke:#D64545;">
+                            <path d="M12 8v5M12 17h.01" />
+                            <circle cx="12" cy="12" r="9" />
+                        </svg>
+                    </div>
+                    <h3 class="modal-title">Desactivar servicio</h3>
+                    <p class="modal-subtitle">
+                        ¿Seguro que deseas desactivar <strong>@pendingServicio?.Nombre</strong>?<br />
+                        Podrás activarlo nuevamente cuando quieras.
+                    </p>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-ghost" @onclick="CloseConfirm" disabled="@(isBusy)">Cancelar</button>
+                    <button class="btn-primary-soft" style="background:#D64545" @onclick="ConfirmarDesactivacionAsync" disabled="@(isBusy)">
+                    @(isBusy ? "Desactivando…" : "Sí, desactivar")
+                    </button>
+                </div>
+            </div>
+        </div>
+}
 
 @code {
+    private List<Veterinaria.MAUIApp.Models.Servicio> servicios = new();
 
+    // Filtros/orden en memoria: no golpea la API al escribir
+    private string filtroNombre = string.Empty;
+    private string filtroEstado = string.Empty;
+    private string sortKey = "recent"; // "recent" | "alpha"
+    private bool sortDesc = true;
+
+    // Estado de carga inicial con manejo de errores
+    private bool isLoading = true;
+    private string? loadError;
+    private string loadErrorTitle = "Error al cargar los servicios";
+
+    // Errores de acción (activar/desactivar)
+    private string? actionError;
+    private string actionErrorTitle = "No se pudo completar la acción";
+
+    // Modal confirmar toggle
+    private bool showConfirm = false;
+    private bool isBusy = false;
+    private Veterinaria.MAUIApp.Models.Servicio? pendingServicio;
+
+    // Vista proyectada: primero filtra, luego ordena (separación de responsabilidades)
+    private IEnumerable<Veterinaria.MAUIApp.Models.Servicio> ServiciosFiltradosOrdenados
+        => Ordenar(Filtrar(servicios));
+
+    private IEnumerable<Veterinaria.MAUIApp.Models.Servicio> Filtrar(IEnumerable<Veterinaria.MAUIApp.Models.Servicio> src)
+        => src
+            .Where(s => string.IsNullOrWhiteSpace(filtroNombre)
+                        || (s.Nombre ?? string.Empty).Contains(filtroNombre, StringComparison.OrdinalIgnoreCase)
+                        || (s.Descripcion ?? string.Empty).Contains(filtroNombre, StringComparison.OrdinalIgnoreCase))
+            .Where(s => string.IsNullOrWhiteSpace(filtroEstado)
+                        || s.Estado.ToString() == filtroEstado);
+
+    private IEnumerable<Veterinaria.MAUIApp.Models.Servicio> Ordenar(IEnumerable<Veterinaria.MAUIApp.Models.Servicio> src)
+    {
+        // TIP: si tienes FechaCreacion, cambia s.Id por FechaCreacion para un “recientes” real.
+        if (sortKey == "alpha")
+        {
+            return sortDesc
+                ? src.OrderByDescending(s => s.Nombre ?? string.Empty)
+                : src.OrderBy(s => s.Nombre ?? string.Empty);
+        }
+        else // "recent"
+        {
+            return sortDesc ? src.OrderByDescending(s => s.Id)
+                            : src.OrderBy(s => s.Id);
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarServiciosAsync();
+    }
+
+    private async Task CargarServiciosAsync()
+    {
+        // Reinicia estados de error antes de cargar
+        isLoading = true;
+        loadError = null;
+        actionError = null;
+
+        try
+        {
+            var lista = await ServicioService.ListarAsync();
+            servicios = lista ?? new List<Veterinaria.MAUIApp.Models.Servicio>();
+        }
+        catch (HttpRequestException ex)
+        {
+            // Error típico de red/servidor
+            loadError = $"No se pudo contactar al servidor. {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            // Fallback genérico
+            loadError = ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged(); // asegura re-render
+        }
+    }
+
+    private Task ReintentarCarga() => CargarServiciosAsync();
+
+    private void IrInicio() => navManager.NavigateTo("/login/menu");
+    private void NuevoServicio() => navManager.NavigateTo("/servicios/agregar");
+    private void EditarServicio(long id) => navManager.NavigateTo($"/servicios/editar/{id}");
+    private void IrMotivos() => navManager.NavigateTo("/motivos/index");
+
+    // Handlers de filtro
+    private void SetEstadoTodos() => filtroEstado = string.Empty;
+    private void SetEstadoActivos() => filtroEstado = "ACTIVO";
+    private void SetEstadoInactivos() => filtroEstado = "INACTIVO";
+
+    // Handlers de orden
+    private void SetSortRecent() => sortKey = "recent";
+    private void SetSortAlpha() => sortKey = "alpha";
+    private void ToggleSortDir() => sortDesc = !sortDesc;
+
+    // Toggle con UI optimista + modal de confirmación para desactivar
+    private void OnToggleClick(Veterinaria.MAUIApp.Models.Servicio s)
+    {
+        actionError = null;
+        if (s.Estado == Models.EstadoServicio.ACTIVO) { pendingServicio = s; showConfirm = true; }
+        else { _ = ActivarServicioAsync(s); } // activar no pide confirmación
+    }
+
+    private async Task ActivarServicioAsync(Veterinaria.MAUIApp.Models.Servicio s)
+    {
+        actionError = null;
+        var anterior = s.Estado;
+
+        // UI optimista: refleja cambio inmediato y revierte si falla
+        s.Estado = Models.EstadoServicio.ACTIVO;
+        try
+        {
+            await ServicioService.CambiarEstadoAsync(s.Id, Models.EstadoServicio.ACTIVO);
+            var lista = await ServicioService.ListarAsync();
+            servicios = lista ?? new List<Veterinaria.MAUIApp.Models.Servicio>();
+        }
+        catch (HttpRequestException ex)
+        {
+            s.Estado = anterior;
+            actionErrorTitle = "Problema de conexión";
+            actionError = $"No se pudo activar el servicio. {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            s.Estado = anterior;
+            actionErrorTitle = "Error al activar";
+            actionError = ex.Message;
+        }
+    }
+
+    private async Task ConfirmarDesactivacionAsync()
+    {
+        if (pendingServicio is null) return;
+        actionError = null;
+
+        isBusy = true;
+        var anterior = pendingServicio.Estado;
+
+        // UI optimista en desactivación (con confirmación previa)
+        pendingServicio.Estado = Models.EstadoServicio.INACTIVO;
+
+        try
+        {
+            await ServicioService.CambiarEstadoAsync(pendingServicio.Id, Models.EstadoServicio.INACTIVO);
+            var lista = await ServicioService.ListarAsync();
+            servicios = lista ?? new List<Veterinaria.MAUIApp.Models.Servicio>();
+            CloseConfirm();
+        }
+        catch (HttpRequestException ex)
+        {
+            pendingServicio.Estado = anterior;
+            actionErrorTitle = "Problema de conexión";
+            actionError = $"No se pudo desactivar el servicio. {ex.Message}";
+            CloseConfirm();
+        }
+        catch (Exception ex)
+        {
+            pendingServicio.Estado = anterior;
+            actionErrorTitle = "Error al desactivar";
+            actionError = ex.Message;
+            CloseConfirm();
+        }
+        finally
+        {
+            isBusy = false;
+        }
+    }
+
+    private void CloseConfirm() { showConfirm = false; pendingServicio = null; }
 }

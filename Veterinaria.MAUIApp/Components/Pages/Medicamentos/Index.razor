@@ -1,7 +1,179 @@
-﻿@page "/medicamentos/index"
+﻿@page "/medicamentos"
 
-<h3>Index</h3>
+@inject MedicamentoService medicamentoService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+@using Veterinaria.MAUIApplication.Models
+@using Veterinaria.MAUIApplication.Services
+
+<h3>Medicamentos</h3>
+
+<!-- Botón superior solo para volver al home -->
+<div class="mb-3 d-flex justify-content-end">
+    <button class="btn btn-gris" @onclick="VolverMenu">Volver al Menu</button>
+</div>
+
+<!-- 🔍 Búsqueda por ID -->
+<div class="mb-3 d-flex">
+    <input type="number" class="form-control me-2" placeholder="Buscar por ID"
+           @bind="idBuscar" @bind:event="oninput" />
+    <button class="btn btn-verde" @onclick="BuscarPorId">Buscar</button>
+    <button class="btn btn-gris ms-2" @onclick="LimpiarBusqueda">Limpiar</button>
+</div>
+
+<!-- ⚠️ Mensaje si no se encontró el ID -->
+@if (!string.IsNullOrEmpty(mensajeBusqueda))
+{
+    <div class="alert alert-warning">@mensajeBusqueda</div>
+}
+
+@if (medicamentos == null)
+{
+    <p>Cargando medicamentos...</p>
+}
+else if (medicamentos.Count == 0 && string.IsNullOrEmpty(mensajeBusqueda))
+{
+    <p>No hay medicamentos registrados.</p>
+}
+else
+{
+    @foreach (var m in medicamentos)
+    {
+        <div class="card mb-3 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title d-flex justify-content-between align-items-center">
+                    @m.Nombre
+                    <span class="badge bg-light text-dark">@m.Formafarmacautica</span>
+                </h5>
+                <p class="card-text mb-1"><strong>Concentración:</strong> @m.Concentracion</p>
+                <p class="card-text mb-1"><strong>Unidad:</strong> @m.Unidad</p>
+                <p class="card-text mb-1"><strong>Vía:</strong> @m.Via</p>
+                <p class="card-text mb-1"><strong>Requiere Receta:</strong> @(m.RequiereReceta ? "Sí" : "No")</p>
+                <p class="card-text mb-1"><strong>Activo:</strong> @(m.Activo ? "Sí" : "No")</p>
+                <p class="card-text mb-1"><strong>Temperatura:</strong> @m.Temperaturaalm</p>
+                <p class="card-text"><strong>Vida útil:</strong> @m.Vidautilmeses meses</p>
+
+                <div class="d-flex justify-content-between mt-3">
+                    <a class="btn btn-sm btn-verde" href="/medicamentos/editar/@m.Id">Editar</a>
+                    <button class="btn btn-sm btn-gris" @onclick="() => ConfirmarEliminar(m.Id, m.Nombre)">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+<!-- Botón flotante para agregar medicamento -->
+<a class="btn btn-verde rounded-circle position-fixed"
+   style="bottom: 20px; right: 20px; width: 56px; height: 56px; font-size: 24px; padding: 0;"
+   href="/medicamentos/agregar">
+    +
+</a>
+
+<style>
+    .btn-verde {
+        background-color: #00C853;
+        color: white;
+        border: none;
+    }
+
+        .btn-verde:hover {
+            background-color: #00B44C;
+        }
+
+    .btn-gris {
+        background-color: #444444;
+        color: white;
+        border: none;
+    }
+
+        .btn-gris:hover {
+            background-color: #555555;
+            color: white;
+        }
+
+    .card-title .badge {
+        font-size: 0.8rem;
+        padding: 0.4em 0.6em;
+        border-radius: 0.5rem;
+    }
+</style>
 
 @code {
+    private List<Medicamento> medicamentos;
+    private int idBuscar;
+    private bool mostrandoResultadoUnico = false;
+    private string mensajeBusqueda = string.Empty;
 
+    protected override async Task OnInitializedAsync()
+    {
+        medicamentos = await medicamentoService.GetAll();
+    }
+
+    private async Task BuscarPorId()
+    {
+        mensajeBusqueda = string.Empty;
+
+        if (idBuscar <= 0)
+        {
+            mensajeBusqueda = "⚠️ Ingresa un ID válido.";
+            return;
+        }
+
+        try
+        {
+            var medicamento = await medicamentoService.GetById(idBuscar);
+            if (medicamento != null)
+            {
+                medicamentos = new List<Medicamento> { medicamento };
+                mostrandoResultadoUnico = true;
+            }
+            else
+            {
+                medicamentos = new List<Medicamento>();
+                mensajeBusqueda = $"⚠️ No se encontró medicamento con ID {idBuscar}.";
+            }
+        }
+        catch (Exception ex)
+        {
+            medicamentos = new List<Medicamento>();
+            mensajeBusqueda = "⚠️ No se encontró medicamento ";
+        }
+    }
+
+    private async Task LimpiarBusqueda()
+    {
+        idBuscar = 0;
+        mostrandoResultadoUnico = false;
+        mensajeBusqueda = string.Empty;
+        medicamentos = await medicamentoService.GetAll();
+    }
+
+    private void VolverMenu()
+    {
+        NavigationManager.NavigateTo("/login/menu");
+    }
+
+    private async Task ConfirmarEliminar(int id, string nombre)
+    {
+        bool confirmado = await JS.InvokeAsync<bool>("confirm", $"¿Estás seguro de eliminar el medicamento '{nombre}'?");
+        if (confirmado)
+        {
+            await Eliminar(id);
+        }
+    }
+
+    private async Task Eliminar(int id)
+    {
+        if (await medicamentoService.Delete(id))
+        {
+            if (mostrandoResultadoUnico)
+            {
+                await LimpiarBusqueda();
+            }
+            else
+            {
+                medicamentos = await medicamentoService.GetAll();
+            }
+        }
+    }
 }

@@ -1,0 +1,136 @@
+﻿@page "/login/menu"
+@inject NavigationManager navManager
+
+<div class="cont">
+    <div class="dropdown">
+        <div class="titulo mb-1">Menu de navegacion</div>
+        <div class="descripcion mb-2">
+            Despliega cada seccion y encuentra el apartado que buscas
+        </div>
+
+        <!-- PACIENTES -->
+        <input type="checkbox" id="pacientes-toggle">
+        <label class="boton-verde" style="width:100%; background-color:#ffffff; color:Black;" for="pacientes-toggle">
+            Pacientes
+        </label>
+        <div class="dropdown-content">
+            <a @onclick="@(() => navManager.NavigateTo("/mascotas"))">Mascotas</a>
+            <a @onclick="@(() => navManager.NavigateTo("/clientes/index"))">Clientes</a>
+            <a @onclick="@(() => navManager.NavigateTo("/Citas/Index"))">Citas</a>
+            <a @onclick="@(() => navManager.NavigateTo("/servicios/index"))">Servicio</a>
+            <a @onclick="@(() => navManager.NavigateTo("/tratamientos/index"))">Tratamientos</a>
+        </div>
+
+        <!-- CLÍNICA -->
+        <input type="checkbox" id="clinica-toggle">
+        <label class="boton-verde" style="width:100%; background-color:#ffffff; color:Black;" for="clinica-toggle">
+            Clínica
+        </label>
+        <div class="dropdown-content">
+            <a @onclick="@(() => navManager.NavigateTo("/medicamentos"))">Medicamentos</a>
+            <a @onclick="@(() => navManager.NavigateTo("/lotes"))">Lotes</a>
+            <a @onclick="@(() => navManager.NavigateTo("/vacunas/index"))">Vacunas</a>
+            <a @onclick="@(() => navManager.NavigateTo("/existencias"))">Existencias</a>
+            <a @onclick="@(() => navManager.NavigateTo("/proveedores"))">Proveedores</a>
+        </div>
+
+        <!-- ADMINISTRACIÓN -->
+        <input type="checkbox" id="admin-toggle">
+        <label class="boton-verde" style="width:100%; background-color:#ffffff; color:Black;" for="admin-toggle">
+            Administración
+        </label>
+        <div class="dropdown-content">
+            <a @onclick="@(() => navManager.NavigateTo("/veterinarios/index"))">Veterinarios</a>
+
+            <a @onclick="@(() => navManager.NavigateTo("/citas/motivocita/indexmotivocita"))">Motivo Citas</a>
+            <a @onclick="@(() => navManager.NavigateTo("/especialidades"))">Especialidades</a>
+            <a @onclick="@(() => navManager.NavigateTo("/especialidades/index"))">Especialidades</a>
+            <a @onclick="@(() => navManager.NavigateTo("/facturas/index"))">Facturas</a>
+            <a @onclick="@(() => navManager.NavigateTo("/bloques-horario/index"))">Bloque Horarios</a>
+            <a @onclick="@(() => navManager.NavigateTo("/agenda"))">Horarios</a>
+            <a @onclick="@(() => navManager.NavigateTo("/test-dia/index"))">Historial dias</a>
+
+        </div>
+
+        <!-- INVENTARIO -->
+        <input type="checkbox" id="inventario-toggle">
+        <label class="boton-verde" style="width:100%; background-color:#ffffff; color:Black;" for="inventario-toggle">
+            Inventario
+        </label>
+        <div class="dropdown-content">
+            <a @onclick="@(() => navManager.NavigateTo("/productos"))">Productos</a>
+            <a @onclick="@(() => navManager.NavigateTo("/stock"))">Stock</a>
+            <a @onclick="@(() => navManager.NavigateTo("/categorias"))">Categorías</a>
+            <a @onclick="@(() => navManager.NavigateTo("/citas/2"))">Citas</a>
+            <a @onclick="@(() => navManager.NavigateTo("/razas/indexmascotas"))">Razas</a>
+        </div>
+
+        <button class="boton-card" @onclick="Logout">Cerrar sesión</button>
+    </div>
+</div>
+
+<style>
+    .cont {
+        width: 100%;
+        height: 100vh;
+        display: grid;
+        gap: 8px;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .dropdown {
+        display: grid;
+        gap: 8px;
+        justify-content: center;
+        margin: 20px;
+    }
+
+        .dropdown input {
+            display: none;
+        }
+
+    .dropdown-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease;
+        background-color: #ffffff;
+        border-radius: 5px;
+        margin-bottom: 5px;
+    }
+
+        .dropdown-content a {
+            display: block;
+            padding: 10px 15px;
+            text-decoration: none;
+            color: black;
+            transition: background 0.3s;
+            background: #ffffff;
+            border-radius: 8px;
+        }
+
+    /* Mostrar contenido al activar checkbox */
+    #pacientes-toggle:checked + label + .dropdown-content {
+        max-height: 500px;
+    }
+
+    #clinica-toggle:checked + label + .dropdown-content {
+        max-height: 500px;
+    }
+
+    #admin-toggle:checked + label + .dropdown-content {
+        max-height: 500px;
+    }
+
+    #inventario-toggle:checked + label + .dropdown-content {
+        max-height: 500px;
+    }
+</style>
+
+@code {
+    private void Logout()
+    {
+        App.Token = null;
+        navManager.NavigateTo("/login/login");
+    }
+}

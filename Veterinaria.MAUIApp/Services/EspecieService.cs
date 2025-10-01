@@ -6,7 +6,11 @@ namespace Veterinaria.MAUIApp.Services
     public class EspecieService
     {
         private readonly HttpClient _http;
+<<<<<<< HEAD
         private const string BaseUrl = "api/especies";
+=======
+        private const string BaseUrl = "especies";
+>>>>>>> cce7d4c545429baff3534df3b6bc33f01fcbd981
 
         public EspecieService(HttpClient http)
         {
@@ -42,4 +46,8 @@ namespace Veterinaria.MAUIApp.Services
             return response.IsSuccessStatusCode;
         }
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> cce7d4c545429baff3534df3b6bc33f01fcbd981
