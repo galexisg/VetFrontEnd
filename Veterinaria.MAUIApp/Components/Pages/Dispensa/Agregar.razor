@@ -1,7 +1,97 @@
-﻿@page "/dispensa/agregar"
+﻿@page "/dispensas/agregar"
+@inject DispensaService DispensaService
+@inject UsuarioService UsuarioService
+@inject AlmacenService AlmacenService
+@inject NavigationManager Navigation
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Services
 
-<h3>Agregar</h3>
+<h3>Crear nueva dispensa</h3>
+
+<EditForm Model="modelo" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="mb-2">
+        <label>Prescripción:</label>
+        <InputNumber @bind-Value="modelo.PrescripcionDetalleId" class="form-control" />
+        <ValidationMessage For="@(() => modelo.PrescripcionDetalleId)" />
+
+    </div>
+
+    <div class="mb-2">
+        <label>Almacén:</label>
+        <InputSelect @bind-Value="modelo.AlmacenId" class="form-control">
+            <option value="">-- Seleccione un almacén --</option>
+            @foreach (var almacen in almacenes)
+            {
+                <option value="@almacen.Id">@almacen.Nombre</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => modelo.AlmacenId)" />
+    </div>
+
+    <div class="mb-2">
+        <label>Lote:</label>
+        <InputNumber @bind-Value="modelo.LoteId" class="form-control" />
+        <ValidationMessage For="@(() => modelo.LoteId)" />
+    </div>
+
+    <div class="mb-2">
+        <label>Cantidad:</label>
+        <InputNumber @bind-Value="modelo.Cantidad" class="form-control" />
+        <ValidationMessage For="@(() => modelo.Cantidad)" />
+    </div>
+
+    <div class="mb-2">
+        <label>Fecha:</label>
+        <InputDate @bind-Value="modelo.Fecha" class="form-control" />
+        <ValidationMessage For="@(() => modelo.Fecha)" />
+    </div>
+
+    <div class="mb-2">
+        <label>Usuario:</label>
+        <InputSelect @bind-Value="modelo.UsuarioId" class="form-control">
+            <option value="">-- Seleccione un usuario --</option>
+            @foreach (var usuario in usuarios)
+            {
+                <option value="@usuario.Id">@usuario.NombreCompleto</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => modelo.UsuarioId)" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Guardar</button>
+    <button type="button" class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+</EditForm>
 
 @code {
+    private DispensaGuardar modelo = new() { Fecha = DateTime.Today };
+    private List<Usuario> usuarios = new();
+    private List<AlmacenSalida> almacenes = new();
 
+    protected override async Task OnInitializedAsync()
+    {
+        usuarios = await UsuarioService.GetAllAsync();
+        almacenes = await AlmacenService.ObtenerTodosAsync();
+    }
+
+    private async Task Guardar()
+    {
+
+        modelo.Fecha = modelo.Fecha.Date.AddHours(12);
+        modelo.Fecha = DateTime.SpecifyKind(modelo.Fecha, DateTimeKind.Unspecified);
+
+
+        var resultado = await DispensaService.CrearAsync(modelo);
+        if (resultado is not null)
+        {
+            Navigation.NavigateTo("/dispensas/index");
+        }
+        else
+        {
+            Console.WriteLine("❌ Error al crear la dispensa");
+        }
+    }
+
+    private void Cancelar() => Navigation.NavigateTo("/dispensas/index");
 }

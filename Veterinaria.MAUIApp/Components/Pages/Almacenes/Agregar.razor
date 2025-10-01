@@ -1,7 +1,56 @@
 ﻿@page "/almacenes/agregar"
+@inject AlmacenService AlmacenService
+@inject NavigationManager Navigation
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Services
 
-<h3>Agregar</h3>
+<h3 class="text-center text-primary fw-bold mb-4">🏬 Agregar nuevo almacén</h3>
+
+<EditForm Model="modelo" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="mb-3">
+        <label class="form-label">Nombre:</label>
+        <InputText @bind-Value="modelo.Nombre" class="form-control" />
+        <ValidationMessage For="@(() => modelo.Nombre)" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Ubicación:</label>
+        <InputText @bind-Value="modelo.Ubicacion" class="form-control" />
+        <ValidationMessage For="@(() => modelo.Ubicacion)" />
+    </div>
+
+    <div class="mb-3 form-check">
+        <InputCheckbox @bind-Value="modelo.Activo" class="form-check-input" />
+        <label class="form-check-label">Activo</label>
+    </div>
+
+    <div class="d-flex justify-content-between mt-4">
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-check-circle me-1"></i> Guardar
+        </button>
+        <button type="button" class="btn btn-secondary" @onclick="Cancelar">
+            <i class="bi bi-x-circle me-1"></i> Cancelar
+        </button>
+    </div>
+</EditForm>
 
 @code {
+    private AlmacenGuardar modelo = new();
 
+    private async Task Guardar()
+    {
+        var resultado = await AlmacenService.CrearAsync(modelo);
+        if (resultado is not null)
+        {
+            Navigation.NavigateTo("/almacenes/index");
+        }
+        else
+        {
+            Console.WriteLine("❌ Error al crear almacén");
+        }
+    }
+
+    private void Cancelar() => Navigation.NavigateTo("/almacenes/index");
 }

@@ -71,5 +71,11 @@ namespace Veterinaria.MAUIApp.Services
         {
             return await _http.GetFromJsonAsync<List<Usuario>>("usuarios/inactivos") ?? new List<Usuario>();
         }
+
+        //public async Task<List<Usuario>> GetClientesAsync()
+        //{
+        //    return await _http.GetFromJsonAsync<List<Usuario>>("api/usuarios/listarclientes")
+        //           ?? new List<Usuario>();
+        //}
     }
 }

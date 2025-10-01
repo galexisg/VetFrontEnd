@@ -1,7 +1,128 @@
-﻿@page "/medicamentos/lotes/index"
+﻿@page "/lotes-medicamento/index"
+@inject LoteMedicamentoService loteService
+@inject NavigationManager nav
 
-<h3>Index</h3>
+@inject IJSRuntime JS
+
+
+@using Veterinaria.MAUIApp.Models.Dtos
+@using Veterinaria.MAUIApp.Services
+
+<h3 class="text-center mt-3">
+    Lote Medicamentos - Gestionar el registro y control
+</h3>
+
+<link rel="stylesheet" href="css/lotes.css" />
+
+@* Mensaje de éxito/error *@
+@if (!string.IsNullOrEmpty(mensaje))
+{
+    <div class="alert alert-info text-center">@mensaje</div>
+}
+
+<div class="d-flex justify-content-end mb-3 px-3">
+    <button class="btn btn-success" @onclick="IrANuevoLote"> 
+        <i class="bi bi-plus-circle me-1"></i> Nuevo lote
+    </button>
+</div>
+<button class="btn btn-outline-secondary ms-2" @onclick="Volver">
+    <i class="bi bi-arrow-left-circle me-1"></i> Volver al inicio
+</button>
+
+<div class="container">
+    @if (lotes.Count == 0)
+    {
+        <div class="alert alert-warning text-center">
+            No se encontraron lotes registrados.
+        </div>
+    }
+    else
+    {
+        @foreach (var lote in lotes)
+        {
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+                    <p><strong>Código:</strong> @lote.CodigoLote</p>
+                    <p>
+                        <strong>Fecha de vencimiento:</strong>
+                        @lote.FechaVencimiento.ToShortDateString()
+                    </p>
+                    <p><strong>Medicamento:</strong> @lote.MedicamentoNombre</p>
+                    <p><strong>Proveedor:</strong> @lote.ProveedorNombre</p>
+                    <p><strong>Observaciones:</strong> @lote.Observaciones</p>
+
+                    <div class="d-flex gap-2 mt-2">
+                        <button class="btn btn-sm btn-outline-primary"
+                                @onclick="@(() => EditarLote(lote.Id))">
+                            <i class="bi bi-pencil-square"></i> Editar
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger"
+                                @onclick="@(() => ConfirmarEliminar(lote.Id))">
+                            <i class="bi bi-trash"></i> Eliminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
 
 @code {
+    // 1. Campos
+    private List<LoteMedicamentoSalida> lotes = new();
+    private string? mensaje;
 
+    // 2. Carga inicial y log de JS
+    protected override async Task OnInitializedAsync()
+    {
+        // Verifica que tu script window.mostrarConfirmacion esté cargado
+        await JS.InvokeVoidAsync("console.log", "función mostrarConfirmacion cargada");
+        lotes = await loteService.GetAllAsync();
+    }
+
+    // 3. Navegación
+    private void IrANuevoLote() =>
+      nav.NavigateTo("/lotes-medicamento/agregar");
+
+    private void EditarLote(int id) =>
+      nav.NavigateTo($"/lotes-medicamento/editar/{id}");
+
+    // 4. Confirmación y delete
+    private async Task ConfirmarEliminar(int id)
+    {
+        Console.WriteLine($"[Debug] Invocando confirm para ID {id}");
+        var confirmar = await JS.InvokeAsync<bool>(
+          "mostrarConfirmacion",
+          "¿Estás seguro de que deseas eliminar este lote?"
+        );
+        Console.WriteLine($"[Debug] confirm devolvió: {confirmar}");
+        if (confirmar)
+        {
+            Console.WriteLine($"[Debug] Llamando a EliminarLote({id})");
+            await EliminarLote(id);
+        }
+    }
+
+    private async Task EliminarLote(int id)
+    {
+        Console.WriteLine($"[Debug] En EliminarLote con ID {id}");
+        var ok = await loteService.DeleteAsync(id);
+        Console.WriteLine($"[Debug] DeleteAsync result: {ok}");
+
+        if (ok)
+        {
+            mensaje = "✅ Lote eliminado correctamente.";
+            lotes = await loteService.GetAllAsync();
+            StateHasChanged();
+        }
+        else
+        {
+            mensaje = "❌ No se pudo eliminar el lote.";
+        }
+    }
+
+    private void Volver() => nav.NavigateTo("/login/menu");
 }
+
+
+

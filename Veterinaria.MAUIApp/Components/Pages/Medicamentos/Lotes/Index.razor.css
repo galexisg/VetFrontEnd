@@ -1,0 +1,212 @@
+﻿/* Fondo general */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Títulos */
+h3 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+/* Tarjetas */
+.card,
+.almacen-card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease-in-out;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+    .card:hover,
+    .almacen-card:hover {
+        transform: scale(1.01);
+    }
+
+    .card-body p,
+    .almacen-card p {
+        margin: 4px 0;
+        font-size: 14px;
+        color: #333;
+    }
+
+/* Botones generales */
+.btn {
+    font-weight: 500;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+/* Botón verde sólido */
+.btn-success,
+.btn-agregar {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white;
+}
+
+    .btn-success:hover,
+    .btn-agregar:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+
+/* Botón gris sólido */
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+}
+
+    .btn-secondary:hover {
+        background-color: #5a6268;
+        border-color: #545b62;
+    }
+
+/* Botón azul outline */
+.btn-outline-primary,
+.btn-editar {
+    border-color: #007bff;
+    color: #007bff;
+    background-color: transparent;
+}
+
+    .btn-outline-primary:hover,
+    .btn-editar:hover {
+        background-color: #007bff;
+        color: white;
+    }
+
+/* Botón rojo outline */
+.btn-outline-danger,
+.btn-inactivar {
+    border-color: #dc3545;
+    color: #dc3545;
+    background-color: transparent;
+}
+
+    .btn-outline-danger:hover,
+    .btn-inactivar:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+
+/* Botón verde outline */
+.btn-outline-success,
+.btn-activar {
+    border-color: #28a745;
+    color: #28a745;
+    background-color: transparent;
+}
+
+    .btn-outline-success:hover,
+    .btn-activar:hover {
+        background-color: #28a745;
+        color: white;
+    }
+
+/* Etiquetas de estado */
+.badge {
+    font-size: 13px;
+    padding: 4px 8px;
+    border-radius: 12px;
+}
+
+.bg-success {
+    background-color: #28a745 !important;
+}
+
+.bg-danger {
+    background-color: #dc3545 !important;
+}
+
+.bg-secondary {
+    background-color: #6c757d !important;
+}
+
+/* Formularios */
+.form-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.form-control,
+.form-select {
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+    }
+
+/* Alertas */
+.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-size: 14px;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-size: 14px;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-size: 14px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-size: 14px;
+}
+
+/* Responsive ajustes */
+@media (max-width: 767.98px) {
+    h3 {
+        font-size: 20px;
+    }
+
+    .btn {
+        font-size: 13px;
+        padding: 6px 10px;
+    }
+
+    .card-body p,
+    .almacen-card p {
+        font-size: 13px;
+    }
+
+    .d-md-table {
+        display: none !important;
+    }
+}
+
+@media (min-width: 768px) {
+    .almacen-card {
+        display: none;
+    }
+
+    .d-md-none {
+        display: none !important;
+    }
+}

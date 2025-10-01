@@ -29,6 +29,7 @@
         <div class="dropdown-content">
             <a @onclick="@(() => navManager.NavigateTo("/medicamentos"))">Medicamentos</a>
             <a @onclick="@(() => navManager.NavigateTo("/lotes"))">Lotes</a>
+            <a @onclick="@(() => navManager.NavigateTo("/lotes-medicamento/index"))">LotesMedicamento</a>
             <a @onclick="@(() => navManager.NavigateTo("/vacunas/index"))">Vacunas</a>
             <a @onclick="@(() => navManager.NavigateTo("/existencias"))">Existencias</a>
             <a @onclick="@(() => navManager.NavigateTo("/proveedores"))">Proveedores</a>
@@ -63,6 +64,9 @@
             <a @onclick="@(() => navManager.NavigateTo("/categorias"))">Categorías</a>
             <a @onclick="@(() => navManager.NavigateTo("/citas/2"))">Citas</a>
             <a @onclick="@(() => navManager.NavigateTo("/razas/indexmascotas"))">Razas</a>
+            <a @onclick="@(() => navManager.NavigateTo("/dispensas/index"))">Dispensa</a>
+            <a @onclick="@(() => navManager.NavigateTo("/almacenes/index"))">Almacen</a>
+
         </div>
 
         <button class="boton-card" @onclick="Logout">Cerrar sesión</button>

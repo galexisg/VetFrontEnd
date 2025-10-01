@@ -100,6 +100,10 @@ namespace Veterinaria.MAUIApp
 
             builder.Services.AddScoped<CompraService>();
 
+            builder.Services.AddScoped<AlmacenService>();
+            builder.Services.AddScoped<DispensaService>();
+            builder.Services.AddScoped<LoteMedicamentoService>();
+
 
             return builder.Build();
         }

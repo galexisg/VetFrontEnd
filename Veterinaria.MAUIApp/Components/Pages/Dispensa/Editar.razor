@@ -1,7 +1,156 @@
-﻿@page "/dispensa/editar"
+﻿@page "/dispensas/editar/{Id:int}"
+@inject DispensaService DispensaService
+@inject UsuarioService UsuarioService
+@inject AlmacenService AlmacenService
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Services
 
-<h3>Editar</h3>
+<h3>Editar dispensa</h3>
+
+@if (modelo is null)
+{
+    <p>Cargando datos...</p>
+}
+else
+{
+    <!-- Cambio: usamos EditForm con OnValidSubmit -->
+    <EditForm Model="modelo" OnValidSubmit="ConfirmarActualizacion">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label class="form-label">Prescripción:</label>
+            <InputNumber @bind-Value="modelo.PrescripcionDetalleId" class="form-control" />
+            <ValidationMessage For="@(() => modelo.PrescripcionDetalleId)" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Almacén:</label>
+            <InputSelect @bind-Value="modelo.AlmacenId" class="form-select">
+                <option value="">-- Seleccione un almacén --</option>
+                @foreach (var almacen in almacenes)
+                {
+                    <option value="@almacen.Id">@almacen.Nombre</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => modelo.AlmacenId)" />
+            @if (!string.IsNullOrWhiteSpace(modelo.AlmacenNombre))
+            {
+                <small class="text-muted">Actual: @modelo.AlmacenNombre</small>
+            }
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Lote:</label>
+            <InputNumber @bind-Value="modelo.LoteId" class="form-control" />
+            <ValidationMessage For="@(() => modelo.LoteId)" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Cantidad:</label>
+            <InputNumber @bind-Value="modelo.Cantidad" class="form-control" />
+            <ValidationMessage For="@(() => modelo.Cantidad)" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Fecha:</label>
+            <InputDate @bind-Value="modelo.Fecha" class="form-control" />
+            <ValidationMessage For="@(() => modelo.Fecha)" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Usuario:</label>
+            <InputSelect @bind-Value="modelo.UsuarioId" class="form-select">
+                <option value="">-- Seleccione un usuario --</option>
+                @foreach (var usuario in usuarios)
+                {
+                    <option value="@usuario.Id">@usuario.NombreCompleto</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => modelo.UsuarioId)" />
+            @if (!string.IsNullOrWhiteSpace(modelo.UsuarioNombre))
+            {
+                <small class="text-muted">Actual: @modelo.UsuarioNombre</small>
+            }
+        </div>
+
+        <div class="d-flex gap-2">
+            <!-- Cambio: botón type="submit" -->
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save me-1"></i> Actualizar
+            </button>
+            <button type="button" class="btn btn-secondary" @onclick="Cancelar">
+                <i class="bi bi-x-circle me-1"></i> Cancelar
+            </button>
+        </div>
+    </EditForm>
+}
 
 @code {
+    [Parameter] public int Id { get; set; }
+    private DispensaActualizar? modelo;
+    private List<Usuario> usuarios = new();
+    private List<AlmacenSalida> almacenes = new();
 
+    protected override async Task OnInitializedAsync()
+    {
+        // Carga inicial de datos
+        var original = await DispensaService.ObtenerPorIdAsync(Id);
+        usuarios = await UsuarioService.GetAllAsync();
+        almacenes = await AlmacenService.ObtenerTodosAsync();
+
+        if (original is not null)
+        {
+            modelo = new DispensaActualizar
+            {
+                PrescripcionDetalleId = original.PrescripcionDetalleId,
+                LoteId = original.LoteId,
+                Cantidad = original.Cantidad,
+                Fecha = original.Fecha,
+                AlmacenNombre = original.AlmacenNombre,
+                UsuarioNombre = original.UsuarioNombre,
+                AlmacenId = almacenes.FirstOrDefault(a => a.Nombre == original.AlmacenNombre)?.Id ?? 0,
+                UsuarioId = usuarios.FirstOrDefault(u => u.NombreCompleto == original.UsuarioNombre)?.Id ?? 0
+            };
+        }
+    }
+
+    private async Task ConfirmarActualizacion()
+    {
+        // Confirmación de la acción
+        var ok = await JS.InvokeAsync<bool>(
+            "confirm",
+            $"¿Está seguro que desea actualizar esta dispensa?"
+        );
+
+        if (!ok)
+            return;
+
+        await Actualizar();
+    }
+
+    private async Task Actualizar()
+    {
+        if (modelo is null)
+            return;
+
+        var resultado = await DispensaService.EditarAsync(Id, modelo);
+        if (resultado is not null)
+        {
+            // Navegar de vuelta al listado al actualizar exitosamente
+            Navigation.NavigateTo("/dispensas/index");
+        }
+        else
+        {
+            Console.WriteLine("❌ Error al actualizar la dispensa");
+            // aquí podrías mostrar un toast o alerta en UI
+        }
+    }
+
+    private void Cancelar()
+    {
+        Navigation.NavigateTo("/dispensas/index");
+    }
 }
