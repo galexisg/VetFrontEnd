@@ -1,129 +1,121 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-using Veterinaria.MAUIApp.Models;
+﻿using System.Net.Http.Json;
+using VetApp.Models;
 
-namespace Veterinaria.MAUIApp.Services
+namespace VetApp.Services
 {
     public class CompraService
     {
         private readonly HttpClient _httpClient;
-        private readonly string _baseUrl = "http://localhost:8080/api/v1/compras"; // 👈 Ajusta la URL a tu endpoint real
 
         public CompraService(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
 
-        // Obtener todas las compras
-        public async Task<List<Compra>> GetComprasAsync()
+        private const string BaseUrl = "/api/compras";
+
+        public async Task<List<Compra>> ObtenerTodasAsync()
         {
-            try
-            {
-                var response = await _httpClient.GetAsync(_baseUrl);
-                response.EnsureSuccessStatusCode();
-
-                var content = await response.Content.ReadAsStringAsync();
-                var compras = JsonSerializer.Deserialize<List<Compra>>(content, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-
-                return compras ?? new List<Compra>();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al obtener compras: {ex.Message}");
-                return new List<Compra>();
-            }
+            var compras = await _httpClient.GetFromJsonAsync<List<Compra>>(BaseUrl);
+            return compras ?? new List<Compra>();
         }
 
-        // Obtener una compra por ID
-        public async Task<Compra?> GetCompraByIdAsync(int id)
+        public async Task<Compra> ObtenerPorIdAsync(long id)
         {
-            try
-            {
-                var response = await _httpClient.GetAsync($"{_baseUrl}/{id}");
-                response.EnsureSuccessStatusCode();
-
-                var content = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<Compra>(content, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al obtener compra con ID {id}: {ex.Message}");
-                return null;
-            }
+            return await _httpClient.GetFromJsonAsync<Compra>($"{BaseUrl}/{id}");
         }
 
-        // Crear una nueva compra
-        public async Task<Compra?> CreateCompraAsync(Compra nuevaCompra)
+        public async Task<Compra> CrearAsync(CompraCrear compra)
         {
-            try
-            {
-                var json = JsonSerializer.Serialize(nuevaCompra);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                var response = await _httpClient.PostAsync(_baseUrl, content);
-                response.EnsureSuccessStatusCode();
-
-                var responseContent = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<Compra>(responseContent, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al crear compra: {ex.Message}");
-                return null;
-            }
+            var response = await _httpClient.PostAsJsonAsync(BaseUrl, compra);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<Compra>();
         }
 
-        // Actualizar una compra existente
-        public async Task<Compra?> UpdateCompraAsync(int id, Compra compraActualizada)
+        public async Task<Compra> ActualizarAsync(long id, CompraActualizar compra)
         {
-            try
-            {
-                var json = JsonSerializer.Serialize(compraActualizada);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                var response = await _httpClient.PutAsync($"{_baseUrl}/{id}", content);
-                response.EnsureSuccessStatusCode();
-
-                var responseContent = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<Compra>(responseContent, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al actualizar compra con ID {id}: {ex.Message}");
-                return null;
-            }
+            var response = await _httpClient.PutAsJsonAsync($"{BaseUrl}/{id}", compra);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<Compra>();
         }
 
-        // Eliminar una compra
-        public async Task<bool> DeleteCompraAsync(int id)
+        public async Task CancelarAsync(long id, CompraCancelar compra)
         {
-            try
+            var response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Delete, $"{BaseUrl}/{id}")
             {
-                var response = await _httpClient.DeleteAsync($"{_baseUrl}/{id}");
-                response.EnsureSuccessStatusCode();
-                return true;
-            }
-            catch (Exception ex)
+                Content = JsonContent.Create(compra)
+            });
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task<List<Compra>> ObtenerPorProveedorAsync(int proveedorId)
+        {
+            var compras = await _httpClient.GetFromJsonAsync<List<Compra>>($"{BaseUrl}/proveedor/{proveedorId}");
+            return compras ?? new List<Compra>();
+        }
+
+        public async Task<List<Compra>> ObtenerPorFechaAsync(DateTime fecha)
+        {
+            var compras = await _httpClient.GetFromJsonAsync<List<Compra>>($"{BaseUrl}/fecha/{fecha:yyyy-MM-dd}");
+            return compras ?? new List<Compra>();
+        }
+
+        public async Task<List<Compra>> ObtenerPorUsuarioAsync(int usuarioId)
+        {
+            var compras = await _httpClient.GetFromJsonAsync<List<Compra>>($"{BaseUrl}/usuario/{usuarioId}");
+            return compras ?? new List<Compra>();
+        }
+    }
+
+    public class CompraDetalleService
+    {
+        private readonly HttpClient _httpClient;
+
+        public CompraDetalleService(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+        }
+
+        private const string BaseUrl = "/api/compra-detalle";
+
+        public async Task<List<CompraDetalle>> ListarDetallesAsync()
+        {
+            var detalles = await _httpClient.GetFromJsonAsync<List<CompraDetalle>>(BaseUrl);
+            return detalles ?? new List<CompraDetalle>();
+        }
+
+        public async Task<CompraDetalle> ObtenerDetalleAsync(long id)
+        {
+            return await _httpClient.GetFromJsonAsync<CompraDetalle>($"{BaseUrl}/{id}");
+        }
+
+        public async Task<CompraDetalle> CrearDetalleAsync(CrearDetalle detalle)
+        {
+            var response = await _httpClient.PostAsJsonAsync(BaseUrl, detalle);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<CompraDetalle>();
+        }
+
+        public async Task<CompraDetalle> ActualizarDetalleAsync(long id, ActualizarDetalle detalle)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"{BaseUrl}/{id}", detalle);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<CompraDetalle>();
+        }
+
+        public async Task EliminarDetalleAsync(long id, CancelarDetalle detalle)
+        {
+            var response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Delete, $"{BaseUrl}/{id}")
             {
-                Console.WriteLine($"Error al eliminar compra con ID {id}: {ex.Message}");
-                return false;
-            }
+                Content = JsonContent.Create(detalle)
+            });
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task<List<CompraDetalle>> DetallesPorCompraAsync(long compraId)
+        {
+            var detalles = await _httpClient.GetFromJsonAsync<List<CompraDetalle>>($"{BaseUrl}/compra/{compraId}");
+            return detalles ?? new List<CompraDetalle>();
         }
     }
 }
