@@ -1,0 +1,123 @@
+﻿@page "/movimientodetalle/agregar"
+@using System.ComponentModel.DataAnnotations
+@using Veterinaria.MAUIApp.Models.Dtos
+@using Veterinaria.MAUIApp.Services
+@inject MovimientoDetalleService MovimientoDetalleService
+@inject NavigationManager NavigationManager
+
+<h3>Crear Nuevo Detalle de Movimiento</h3>
+
+<EditForm Model="@detalleDto" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+
+    @if (!string.IsNullOrEmpty(errorMensaje))
+    {
+        <div class="alert alert-danger" role="alert">
+            <strong>Error al guardar:</strong> @errorMensaje
+        </div>
+    }
+
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label>Cantidad:</label>
+        <InputNumber class="form-control" @bind-Value="detalleDto.Cantidad" />
+        <ValidationMessage For="@(() => detalleDto.Cantidad)" />
+    </div>
+
+    <div class="form-group">
+        <label>Costo Unitario:</label>
+        <InputNumber class="form-control" @bind-Value="detalleDto.CostoUnitario" />
+        <ValidationMessage For="@(() => detalleDto.CostoUnitario)" />
+    </div>
+
+    <div class="form-group">
+        <label>Fecha:</label>
+        @* InputDate es ideal para campos DateTime *@
+        <InputDate class="form-control" @bind-Value="detalleDto.Fecha" />
+        <ValidationMessage For="@(() => detalleDto.Fecha)" />
+    </div>
+
+    @* IDs de Relación *@
+
+    <div class="form-group">
+        <label>Medicamento ID:</label>
+        <InputNumber class="form-control" @bind-Value="detalleDto.MedicamentoId" />
+        <ValidationMessage For="@(() => detalleDto.MedicamentoId)" />
+    </div>
+
+    <div class="form-group">
+        <label>Lote Medicamento ID:</label>
+        <InputNumber class="form-control" @bind-Value="detalleDto.LoteMedicamentoId" />
+        <ValidationMessage For="@(() => detalleDto.LoteMedicamentoId)" />
+    </div>
+
+    <div class="form-group">
+        <label>Almacén ID:</label>
+        <InputNumber class="form-control" @bind-Value="detalleDto.AlmacenId" />
+        <ValidationMessage For="@(() => detalleDto.AlmacenId)" />
+    </div>
+
+    <div class="form-group">
+        <label>Movimiento Inventario ID:</label>
+        <InputNumber class="form-control" @bind-Value="detalleDto.MovimientoInventarioId" />
+        <ValidationMessage For="@(() => detalleDto.MovimientoInventarioId)" />
+    </div>
+
+    <div class="form-group">
+        <label>Usuario ID:</label>
+        <InputNumber class="form-control" @bind-Value="detalleDto.UsuarioId" />
+        <ValidationMessage For="@(() => detalleDto.UsuarioId)" />
+    </div>
+
+    <button type="submit" class="btn btn-success mt-3" disabled="@isLoading">
+        @if (isLoading)
+        {
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                }
+        else
+        {
+            <span>Guardar Detalle</span>
+        }
+    </button>
+    <a href="/movimientodetalle" class="btn btn-secondary mt-3" disabled="@isLoading">Cancelar</a>
+</EditForm>
+
+
+@code {
+    private MovimientoDetalleCreacionDto detalleDto = new MovimientoDetalleCreacionDto { Fecha = DateTime.Today }; // Inicializa la fecha
+    private string errorMensaje = string.Empty;
+    private bool isLoading = false;
+
+    private async Task HandleValidSubmit()
+    {
+        errorMensaje = string.Empty;
+        isLoading = true;
+
+        try
+        {
+            // Llama al servicio para enviar el DTO (POST)
+            var detalleCreado = await MovimientoDetalleService.CrearAsync(detalleDto);
+
+            if (detalleCreado != null)
+            {
+                // Éxito: Redirigir al listado principal
+                NavigationManager.NavigateTo("/movimientodetalle");
+            }
+            else
+            {
+                // Falla del backend (ej. un 400 o 500 no capturado por excepción)
+                errorMensaje = "El servidor rechazó el registro. Verifique que todas las IDs (Medicamento, Lote, etc.) sean válidas.";
+            }
+        }
+        catch (Exception ex)
+        {
+            // Error de conexión, timeout o excepción lanzada por el servicio
+            errorMensaje = $"Error de conexión o API: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}

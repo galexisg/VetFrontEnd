@@ -1,0 +1,149 @@
+﻿@page "/movimientos"
+
+<!-- Se inyecta la clase concreta del servicio, siguiendo el patrón de tu proyecto -->
+@inject Veterinaria.MAUIApp.Services.MovimientoInventarioService MovimientoService
+@inject NavigationManager Navigation
+
+<PageTitle>Movimientos de Inventario</PageTitle>
+
+<!-- Contenedor Principal de la Página -->
+<div class="card shadow p-4">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h3 class="mb-0">Gestión de Movimientos de Inventario</h3>
+
+        <!-- Botón para ir a la página de creación -->
+        <button class="btn btn-light" @onclick="NavigateToAgregar">
+            <span class="oi oi-plus" aria-hidden="true"></span> Nuevo Movimiento
+        </button>
+    </div>
+
+    <div class="card-body">
+        <!-- Manejo del estado de carga y datos vacíos -->
+        @if (isLoading)
+        {
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <p class="mt-2">Cargando movimientos...</p>
+            </div>
+        }
+        else if (Movimientos == null || !Movimientos.Any())
+        {
+            <div class="alert alert-info text-center" role="alert">
+                No hay movimientos de inventario registrados.
+            </div>
+        }
+        else
+        {
+            <!-- Tabla Responsiva para la lista de datos -->
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tipo</th>
+                            <th>Fecha</th>
+                            <th>Observación</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var movimiento in Movimientos)
+                        {
+                            <tr>
+                                <td>@movimiento.Id</td>
+                                <!-- Resalta el tipo de movimiento con un badge de color -->
+                                <td>
+                                    <span class="badge @(movimiento.Tipo == "ENTRADA" ? "bg-success" : "bg-warning text-dark")">
+                                        @movimiento.Tipo
+                                    </span>
+                                </td>
+                                <td>@movimiento.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@movimiento.Observacion</td>
+                                <td style="width: 200px;">
+                                    <!-- Botón para Editar -->
+                                    <button class="btn btn-sm btn-info me-2" @onclick="() => NavigateToEditar(movimiento.Id)" title="Editar">
+                                        <span class="oi oi-pencil" aria-hidden="true"></span>
+                                    </button>
+                                    <!-- Botón para Eliminar -->
+                                    <button class="btn btn-sm btn-danger" @onclick="() => EliminarMovimiento(movimiento.Id)" title="Eliminar">
+                                        <span class="oi oi-trash" aria-hidden="true"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+
+<!-- Bloque de Código de la Página (Lógica en C#) -->
+@code {
+    // Lista para almacenar los datos
+    private List<MovimientoInventario> Movimientos;
+    private bool isLoading = true;
+
+    // Se ejecuta al inicializar la página
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarMovimientosAsync();
+    }
+
+    // Método para cargar los datos del servicio
+    private async Task CargarMovimientosAsync()
+    {
+        isLoading = true;
+        try
+        {
+            // Llama al método del servicio concreto
+            Movimientos = await MovimientoService.GetMovimientosInventarioAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar movimientos: {ex.Message}");
+            await Application.Current.MainPage.DisplayAlert("Error de Conexión", "No se pudieron cargar los movimientos. Verifique la API.", "Aceptar");
+            Movimientos = new List<MovimientoInventario>();
+        }
+        isLoading = false;
+        StateHasChanged(); // Forzar la actualización de la UI
+    }
+
+    // Lógica de navegación a la página de agregar
+    private void NavigateToAgregar()
+    {
+        // Se asume que crearás la ruta '/movimientos/agregar'
+        Navigation.NavigateTo("/movimientos/agregar");
+    }
+
+    // Lógica de navegación a la página de edición
+    private void NavigateToEditar(int id)
+    {
+        // Se asume que crearás la ruta '/movimientos/editar/{id}'
+        Navigation.NavigateTo($"/movimientos/editar/{id}");
+    }
+
+    // Lógica para eliminar un registro
+    private async Task EliminarMovimiento(int id)
+    {
+        bool confirmed = await Application.Current.MainPage.DisplayAlert("Confirmar Eliminación",
+            $"¿Está seguro de que desea eliminar el movimiento con ID {id}?", "Sí", "No");
+
+        if (confirmed)
+        {
+            bool success = await MovimientoService.DeleteMovimientoInventarioAsync(id);
+            if (success)
+            {
+                await CargarMovimientosAsync();
+                await Application.Current.MainPage.DisplayAlert("Éxito", "Movimiento eliminado correctamente.", "Aceptar");
+            }
+            else
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", "No se pudo eliminar el movimiento. Verifique dependencias o la API.", "Aceptar");
+            }
+        }
+    }
+}

@@ -82,6 +82,7 @@ namespace Veterinaria.MAUIApp
             builder.Services.AddScoped<AuthService>();
             builder.Services.AddScoped<DiagnosticoService>();
             builder.Services.AddScoped<TratamientosAplicadosService>();
+<<<<<<< HEAD
             builder.Services.AddScoped<CitaService>();
             builder.Services.AddScoped<VacunaService>();
             builder.Services.AddScoped<TratamientoService>();
@@ -101,6 +102,11 @@ namespace Veterinaria.MAUIApp
 
             builder.Services.AddScoped<CompraService>();
 
+=======
+            builder.Services.AddScoped<InventarioService>();
+            builder.Services.AddScoped<MovimientoDetalleService>();
+            builder.Services.AddScoped<MovimientoInventarioService>();
+>>>>>>> cristian
 
             return builder.Build();
         }

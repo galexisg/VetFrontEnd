@@ -1,0 +1,187 @@
+﻿@page "/movimientodetalle/editar/{Id:int}"
+@using System.ComponentModel.DataAnnotations
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Models.Dtos
+@using Veterinaria.MAUIApp.Services
+@inject MovimientoDetalleService MovimientoDetalleService
+@inject NavigationManager NavigationManager
+
+<h3>Editar Detalle de Movimiento (ID: @Id)</h3>
+
+@if (isLoading)
+{
+    <div class="text-center py-5">
+        <span class="spinner-border text-primary" role="status"></span>
+        <p class="mt-2">Cargando datos del detalle...</p>
+    </div>
+}
+else if (!string.IsNullOrEmpty(errorMensaje))
+{
+    <div class="alert alert-danger" role="alert">
+        <strong>Error:</strong> @errorMensaje
+        <a href="/movimientodetalle" class="btn btn-sm btn-outline-danger float-end">Volver al listado</a>
+    </div>
+}
+else if (detalleDto == null)
+{
+    <div class="alert alert-warning" role="alert">
+        No se encontró el detalle de movimiento con ID @Id.
+    </div>
+}
+else
+{
+    <EditForm Model="@detalleDto" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        @* Campos de datos principales *@
+        <div class="form-group">
+            <label>Cantidad:</label>
+            <InputNumber class="form-control" @bind-Value="detalleDto.Cantidad" />
+            <ValidationMessage For="@(() => detalleDto.Cantidad)" />
+        </div>
+
+        <div class="form-group">
+            <label>Costo Unitario:</label>
+            <InputNumber class="form-control" @bind-Value="detalleDto.CostoUnitario" />
+            <ValidationMessage For="@(() => detalleDto.CostoUnitario)" />
+        </div>
+
+        <div class="form-group">
+            <label>Fecha:</label>
+            <InputDate class="form-control" @bind-Value="detalleDto.Fecha" />
+            <ValidationMessage For="@(() => detalleDto.Fecha)" />
+        </div>
+
+        @* IDs de Relación *@
+        <div class="form-group">
+            <label>Medicamento ID:</label>
+            <InputNumber class="form-control" @bind-Value="detalleDto.MedicamentoId" />
+            <ValidationMessage For="@(() => detalleDto.MedicamentoId)" />
+        </div>
+
+        <div class="form-group">
+            <label>Lote Medicamento ID:</label>
+            <InputNumber class="form-control" @bind-Value="detalleDto.LoteMedicamentoId" />
+            <ValidationMessage For="@(() => detalleDto.LoteMedicamentoId)" />
+        </div>
+
+        <div class="form-group">
+            <label>Almacén ID:</label>
+            <InputNumber class="form-control" @bind-Value="detalleDto.AlmacenId" />
+            <ValidationMessage For="@(() => detalleDto.AlmacenId)" />
+        </div>
+
+        <div class="form-group">
+            <label>Movimiento Inventario ID:</label>
+            <InputNumber class="form-control" @bind-Value="detalleDto.MovimientoInventarioId" />
+            <ValidationMessage For="@(() => detalleDto.MovimientoInventarioId)" />
+        </div>
+
+        <div class="form-group">
+            <label>Usuario ID:</label>
+            <InputNumber class="form-control" @bind-Value="detalleDto.UsuarioId" />
+            <ValidationMessage For="@(() => detalleDto.UsuarioId)" />
+        </div>
+
+        <button type="submit" class="btn btn-warning mt-3" disabled="@isSaving">
+            @if (isSaving)
+            {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                }
+            else
+            {
+                <span>Guardar Cambios</span>
+            }
+        </button>
+        <a href="/movimientodetalle" class="btn btn-secondary mt-3" disabled="@isSaving">Cancelar</a>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; } // Captura el ID de la URL
+
+    private MovimientoDetalleActualizacionDto? detalleDto;
+    private bool isLoading = true;
+    private bool isSaving = false;
+    private string errorMensaje = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDetalle(Id);
+    }
+
+    private async Task LoadDetalle(int id)
+    {
+        isLoading = true;
+        errorMensaje = string.Empty;
+
+        try
+        {
+            // 1. Obtiene el registro completo de la API
+            var detalle = await MovimientoDetalleService.GetByIdAsync(id);
+
+            if (detalle != null)
+            {
+                // 2. Mapea el modelo completo (MovimientoDetalle) al DTO de Actualización
+                detalleDto = new MovimientoDetalleActualizacionDto
+                {
+                    Id = detalle.Id,
+                    Cantidad = detalle.Cantidad,
+                    CostoUnitario = detalle.CostoUnitario,
+                    Fecha = detalle.Fecha,
+
+                    // Mapeo de IDs de navegación (asumiendo que los objetos anidados no son nulos)
+                    // Usamos el operador ?? 0 para manejar IDs nulas de forma segura si el objeto es nulo.
+                    MedicamentoId = detalle.Medicamento?.Id ?? 0,
+                    LoteMedicamentoId = detalle.LoteMedicamento?.Id ?? 0,
+                    AlmacenId = detalle.Almacen?.Id ?? 0,
+                    MovimientoInventarioId = detalle.MovimientoInventario?.Id ?? 0,
+                    UsuarioId = detalle.Usuario?.Id ?? 0
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMensaje = $"No se pudieron cargar los datos del detalle: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (detalleDto == null) return;
+
+        errorMensaje = string.Empty;
+        isSaving = true;
+
+        try
+        {
+            // Llama al servicio para actualizar (PUT)
+            var detalleActualizado = await MovimientoDetalleService.EditarAsync(detalleDto);
+
+            if (detalleActualizado != null)
+            {
+                // Éxito: Redirigir al listado
+                NavigationManager.NavigateTo("/movimientodetalle");
+            }
+            else
+            {
+                // Falla del backend (ej. error 400/500 que el servicio no lanzó como excepción)
+                errorMensaje = "Error al actualizar el registro. Verifique las IDs de las relaciones.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMensaje = $"Error de conexión o API: {ex.Message}";
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+}

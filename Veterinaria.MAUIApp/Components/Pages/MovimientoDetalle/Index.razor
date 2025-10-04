@@ -1,8 +1,8 @@
-﻿@page "/inventario"
+﻿@page "/movimientodetalle"
 @using Veterinaria.MAUIApp.Models
 @using Veterinaria.MAUIApp.Services
 @inject NavigationManager NavManager
-@inject InventarioService InventarioService // Inyecta el servicio de Inventario
+@inject MovimientoDetalleService MovimientoDetalleService // Inyecta el servicio de MovimientoDetalle
 
 <style>
     /* Estilos mínimos para simular el diseño de "guía" */
@@ -171,8 +171,8 @@
     </button>
 
     <div class="d-grid gap-1">
-        <div class="page-title">Inventario de Medicamentos</div>
-        <div class="page-subtitle">Control de stock, máximos y mínimos por medicamento y almacén.</div>
+        <div class="page-title">Detalle de Movimientos</div>
+        <div class="page-subtitle">Registros detallados de entradas y salidas del stock.</div>
     </div>
 </div>
 
@@ -182,32 +182,28 @@
         <div>
             <strong>ERROR AL CARGAR:</strong>
             <div class="mt-1">@errorMessage</div>
-            @if (errorMessage.Contains("JSON"))
-            {
-                <div class="descripcion" style="color:#b32121; margin-top:0.5rem;">🚨 Problema de formato de datos. Asegúrate de llamar a /api/inventario/lista.</div>
-            }
         </div>
-        <button class="boton-card-sm btn btn-sm btn-outline-danger" @onclick="LoadInventarios" style="flex-shrink: 0;">Reintentar</button>
+        <button class="boton-card-sm btn btn-sm btn-outline-danger" @onclick="LoadMovimientoDetalles" style="flex-shrink: 0;">Reintentar</button>
     </div>
 }
 else if (isLoading)
 {
-    <div class="loading-message">Cargando inventario...</div>
+    <div class="loading-message">Cargando detalles de movimientos...</div>
 }
-else if (inventarios == null)
+else if (movimientoDetalles == null)
 {
     <div class="card-list mt-3">
-        <p class="titulo mb-1">Cargar Datos de Inventario</p>
-        <p class="descripcion mb-2">Pulsa el botón para cargar los registros de stock desde la API.</p>
-        <button class="boton-verde" @onclick="LoadInventarios">Cargar Datos</button>
+        <p class="titulo mb-1">Cargar Registros</p>
+        <p class="descripcion mb-2">Pulsa el botón para cargar los movimientos desde la API. (Asegúrate de haber iniciado sesión)</p>
+        <button class="boton-verde" @onclick="LoadMovimientoDetalles">Cargar Datos</button>
     </div>
 }
-else if (inventarios.Count == 0)
+else if (movimientoDetalles.Count == 0)
 {
     <div class="card-list mt-3">
-        <p class="titulo mb-1">No hay registros de inventario</p>
-        <p class="descripcion mb-2">Crea un nuevo registro para iniciar el control de stock.</p>
-        <button class="boton-verde" @onclick="NavigateToCreate">Crear Nuevo Registro</button>
+        <p class="titulo mb-1">No hay movimientos detallados</p>
+        <p class="descripcion mb-2">Crea un nuevo registro de movimiento para ver el detalle.</p>
+        <button class="boton-verde" @onclick="NavigateToCreate">Crear Nuevo Detalle</button>
     </div>
 }
 else
@@ -219,8 +215,8 @@ else
                 <svg viewBox="0 0 24 24" aria-hidden="true" style="stroke:#4f46e5;"><path d="M12 6v12M6 12h12" /></svg>
             </div>
             <div class="d-grid gap-1">
-                <p class="titulo mb-0">Crear Nuevo Registro</p>
-                <div class="descripcion">Asociar un medicamento a un almacén e iniciar el stock.</div>
+                <p class="titulo mb-0">Crear Nuevo Detalle</p>
+                <div class="descripcion">Registrar la entrada o salida de un lote de medicamento.</div>
             </div>
         </div>
 
@@ -228,26 +224,26 @@ else
             <table class="w-full text-sm text-left text-gray-700">
                 <thead style="background-color: #f9fafb; border-bottom: 1px solid #e5e7eb;">
                     <tr>
+                        <th scope="col" class="px-4 py-3 font-semibold">Mov. ID</th>
                         <th scope="col" class="px-4 py-3 font-semibold">Medicamento</th>
-                        <th scope="col" class="px-4 py-3 font-semibold">Almacén</th>
-                        <th scope="col" class="px-4 py-3 font-semibold">Stock Actual</th>
-                        <th scope="col" class="px-4 py-3 font-semibold">Mínimo</th>
-                        <th scope="col" class="px-4 py-3 font-semibold">Máximo</th>
+                        <th scope="col" class="px-4 py-3 font-semibold">Lote</th>
+                        <th scope="col" class="px-4 py-3 font-semibold">Cantidad</th>
+                        <th scope="col" class="px-4 py-3 font-semibold">Costo</th>
                         <th scope="col" class="px-4 py-3 font-semibold">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in inventarios)
+                    @foreach (var item in movimientoDetalles)
                     {
                         <tr style="border-bottom: 1px solid #f3f4f6;">
-                            <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">@item.Medicamento?.Nombre</td>
-                            <td class="px-4 py-3">@item.Almacen?.Nombre</td>
-                            <td class="px-4 py-3">@item.StockActual</td>
-                            <td class="px-4 py-3">@item.StockMinimo</td>
-                            <td class="px-4 py-3">@item.StockMaximo</td>
+                            <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">@item.MovimientoInventario?.Id</td>
+                            <td class="px-4 py-3">@item.Medicamento?.Nombre</td>
+                            <td class="px-4 py-3">@item.LoteMedicamento?.Id</td> @* Usamos CodigoLote para mejor visualización *@
+                            <td class="px-4 py-3">@item.Cantidad</td>
+                            <td class="px-4 py-3">@item.CostoUnitario.ToString("C2")</td>
                             <td class="px-4 py-3 space-x-2">
-                                <a href="/inventario/editar/@item.Id" class="text-blue-600 hover:text-blue-800 text-xs font-medium">Editar</a>
-                                <button class="text-red-600 hover:text-red-800 text-xs font-medium" @onclick="() => EliminarInventario(item.Id)">Eliminar</button>
+                                <a href="/movimientodetalle/editar/@item.Id" class="text-blue-600 hover:text-blue-800 text-xs font-medium">Editar</a>
+                                <button class="text-red-600 hover:text-red-800 text-xs font-medium" @onclick="() => EliminarDetalle(item.Id)">Eliminar</button>
                             </td>
                         </tr>
                     }
@@ -258,29 +254,29 @@ else
 }
 
 @code {
-    private List<Inventario>? inventarios;
+    private List<MovimientoDetalle>? movimientoDetalles;
     private string errorMessage = string.Empty;
     private bool isLoading = false;
 
-    // 🚨 OnInitializedAsync ha sido ELIMINADO para evitar conflictos con el Login/Autenticación.
+    // 🚨 OnInitializedAsync se omite para dar el control de carga al usuario y evitar conflictos de login.
 
-    private async Task LoadInventarios()
+    private async Task LoadMovimientoDetalles()
     {
         errorMessage = string.Empty;
         isLoading = true;
-        inventarios = null;
+        movimientoDetalles = null;
         StateHasChanged();
 
         try
         {
-            // Este método en C# debe llamar al endpoint /api/inventario/lista de tu API Spring Boot.
-            inventarios = await InventarioService.GetInventariosAsync();
+            // Este método en C# debe llamar al endpoint /api/movimientoDetalle/lista de tu API Spring Boot.
+            movimientoDetalles = await MovimientoDetalleService.GetTodosAsync();
         }
         catch (Exception ex)
         {
-            // Captura el error, que puede ser de JSON si no llama a /lista, o de autenticación.
-            errorMessage = $"Fallo en la carga de inventarios. Causa: {ex.InnerException?.Message ?? ex.Message}";
-            inventarios = new List<Inventario>();
+            // Captura el error, ya sea de red, autenticación o deserialización.
+            errorMessage = $"Error al cargar los detalles. Causa: {ex.InnerException?.Message ?? ex.Message}";
+            movimientoDetalles = new List<MovimientoDetalle>();
         }
         finally
         {
@@ -288,11 +284,11 @@ else
         }
     }
 
-    private async Task EliminarInventario(int id)
+    private async Task EliminarDetalle(int id)
     {
         var confirmado = await App.Current.MainPage.DisplayAlert(
             "Confirmar Eliminación",
-            $"¿Estás seguro de que quieres eliminar el registro de Inventario ID: {id}?",
+            $"¿Estás seguro de que quieres eliminar el Detalle de Movimiento ID: {id}?",
             "Sí",
             "No");
 
@@ -301,10 +297,11 @@ else
             try
             {
                 // Reemplaza esto con tu llamada real al servicio:
-                // await InventarioService.EliminarAsync(id);
+                // bool success = await MovimientoDetalleService.EliminarAsync(id);
+                // if (success) { await LoadMovimientoDetalles(); }
 
                 await Task.Delay(500); // Simulación de espera
-                await LoadInventarios();
+                await LoadMovimientoDetalles();
             }
             catch (Exception ex)
             {
@@ -315,7 +312,7 @@ else
 
     private void NavigateToCreate()
     {
-        NavManager.NavigateTo("/inventario/agregar");
+        NavManager.NavigateTo("/movimientodetalle/agregar");
     }
 
     private void NavigateToMenu()
