@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Veterinaria.MAUIApp.Models
 {
-    internal class LoteMedicamento
+    public  class LoteMedicamento
     {
+        public int Id { get; set; }
+        public string? Nombre { get; set; }
     }
 }

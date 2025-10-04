@@ -1,7 +1,104 @@
 ﻿@page "/inventario/agregar"
+@using System.ComponentModel.DataAnnotations
+@using Veterinaria.MAUIApp.Models.Dtos
+@using Veterinaria.MAUIApp.Services
+@inject InventarioService InventarioService
+@inject NavigationManager NavigationManager
 
-<h3>Agregar</h3>
+<h3>Crear Nuevo Registro de Inventario</h3>
+
+<EditForm Model="@inventarioDto" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+
+    @if (!string.IsNullOrEmpty(errorMensaje))
+    {
+        <div class="alert alert-danger" role="alert">
+            <strong>Error al guardar:</strong> @errorMensaje
+        </div>
+    }
+
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label>Medicamento ID:</label>
+        <InputNumber class="form-control" @bind-Value="inventarioDto.MedicamentoId" />
+        <ValidationMessage For="@(() => inventarioDto.MedicamentoId)" />
+    </div>
+
+    <div class="form-group">
+        <label>Almacén ID:</label>
+        <InputNumber class="form-control" @bind-Value="inventarioDto.AlmacenId" />
+        <ValidationMessage For="@(() => inventarioDto.AlmacenId)" />
+    </div>
+
+    <div class="form-group">
+        <label>Stock Actual:</label>
+        <InputNumber class="form-control" @bind-Value="inventarioDto.StockActual" />
+        <ValidationMessage For="@(() => inventarioDto.StockActual)" />
+    </div>
+
+    <div class="form-group">
+        <label>Stock Mínimo:</label>
+        <InputNumber class="form-control" @bind-Value="inventarioDto.StockMinimo" />
+        <ValidationMessage For="@(() => inventarioDto.StockMinimo)" />
+    </div>
+
+    <div class="form-group">
+        <label>Stock Máximo:</label>
+        <InputNumber class="form-control" @bind-Value="inventarioDto.StockMaximo" />
+        <ValidationMessage For="@(() => inventarioDto.StockMaximo)" />
+    </div>
+
+    <button type="submit" class="btn btn-success" disabled="@isLoading">
+        @if (isLoading)
+        {
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        }
+        else
+        {
+            <span>Guardar</span>
+        }
+    </button>
+    <a href="/inventario" class="btn btn-secondary" disabled="@isLoading">Cancelar</a>
+</EditForm>
+
 
 @code {
+    private InventarioCreacionDto inventarioDto = new InventarioCreacionDto();
+    private string errorMensaje = string.Empty;
+    private bool isLoading = false;
 
+    private async Task HandleValidSubmit()
+    {
+        // Limpiamos el estado y activamos la carga
+        errorMensaje = string.Empty;
+        isLoading = true;
+
+        try
+        {
+            // La llamada al servicio, que ahora usa el DTO con validaciones
+            var inventarioCreado = await InventarioService.PostInventarioAsync(inventarioDto);
+
+            if (inventarioCreado != null)
+            {
+                // Éxito: Redirigir al listado principal
+                NavigationManager.NavigateTo("/inventario");
+            }
+            else
+            {
+                // Falla del backend (ej. un 400 o 500 no capturado por excepción)
+                errorMensaje = "El servidor rechazó el registro. Asegúrese de que el Medicamento ID y el Almacén ID existen.";
+            }
+        }
+        catch (Exception ex)
+        {
+            // Error de conexión, timeout o excepción lanzada por el servicio
+            errorMensaje = $"Error de conexión o API: {ex.Message}";
+        }
+        finally
+        {
+            // Siempre desactivamos la carga al finalizar
+            isLoading = false;
+        }
+    }
 }

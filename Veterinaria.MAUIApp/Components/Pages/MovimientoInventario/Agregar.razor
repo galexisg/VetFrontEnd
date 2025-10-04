@@ -1,0 +1,133 @@
+﻿@page "/movimientoinventario/agregar"
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Models.Dtos
+@using Veterinaria.MAUIApp.Services
+@inject MovimientoInventarioService MovimientoInventarioService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Crear Movimiento de Inventario</PageTitle>
+
+<div class="card shadow-lg p-4 mb-5 bg-white rounded">
+    <h3 class="card-title text-primary mb-4">
+        <i class="fas fa-plus-circle me-2"></i> Registrar Nuevo Movimiento de Inventario (Cabecera)
+    </h3>
+
+    <EditForm Model="@CreacionDto" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary class="alert alert-danger" />
+
+        <div class="row">
+            <!-- Columna 1: Tipo y Fecha -->
+            <div class="col-md-6">
+                <h5 class="text-secondary border-bottom pb-2 mb-3">Datos Generales</h5>
+
+                <!-- Tipo de Movimiento -->
+                <div class="form-group mb-3">
+                    <label class="form-label fw-bold">Tipo de Movimiento (*):</label>
+                    <InputSelect class="form-control form-control-lg" @bind-Value="CreacionDto.Tipo">
+                        <option value="">-- Seleccione el Tipo --</option>
+                        <option value="ENTRADA">ENTRADA (Compra, Ingreso por Ajuste)</option>
+                        <option value="SALIDA">SALIDA (Venta, Baja por Descarte)</option>
+                    </InputSelect>
+                    <ValidationMessage For="@(() => CreacionDto.Tipo)" class="text-danger small" />
+                </div>
+
+                <!-- Fecha del Movimiento -->
+                <div class="form-group mb-3">
+                    <label class="form-label fw-bold">Fecha (*):</label>
+                    <InputDate class="form-control form-control-lg" @bind-Value="CreacionDto.Fecha" />
+                    <ValidationMessage For="@(() => CreacionDto.Fecha)" class="text-danger small" />
+                </div>
+            </div>
+
+            <!-- Columna 2: Observación -->
+            <div class="col-md-6">
+                <h5 class="text-secondary border-bottom pb-2 mb-3">Observación</h5>
+
+                <!-- Observación -->
+                <div class="form-group mb-3">
+                    <label class="form-label fw-bold">Observación:</label>
+                    <InputTextArea class="form-control" @bind-Value="CreacionDto.Observacion" rows="5" placeholder="Motivo del movimiento, referencia de factura, etc." />
+                    <ValidationMessage For="@(() => CreacionDto.Observacion)" class="text-danger small" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="mt-4 pt-3 border-top d-flex justify-content-end">
+            <a href="/movimientoinventario" class="btn btn-outline-secondary btn-lg me-3">
+                <i class="fas fa-times me-1"></i> Cancelar
+            </a>
+            <button type="submit" class="btn btn-success btn-lg" disabled="@isSaving">
+                @if (isSaving)
+                {
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <span> Guardando...</span>
+                }
+                else
+                {
+                    <i class="fas fa-save me-1"></i>
+                    <span>Guardar Movimiento</span>
+                }
+            </button>
+        </div>
+    </EditForm>
+</div>
+
+
+@code {
+    // DTO utilizado para enviar los datos de creación a la API.
+    private MovimientoInventarioCreacionDto CreacionDto = new MovimientoInventarioCreacionDto
+    {
+        // Inicializa la fecha con el día actual por conveniencia
+        Fecha = DateTime.Now.Date,
+        Tipo = "ENTRADA" // Valor por defecto
+    };
+
+    private bool isSaving = false;
+
+    // Método que se ejecuta cuando el formulario es válido
+    private async Task HandleValidSubmit()
+    {
+        if (isSaving) return;
+        isSaving = true;
+
+        try
+        {
+            // Llama al método corregido del servicio, que devuelve el objeto creado o null
+            var movimientoCreado = await MovimientoInventarioService.CrearMovimientoAsync(CreacionDto);
+
+            if (movimientoCreado != null && movimientoCreado.Id > 0)
+            {
+                // Éxito: Muestra alerta y redirige
+                // Nota: Una vez creado el movimiento (cabecera), usualmente se redirige a la vista de edición
+                // para agregar los detalles (productos). Aquí redirigimos a la lista.
+                await App.Current.MainPage.DisplayAlert("¡Movimiento Creado!",
+                    $"Movimiento de {movimientoCreado.Tipo} (ID: {movimientoCreado.Id}) registrado con éxito.",
+                    "Aceptar");
+
+                // Redirigir al listado principal
+                NavigationManager.NavigateTo("/movimientoinventario");
+            }
+            else
+            {
+                // Fallo: El servicio devolvió null (indicando error en la API o deserialización)
+                await App.Current.MainPage.DisplayAlert("Error de Creación",
+                    "No se pudo crear el movimiento de inventario. Verifique la conexión o el formato de datos.",
+                    "Aceptar");
+            }
+        }
+        catch (Exception ex)
+        {
+            // Error de conexión o manejo de la excepción
+            Console.WriteLine($"[AgregarMovimientoInventarioPage] Error al guardar movimiento: {ex.Message}");
+            await App.Current.MainPage.DisplayAlert("Error Inesperado",
+                $"Ocurrió un error al intentar guardar: {ex.Message}",
+                "Aceptar");
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+}

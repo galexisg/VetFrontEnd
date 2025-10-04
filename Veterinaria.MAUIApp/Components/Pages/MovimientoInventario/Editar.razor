@@ -1,0 +1,179 @@
+﻿@page "/movimientos/editar/{Id:int}"
+@using Veterinaria.MAUIApp.Models.Dtos
+
+<!-- Se inyecta el servicio y el navegador, siguiendo la convención de tu proyecto -->
+@inject Veterinaria.MAUIApp.Services.MovimientoInventarioService MovimientoService
+@inject NavigationManager Navigation
+
+<PageTitle>Editar Movimiento de Inventario</PageTitle>
+
+<!-- Parámetro de la ruta para capturar el ID del movimiento a editar -->
+@code {
+    [Parameter]
+    public int Id { get; set; }
+}
+
+<div class="card shadow p-4">
+    <div class="card-header bg-warning text-dark">
+        <h3 class="mb-0">Editar Movimiento de Inventario (ID: @Id)</h3>
+    </div>
+
+    <div class="card-body">
+        <!-- Manejo del estado de carga -->
+        @if (isLoading)
+        {
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <p class="mt-2">Cargando datos del movimiento...</p>
+            </div>
+        }
+        else if (movimiento == null)
+        {
+            <!-- Manejo de error si el ID no existe o no se pudo cargar -->
+            <div class="alert alert-danger" role="alert">
+                Error: No se encontró el Movimiento de Inventario con ID @Id.
+            </div>
+            <button class="btn btn-secondary mt-3" @onclick="NavigateToIndex">
+                Volver al Listado
+            </button>
+        }
+        else
+        {
+            <!-- Formulario de Edición -->
+            <EditForm Model="@movimientoActualizacionDto" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+
+                <div class="mb-3">
+                    <label for="tipo" class="form-label">Tipo de Movimiento</label>
+                    <!-- El Tipo no debería ser editable después de creado, pero si la API lo permite, usa este Select -->
+                    <InputSelect id="tipo" @bind-Value="movimientoActualizacionDto.Tipo" class="form-select" disabled>
+                        <option value="ENTRADA">ENTRADA</option>
+                        <option value="SALIDA">SALIDA</option>
+                    </InputSelect>
+                    <ValidationMessage For="@(() => movimientoActualizacionDto.Tipo)" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="observacion" class="form-label">Observación</label>
+                    <InputTextArea id="observacion" @bind-Value="movimientoActualizacionDto.Observacion" class="form-control" placeholder="Detalles o motivo del movimiento" />
+                    <ValidationMessage For="@(() => movimientoActualizacionDto.Observacion)" />
+                </div>
+
+                <!-- Otros campos relevantes para la actualización (si existen en el DTO de actualización) -->
+                <!-- Ejemplo: Id del Almacén, si este campo es actualizable:
+                <div class="mb-3">
+                    <label for="almacenId" class="form-label">ID de Almacén</label>
+                    <InputNumber id="almacenId" @bind-Value="movimientoActualizacionDto.AlmacenId" class="form-control" />
+                    <ValidationMessage For="@(() => movimientoActualizacionDto.AlmacenId)" />
+                </div>
+                -->
+
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="button" class="btn btn-secondary" @onclick="NavigateToIndex">
+                        <span class="oi oi-chevron-left"></span> Cancelar y Volver
+                    </button>
+
+                    <button type="submit" class="btn btn-warning" disabled="@isSaving">
+                        @if (isSaving)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>Guardando...</span>
+                        }
+                        else
+                        {
+                            <span class="oi oi-loop-circular"></span>
+                            <span>Actualizar Movimiento</span>
+                                        }
+                    </button>
+                </div>
+
+            </EditForm>
+        }
+    </div>
+</div>
+
+
+@code {
+    // Modelo completo que se obtiene de la API
+    private MovimientoInventario? movimiento;
+    // DTO que se enlaza al formulario (se usa para enviar la actualización)
+    // NOTA: Asegúrate de que esta clase exista en tu carpeta Models/Dtos/ (o similar)
+    private MovimientoInventarioActualizacionDto movimientoActualizacionDto = new MovimientoInventarioActualizacionDto();
+
+    private bool isLoading = true;
+    private bool isSaving = false;
+
+    // Se ejecuta cuando se establece el parámetro 'Id'
+    protected override async Task OnParametersSetAsync()
+    {
+        await CargarMovimientoAsync(Id);
+    }
+
+    // Carga los datos del Movimiento de Inventario por ID
+    private async Task CargarMovimientoAsync(int id)
+    {
+        isLoading = true;
+        try
+        {
+            // NOTA: El modelo MovimientoInventario y el servicio MovimientoService deben estar correctamente definidos.
+            movimiento = await MovimientoService.GetMovimientoInventarioByIdAsync(id);
+
+            if (movimiento != null)
+            {
+                // Mapear el modelo completo al DTO de actualización
+                movimientoActualizacionDto.Id = movimiento.Id;
+                movimientoActualizacionDto.Tipo = movimiento.Tipo;
+                movimientoActualizacionDto.Observacion = movimiento.Observacion;
+                // Asegúrate de mapear todos los campos necesarios del DTO de Actualización
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar movimiento ID {id}: {ex.Message}");
+            await Application.Current.MainPage.DisplayAlert("Error", "No se pudieron obtener los datos del movimiento.", "Aceptar");
+            movimiento = null; // Marcar como nulo para mostrar mensaje de error
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    // Maneja la sumisión del formulario cuando los datos son válidos
+    private async Task HandleValidSubmit()
+    {
+        isSaving = true;
+        try
+        {
+            // Llama al método PUT del servicio
+            bool success = await MovimientoService.PutMovimientoInventarioAsync(movimientoActualizacionDto);
+
+            if (success)
+            {
+                await Application.Current.MainPage.DisplayAlert("Éxito", "Movimiento actualizado correctamente.", "Aceptar");
+                NavigateToIndex();
+            }
+            else
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", "No se pudo actualizar el movimiento. Verifique la conexión o los datos.", "Aceptar");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error en la actualización: {ex.Message}");
+            await Application.Current.MainPage.DisplayAlert("Error de Conexión", "Ocurrió un error al intentar comunicarse con la API.", "Aceptar");
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    // Navega de vuelta al índice
+    private void NavigateToIndex()
+    {
+        Navigation.NavigateTo("/movimientos");
+    }
+}

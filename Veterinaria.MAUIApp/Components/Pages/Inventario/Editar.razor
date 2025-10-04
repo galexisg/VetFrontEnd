@@ -1,7 +1,160 @@
-﻿@page "/inventario/editar"
+﻿@page "/inventario/editar/{Id:int}"
+@using Veterinaria.MAUIApp.Models.Dtos
+@using Veterinaria.MAUIApp.Models
+@using Veterinaria.MAUIApp.Services
+@inject InventarioService InventarioService
+@inject NavigationManager NavigationManager
 
-<h3>Editar</h3>
+<h3>Editar Registro de Inventario (ID: @Id)</h3>
 
+@if (isLoading)
+{
+    <div class="text-center py-5">
+        <span class="spinner-border text-primary" role="status"></span>
+        <p class="mt-2">Cargando datos del inventario...</p>
+    </div>
+}
+else if (!string.IsNullOrEmpty(errorMensaje))
+{
+    <div class="alert alert-danger" role="alert">
+        <strong>Error:</strong> @errorMensaje
+        <a href="/inventario" class="btn btn-sm btn-outline-danger float-end">Volver al listado</a>
+    </div>
+}
+else if (inventarioDto == null)
+{
+    <div class="alert alert-warning" role="alert">
+        No se encontró el registro de inventario con ID @Id.
+    </div>
+}
+else
+{
+    <EditForm Model="@inventarioDto" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label>Medicamento ID:</label>
+            <InputNumber class="form-control" @bind-Value="inventarioDto.MedicamentoId" />
+            <ValidationMessage For="@(() => inventarioDto.MedicamentoId)" />
+        </div>
+
+        <div class="form-group">
+            <label>Almacén ID:</label>
+            <InputNumber class="form-control" @bind-Value="inventarioDto.AlmacenId" />
+            <ValidationMessage For="@(() => inventarioDto.AlmacenId)" />
+        </div>
+
+        <div class="form-group">
+            <label>Stock Actual:</label>
+            <InputNumber class="form-control" @bind-Value="inventarioDto.StockActual" />
+            <ValidationMessage For="@(() => inventarioDto.StockActual)" />
+        </div>
+
+        <div class="form-group">
+            <label>Stock Mínimo:</label>
+            <InputNumber class="form-control" @bind-Value="inventarioDto.StockMinimo" />
+            <ValidationMessage For="@(() => inventarioDto.StockMinimo)" />
+        </div>
+
+        <div class="form-group">
+            <label>Stock Máximo:</label>
+            <InputNumber class="form-control" @bind-Value="inventarioDto.StockMaximo" />
+            <ValidationMessage For="@(() => inventarioDto.StockMaximo)" />
+        </div>
+
+        <button type="submit" class="btn btn-warning" disabled="@isSaving">
+            @if (isSaving)
+            {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            }
+            else
+            {
+                <span>Guardar Cambios</span>
+            }
+        </button>
+        <a href="/inventario" class="btn btn-secondary" disabled="@isSaving">Cancelar</a>
+    </EditForm>
+}
 @code {
+    [Parameter]
+    public int Id { get; set; } // Captura el ID de la URL
 
+    private InventarioActualizacionDto? inventarioDto;
+    private bool isLoading = true; // Controla la carga inicial de datos
+    private bool isSaving = false; // Controla el estado del botón al guardar
+    private string errorMensaje = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadInventario(Id);
+    }
+
+    private async Task LoadInventario(int id)
+    {
+        isLoading = true;
+        errorMensaje = string.Empty;
+
+        try
+        {
+            // 1. Obtiene el registro completo de la API
+            var inventario = await InventarioService.GetInventarioByIdAsync(id);
+
+            if (inventario != null)
+            {
+                // 2. Mapea el modelo completo al DTO de Actualización
+                inventarioDto = new InventarioActualizacionDto
+                {
+                    Id = inventario.Id,
+                    StockActual = inventario.StockActual,
+                    StockMinimo = inventario.StockMinimo,
+                    StockMaximo = inventario.StockMaximo,
+                    // Asegúrate de que tu modelo Inventario.cs tiene las propiedades correctas:
+                    MedicamentoId = inventario.Medicamento?.Id ?? 0,
+                    AlmacenId = inventario.Almacen?.Id ?? 0
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMensaje = $"No se pudieron cargar los datos: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (inventarioDto == null) return;
+
+        errorMensaje = string.Empty;
+        isSaving = true;
+
+        try
+        {
+            // 1. Llama al servicio para actualizar (PUT)
+            var success = await InventarioService.PutInventarioAsync(inventarioDto);
+
+            if (success)
+            {
+                // Éxito: Redirigir al listado
+                NavigationManager.NavigateTo("/inventario");
+            }
+            else
+            {
+                // Falla del backend (ej. error 400/500)
+                errorMensaje = "Error al actualizar el registro. Verifique que las IDs de Medicamento y Almacén sean válidas.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMensaje = $"Error de conexión o API: {ex.Message}";
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
 }
